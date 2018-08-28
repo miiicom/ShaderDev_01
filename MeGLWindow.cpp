@@ -54,6 +54,24 @@ void sendDataToOpenGL() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	}
 
+bool checkShaderStatus(GLuint shaderID) {
+	GLint compileStatus;
+	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &compileStatus);
+	if (compileStatus != GL_TRUE) {
+		GLint infoLogLength;
+		glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
+		GLchar* buffer = new GLchar[infoLogLength];
+
+		GLsizei bufferSize;
+		glGetShaderInfoLog(shaderID, infoLogLength, &bufferSize, buffer);
+		cout << buffer << endl;
+
+		delete[] buffer;
+		return false;
+	}
+	return true;
+}
+
 void installShaders() {
 	
 	GLuint  vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -68,18 +86,8 @@ void installShaders() {
 	glCompileShader(vertexShaderID);
 	glCompileShader(fragmentShaderID);
 
-	GLint compileStatus;
-	glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &compileStatus);
-	if (compileStatus != GL_TRUE) {
-		GLint infoLogLength;
-		glGetShaderiv(vertexShaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
-		GLchar* buffer = new GLchar[infoLogLength];
-
-		GLsizei bufferSize;
-		glGetShaderInfoLog(vertexShaderID, infoLogLength, &bufferSize, buffer);
-		cout << buffer << endl;
-
-		delete[] buffer;
+	if (!checkShaderStatus(vertexShaderID) || ! checkShaderStatus(fragmentShaderID)) {
+		return;
 	}
 
 	GLuint programID = glCreateProgram();
