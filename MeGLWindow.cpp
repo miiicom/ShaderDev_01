@@ -54,14 +54,17 @@ void sendDataToOpenGL() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	}
 
+
 bool checkStatus(
 	GLuint objectID,
 	PFNGLGETSHADERIVPROC objectPropertyGetterFunc,
 	PFNGLGETSHADERINFOLOGPROC getInfoLogFunc,
-	GLenum statusType) {
+	GLenum statusType)
+{
 	GLint status;
 	objectPropertyGetterFunc(objectID, statusType, &status);
-	if (status != GL_TRUE) {
+	if (status != GL_TRUE)
+	{
 		GLint infoLogLength;
 		objectPropertyGetterFunc(objectID, GL_INFO_LOG_LENGTH, &infoLogLength);
 		GLchar* buffer = new GLchar[infoLogLength];
@@ -69,14 +72,11 @@ bool checkStatus(
 		GLsizei bufferSize;
 		getInfoLogFunc(objectID, infoLogLength, &bufferSize, buffer);
 		cout << buffer << endl;
-
 		delete[] buffer;
 		return false;
 	}
 	return true;
-
 }
-
 bool checkShaderStatus(GLuint shaderID) {
 	/*
 	GLint compileStatus;
@@ -99,7 +99,7 @@ bool checkShaderStatus(GLuint shaderID) {
 }
 
 
-bool checkProgramStatus(GLuint programID){
+bool checkProgramStatus(GLuint programID) {
 	/*
 	GLint linkStatus;
 	glGetProgramiv(programID, GL_LINK_STATUS, &linkStatus);
@@ -140,8 +140,8 @@ void installShaders() {
 	}
 
 	GLuint programID = glCreateProgram();
-	glAttachShader(programID, vertexShaderID);
-	glAttachShader(programID, fragmentShaderID);
+	//glAttachShader(programID, vertexShaderID);
+	//glAttachShader(programID, fragmentShaderID);
 	glLinkProgram(programID);
 
 	if (!checkProgramStatus(programID)) {
