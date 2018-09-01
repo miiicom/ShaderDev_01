@@ -130,6 +130,10 @@
   <ItemGroup>
     <ClInclude Include="MeGLWindow.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="FragmentShaderCode.glsl" />
+    <None Include="vertexShaderCode.glsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

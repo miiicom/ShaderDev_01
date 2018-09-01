@@ -1,11 +1,12 @@
 
 #include <GL/glew.h>
 #include <iostream>
+#include <fstream>
 #include <MeGLWindow.h>
 using namespace std;
 
-extern const char* vertexShaderCode;
-extern const char* fragmentShaderCode;
+//extern const char* vertexShaderCode;
+//extern const char* fragmentShaderCode;
 
 void sendDataToOpenGL() {
 	GLfloat verts[]{
@@ -78,47 +79,26 @@ bool checkStatus(
 	return true;
 }
 bool checkShaderStatus(GLuint shaderID) {
-	/*
-	GLint compileStatus;
-	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &compileStatus);
-	if (compileStatus != GL_TRUE) {
-		GLint infoLogLength;
-		glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
-		GLchar* buffer = new GLchar[infoLogLength];
-
-		GLsizei bufferSize;
-		glGetShaderInfoLog(shaderID, infoLogLength, &bufferSize, buffer);
-		cout << buffer << endl;
-
-		delete[] buffer;
-		return false;
-	}
-	return true;*/
-
 	return checkStatus(shaderID, glGetShaderiv, glGetShaderInfoLog, GL_COMPILE_STATUS);
 }
 
 
 bool checkProgramStatus(GLuint programID) {
-	/*
-	GLint linkStatus;
-	glGetProgramiv(programID, GL_LINK_STATUS, &linkStatus);
-	if (linkStatus != GL_TRUE) {
-		GLint infoLogLength;
-		glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &infoLogLength);
-		GLchar* buffer = new GLchar[infoLogLength];
-
-		GLsizei bufferSize;
-		glGetProgramInfoLog(programID, infoLogLength, &bufferSize, buffer);
-		cout << buffer << endl;
-
-		delete[] buffer;
-		return false;
-	}
-	return true;
-	*/
-
 	return checkStatus(programID, glGetProgramiv, glGetProgramInfoLog, GL_LINK_STATUS);
+}
+
+string readShaderCode(const char* filename) {
+	ifstream meInput(filename); {
+		if (!meInput.good()) {
+			cout << "File fail to load" << filename;
+			exit(1);
+		}
+
+		return std::string(
+			std::istreambuf_iterator<char>(meInput),
+			std::istreambuf_iterator<char>()
+		);
+	}
 }
 
 void installShaders() {
@@ -126,10 +106,14 @@ void installShaders() {
 	GLuint  vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint  fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
+	string temp = readShaderCode("VertexShaderCode.glsl");
 	const GLchar* adapter[1];
-	adapter[0] = vertexShaderCode;
+
+	adapter[0] = temp.c_str();
 	glShaderSource(vertexShaderID, 1, adapter, 0);
-	adapter[0] = fragmentShaderCode;
+
+	temp = readShaderCode("FragmentShaderCode.glsl");
+	adapter[0] = temp.c_str();
 	glShaderSource(fragmentShaderID, 1, adapter, 0);
 
 	glCompileShader(vertexShaderID);
@@ -140,8 +124,8 @@ void installShaders() {
 	}
 
 	GLuint programID = glCreateProgram();
-	//glAttachShader(programID, vertexShaderID);
-	//glAttachShader(programID, fragmentShaderID);
+	glAttachShader(programID, vertexShaderID);
+	glAttachShader(programID, fragmentShaderID);
 	glLinkProgram(programID);
 
 	if (!checkProgramStatus(programID)) {
