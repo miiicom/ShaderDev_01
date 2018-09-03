@@ -1,2 +1,4 @@
 ﻿  MeGLWindow.cpp
-  ShaderDev_01.vcxproj -> C:\Users\U1137972\source\repos\ShaderDev_01\Debug\ShaderDev_01.exe
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\meglwindow.cpp(133): error C2059: syntax error: '<<'
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\meglwindow.cpp(138): error C2059: syntax error: '=='
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\meglwindow.cpp(142): error C2059: syntax error: '>>'

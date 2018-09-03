@@ -125,16 +125,21 @@ void installShaders() {
 
 void MeGLWindow::initializeGL() {
 	glewInit();
-	glEnable(GL_DEPTH_TEST);
 	sendDataToOpenGL();
 	installShaders();
 }
 
 void MeGLWindow::paintGL() {
+<<<<<<< HEAD
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 
+=======
+	glViewport(0, 0, 512, 512);
+	glDrawElements(GL_LINE_LOOP, 9, GL_UNSIGNED_SHORT, 0);
+	//glDrawArrays(GL_TRIANGLES, 0, 2);
+>>>>>>> parent of d4f6f77... update
 }
 
 MeGLWindow::MeGLWindow()
