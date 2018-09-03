@@ -4,7 +4,7 @@
 #include <fstream>
 #include <MeGLWindow.h>
 #include <glm\glm.hpp>
-#include <vertex.h>
+#include <Primitives/vertex.h>
 using namespace std;
 
 //extern const char* vertexShaderCode;
