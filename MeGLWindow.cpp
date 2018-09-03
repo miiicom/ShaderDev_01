@@ -14,6 +14,7 @@ using namespace std;
 const uint NUM_VERTICES_PER_TRU = 3;
 const uint NUM_FLOATS_PER_VERTICE = 6;
 const uint VERTEX_BYTE_SIZE = NUM_FLOATS_PER_VERTICE * sizeof(float);
+GLuint programID;
 
 void sendDataToOpenGL() {
 	ShapeData tri = ShapeGenerator::makeTriangle();
@@ -103,7 +104,7 @@ void installShaders() {
 		return;
 	}
 
-	GLuint programID = glCreateProgram();
+	programID = glCreateProgram();
 	glAttachShader(programID, vertexShaderID);
 	glAttachShader(programID, fragmentShaderID);
 	glLinkProgram(programID);
@@ -124,7 +125,23 @@ void MeGLWindow::initializeGL() {
 void MeGLWindow::paintGL() {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	// create input uniform value. They are the same for each draw call.
+	glm::vec3 dominatingColor(1.0f, 0.0f, 0.0f);
+	GLint dominatingColorUniformLocation = glGetUniformLocation(programID, "dominatingColor");
+	glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);// assign them
+
+	GLint yFlipUniformLocation =
+		glGetUniformLocation(programID, "yFlip");
+	glUniform1f(yFlipUniformLocation, 1.0f);
+	//glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
+
+
+	dominatingColor.r = 0;
+	dominatingColor.b = 1;
+	glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
+	glUniform1f(yFlipUniformLocation, -1.0f);
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
 }
 
 MeGLWindow::MeGLWindow()
