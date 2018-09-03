@@ -27,6 +27,9 @@
     <ClCompile Include="MeShaderCode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ShapeGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeGLWindow.h">
@@ -34,6 +37,12 @@
     </ClInclude>
     <ClInclude Include="vertex.h">
       <Filter>Header Files\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeData.h">
+      <Filter>Header Files\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeGenerator.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

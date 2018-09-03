@@ -1,6 +1,8 @@
 #pragma once
-struct Vector
+#include <glm\glm.hpp>
+
+struct Vertex
 {
-	glm::vec3 x, y, z;
-	glm::vec3 r, g, b;
+	glm::vec3 position;
+	glm::vec3 color;
 };
