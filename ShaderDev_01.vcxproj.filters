@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Primitives">
-      <UniqueIdentifier>{18e9eaea-6e76-4cc1-abc0-762c358b1596}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Mainer.cpp">
@@ -33,7 +30,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vertex.h">
-      <Filter>Header Files\Primitives</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
