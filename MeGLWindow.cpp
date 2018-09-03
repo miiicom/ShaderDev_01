@@ -3,56 +3,44 @@
 #include <iostream>
 #include <fstream>
 #include <MeGLWindow.h>
+#include <glm\glm.hpp>
+#include <Primitives/vertex.h>
 using namespace std;
 
 //extern const char* vertexShaderCode;
 //extern const char* fragmentShaderCode;
 
+const uint NUM_VERTICES_PER_TRU = 3;
+const uint NUM_FLOATS_PER_VERTICE = 6;
+const uint VERTEX_BYTE_SIZE = NUM_FLOATS_PER_VERTICE * sizeof(float);
+
+struct Vertex {
+	Vector position;
+	Vector color;
+};
+
 void sendDataToOpenGL() {
-	GLfloat verts[]{
+	Vertex verts[] =
+	{
+		glm::vec3(+0.0f, +1.0f, +0.0f),
+		glm::vec3(+1.0f, +0.0f, +0.0f),
 
-		-0.0f, -0.0f,
-		+1.0f, +1.0f, +1.0f,
+		glm::vec3(-1.0f, -1.0f, +0.0f),
+		glm::vec3(+0.0f, +1.0f, +0.0f),
 
-		+0.0f, +1.0f,
-		+1.0f, +0.0f, +0.0f,
-
-		+1.0f, -1.0f,
-		+0.0f, +1.0f, +0.0f,
-
-		-1.0f, -1.0f,
-		+0.0f, +0.0f, +1.0f,
-
-		-1.0f, +0.0f,
-		+1.0f, +1.0f, +1.0f,
-
-		+1.0f, +0.0f,
-		+1.0f, +1.0f, +1.0f,
+		glm::vec3(+1.0f, -1.0f, +0.0f),
+		glm::vec3(+0.0f, +0.0f, +1.0f),
 	};
-	/*
-	GLfloat coordinate[]{
-		-1.0f, +0.0f,
-		+1.0f, +1.0f, +1.0f,
 
-		+1.0f, +0.0f,
-		+1.0f, +1.0f, +1.0f,
-	};*/
-	
 	GLuint vertexBufferID;
-
 	glGenBuffers(1, &vertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (char*)(sizeof(float) * 2));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
 
-	GLushort indices[] = { 0,1,2, 0,2,3, 0,3,1};
-	GLuint indexBufferID;
-	glGenBuffers(1, &indexBufferID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	}
 
 
@@ -143,10 +131,10 @@ void MeGLWindow::initializeGL() {
 }
 
 void MeGLWindow::paintGL() {
-	glClear(GL_DEPTH_BUFFER);
-	glViewport(0, 0, 512, 512);
-	glDrawElements(GL_LINE_LOOP, 9, GL_UNSIGNED_SHORT, 0);
-	//glDrawArrays(GL_TRIANGLES, 0, 2);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    glViewport(0, 0, width(), height());
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+
 }
 
 MeGLWindow::MeGLWindow()
