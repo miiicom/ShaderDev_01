@@ -24,6 +24,7 @@ ShapeData ShapeGenerator::makeTriangle() {
 	ret.numIndices = NUM_ARRAY_ELEMENTS(indices);
 	ret.indices = new GLushort[ret.numIndices];
 	memcpy(ret.indices, indices, sizeof(indices));
+
 	return ret;
 }
 

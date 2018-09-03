@@ -3,7 +3,7 @@
 class ShapeGenerator
 {
 public:
-	ShapeData makeTriangle();
+	static ShapeData makeTriangle();
 
 	ShapeGenerator();
 	~ShapeGenerator();

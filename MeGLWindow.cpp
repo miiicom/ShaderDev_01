@@ -4,7 +4,7 @@
 #include <fstream>
 #include <MeGLWindow.h>
 #include <glm\glm.hpp>
-//#include <Primitives\vertex.h>
+#include <ShapeGenerator.h>
 #include <vertex.h>
 using namespace std;
 
@@ -16,32 +16,23 @@ const uint NUM_FLOATS_PER_VERTICE = 6;
 const uint VERTEX_BYTE_SIZE = NUM_FLOATS_PER_VERTICE * sizeof(float);
 
 void sendDataToOpenGL() {
-	Vertex verts[] =
-	{
-		glm::vec3(+0.0f, +1.0f, +0.0f),
-		glm::vec3(+1.0f, +0.0f, +0.0f),
-
-		glm::vec3(-1.0f, -1.0f, +0.0f),
-		glm::vec3(+0.0f, +1.0f, +0.0f),
-
-		glm::vec3(+1.0f, -1.0f, +0.0f),
-		glm::vec3(+0.0f, +0.0f, +1.0f),
-	};
+	ShapeData tri = ShapeGenerator::makeTriangle();
 
 	GLuint vertexBufferID;
 	glGenBuffers(1, &vertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, tri.vertexBufferSize(), tri.vertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
 
-	GLushort indices[] = { 0,1,2 };
-	//GLuint indexArrayBufferID;
-	//glGenBuffers(1, &indexArrayBufferID);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexArrayBufferID);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, verts.indexBufferSize(), verts.indices, GL_STATIC_DRAW);
+	//GLushort indices[] = { 0,1,2 };
+	GLuint indexArrayBufferID;
+	glGenBuffers(1, &indexArrayBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexArrayBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, tri.indexBufferSize(), tri.indices, GL_STATIC_DRAW);
+	tri.cleanup();
 	}
 
 
