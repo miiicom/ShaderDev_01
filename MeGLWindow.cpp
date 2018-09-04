@@ -28,19 +28,20 @@ void sendDataToOpenGL()
 
 void sendAnotherTriToOpenGL()
 {
-	if (numTris == MAX_TRIS)
-		return;
+	if (numTris == MAX_TRIS) {
+		numTris = 0;
+	}
 	const GLfloat THIS_TRI_X = -1 + numTris * X_DELTA;
 	GLfloat thisTri[] =
 	{
-		THIS_TRI_X, 1.0f, 0.0f,
-		0.1f + THIS_TRI_X, 0.1f, 0.1f,
+		1.0f, THIS_TRI_X, 0.0f,
+		1.0f - THIS_TRI_X, 0.1f, 0.1f,
 
-		THIS_TRI_X + X_DELTA, 1.0f, 0.0f,
-		0.1f, 0.1f + THIS_TRI_X, 0.1f,
+		1.0f, THIS_TRI_X + X_DELTA, 0.0f,
+		0.1f, 1.0f - THIS_TRI_X, 0.1f,
 
-		THIS_TRI_X, 0.0f, 0.0f,
-		0.1f, 0.1f, 0.1f + THIS_TRI_X,
+		0.0f, THIS_TRI_X, 0.0f,
+		0.1f, 0.1f,1.0f - THIS_TRI_X,
 	};
 	glBufferSubData(GL_ARRAY_BUFFER,
 		numTris * TRIANGLE_BYTE_SIZE, TRIANGLE_BYTE_SIZE, thisTri);
