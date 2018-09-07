@@ -10,6 +10,7 @@ int main(int argc, char* argv[]) {
 	//meWindow.show();
 
 	MeWidget meWidg;
+	meWidg.setFixedSize(512, 512);
 	meWidg.show();
 	
 	return app.exec();
