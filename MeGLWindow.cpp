@@ -123,37 +123,67 @@ void MeGLWindow::initializeGL() {
 }
 
 void MeGLWindow::paintGL() {
+	//Clean buffer before draw
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
-	// create input uniform value. They are the same for each draw call.
-	glm::vec3 dominatingColor(1.0f, 0.0f, 0.0f);
-	GLint dominatingColorUniformLocation = glGetUniformLocation(programID, "dominatingColor");
-	glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);// assign them
 
-	GLint yFlipUniformLocation =
-		glGetUniformLocation(programID, "yFlip");
-	glUniform1f(yFlipUniformLocation, 1.0f);
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	// create input uniform value. They are the same for each draw call.
+	//glm::vec3 dominatingColor(1.0f, 0.0f, 0.0f);
+	//GLint dominatingColorUniformLocation = glGetUniformLocation(programID, "dominatingColor");
+	//glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);// assign them
+
+	//------------Flip------------
+	//GLint yFlipUniformLocation =
+	//	glGetUniformLocation(programID, "yFlip");
+	//glUniform1f(yFlipUniformLocation, 1.0f);
+	//glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
+
+	GLint x_MoveUniformLocation = glGetUniformLocation(programID, "xMove");
+	glUniform1f(x_MoveUniformLocation, X_Start);
+
+	
+
+	GLint y_MoveUniformLocation = glGetUniformLocation(programID, "yMove");
+	glUniform1f(y_MoveUniformLocation, Y_Start);
+
+	printf("x_start is %f\n", X_Start);
+	printf("y_start is %f\n", Y_Start);
+
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
 
+	glUniform1f(x_MoveUniformLocation, X_Start_2+ 0.5f);
+	glUniform1f(y_MoveUniformLocation, Y_Start_2 - 0.5f);
 
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
+	//-----------CHANGE COLOR CODE-------------
 	//dominatingColor.r = 0;
 	//dominatingColor.b = 1;
 	//glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
 	//glUniform1f(yFlipUniformLocation, -1.0f);
 	//glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
+	//-----------
 }
 
-void MeGLWindow::InjectUniformValue(GLint X_Offset, GLint Y_Offset) {
+void MeGLWindow::InjectUniformValue(GLfloat X_Offset, GLfloat Y_Offset) {
 	
 	X_Start += X_Offset;
 	Y_Start += Y_Offset;
 }
 
+void MeGLWindow::InjectUniformValue_2(GLfloat X_Offset, GLfloat Y_Offset) {
+
+	X_Start_2 += X_Offset;
+	Y_Start_2 += Y_Offset;
+}
+
 MeGLWindow::MeGLWindow()
 {
-	X_Start = 0;
-	Y_Start = 0;
+	X_Start = +0.0f;
+	Y_Start = +0.0f;
+
+	X_Start_2 = +0.0f;
+	Y_Start_2 = +0.0f;
 }
 
 

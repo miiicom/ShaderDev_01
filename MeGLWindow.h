@@ -12,11 +12,14 @@ protected:
 public:
 	MeGLWindow();
 	~MeGLWindow();
-	void InjectUniformValue(GLint X_Offset, GLint Y_Offset);
-	
+	void InjectUniformValue(GLfloat X_Offset, GLfloat Y_Offset);
+	void InjectUniformValue_2(GLfloat X_Offset, GLfloat Y_Offset);
 private:
-	GLint X_Start;
-	GLint Y_Start;
+	GLfloat X_Start;
+	GLfloat Y_Start;
+
+	GLfloat X_Start_2;
+	GLfloat Y_Start_2;
 };
 
 #endif

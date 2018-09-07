@@ -1,5 +1,4 @@
-﻿  Mainer.cpp
-  MeGLWindow.cpp
+﻿  MeGLWindow.cpp
 c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\shapedata.h(4): warning C4099: 'Vertex': type name first seen using 'struct' now seen using 'class'
   c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\vertex.h(5): note: see declaration of 'Vertex'
   MeWidget.cpp
