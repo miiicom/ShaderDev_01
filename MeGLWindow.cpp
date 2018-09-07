@@ -152,8 +152,8 @@ void MeGLWindow::paintGL() {
 
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
 
-	glUniform1f(x_MoveUniformLocation, X_Start_2+ 0.5f);
-	glUniform1f(y_MoveUniformLocation, Y_Start_2 - 0.5f);
+	glUniform1f(x_MoveUniformLocation, X_Start_2+ 0.8f);
+	glUniform1f(y_MoveUniformLocation, Y_Start_2 - 0.8f);
 
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
 	//-----------CHANGE COLOR CODE-------------
