@@ -30,6 +30,9 @@
     <ClCompile Include="ShapeGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MeWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeGLWindow.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="ShapeGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeWidget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
