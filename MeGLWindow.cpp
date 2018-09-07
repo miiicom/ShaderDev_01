@@ -137,15 +137,23 @@ void MeGLWindow::paintGL() {
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
 
 
-	dominatingColor.r = 0;
-	dominatingColor.b = 1;
-	glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
-	glUniform1f(yFlipUniformLocation, -1.0f);
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
+	//dominatingColor.r = 0;
+	//dominatingColor.b = 1;
+	//glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
+	//glUniform1f(yFlipUniformLocation, -1.0f);
+	//glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
+}
+
+void MeGLWindow::InjectUniformValue(GLint X_Offset, GLint Y_Offset) {
+	
+	X_Start += X_Offset;
+	Y_Start += Y_Offset;
 }
 
 MeGLWindow::MeGLWindow()
 {
+	X_Start = 0;
+	Y_Start = 0;
 }
 
 
