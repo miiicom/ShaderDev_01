@@ -14,4 +14,6 @@ void main()
 	gl_Position.x = gl_Position.x + xMove;
 	gl_Position.y = gl_Position.y + yMove;
 	theColor = vertexColor;
+	theColor.x= xMove;
+	theColor.y= yMove;
 }
