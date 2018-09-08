@@ -127,22 +127,8 @@ void MeGLWindow::paintGL() {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
 
-
-	// create input uniform value. They are the same for each draw call.
-	//glm::vec3 dominatingColor(1.0f, 0.0f, 0.0f);
-	//GLint dominatingColorUniformLocation = glGetUniformLocation(programID, "dominatingColor");
-	//glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);// assign them
-
-	//------------Flip------------
-	//GLint yFlipUniformLocation =
-	//	glGetUniformLocation(programID, "yFlip");
-	//glUniform1f(yFlipUniformLocation, 1.0f);
-	//glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
-
 	GLint x_MoveUniformLocation = glGetUniformLocation(programID, "xMove");
 	glUniform1f(x_MoveUniformLocation, X_Start);
-
-	
 
 	GLint y_MoveUniformLocation = glGetUniformLocation(programID, "yMove");
 	glUniform1f(y_MoveUniformLocation, Y_Start);
@@ -156,13 +142,7 @@ void MeGLWindow::paintGL() {
 	glUniform1f(y_MoveUniformLocation, Y_Start_2 - 0.8f);
 
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
-	//-----------CHANGE COLOR CODE-------------
-	//dominatingColor.r = 0;
-	//dominatingColor.b = 1;
-	//glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
-	//glUniform1f(yFlipUniformLocation, -1.0f);
-	//glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
-	//-----------
+
 }
 
 void MeGLWindow::InjectUniformValue(GLfloat X_Offset, GLfloat Y_Offset) {
