@@ -15,6 +15,18 @@ ShapeData ShapeGenerator::makeTriangle() {
 
 		glm::vec3(-0.8f, 0.9f, +0.0f),
 		glm::vec3(+0.0f, +0.0f, +1.0f),
+
+		glm::vec3(-1.0f, 0.0f, +0.1f),
+		glm::vec3(+0.0f, +0.0f, +1.0f),
+
+		glm::vec3(+1.0f, 0.0f, +0.1f),
+		glm::vec3(+0.0f, +0.0f, +1.0f),
+
+		glm::vec3(+0.0f, 1.0f, +0.1f),
+		glm::vec3(+0.0f, +0.0f, +1.0f),
+
+		glm::vec3(+0.0f, -1.0f, +0.1f),
+		glm::vec3(+0.0f, +0.0f, +1.0f),
 	};
 	ret.numVertices = NUM_ARRAY_ELEMENTS(verts);
 	ret.vertices = new Vertex[ret.numVertices];

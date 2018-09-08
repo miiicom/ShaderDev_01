@@ -127,14 +127,18 @@ void MeGLWindow::paintGL() {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
 
+	//glDrawArrays(GL_TRIANGLES, 3, 4);
+
 	GLint x_MoveUniformLocation = glGetUniformLocation(programID, "xMove");
-	glUniform1f(x_MoveUniformLocation, X_Start);
-
 	GLint y_MoveUniformLocation = glGetUniformLocation(programID, "yMove");
-	glUniform1f(y_MoveUniformLocation, Y_Start);
 
-	printf("x_start is %f\n", X_Start);
-	printf("y_start is %f\n", Y_Start);
+	glUniform1f(x_MoveUniformLocation, +0.0f);
+	glUniform1f(y_MoveUniformLocation, +0.0f);
+
+	glDrawArrays(GL_TRIANGLES, 3, 4);
+
+	glUniform1f(x_MoveUniformLocation, X_Start);
+	glUniform1f(y_MoveUniformLocation, Y_Start);
 
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
 
@@ -143,7 +147,7 @@ void MeGLWindow::paintGL() {
 
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+
 
 }
 
