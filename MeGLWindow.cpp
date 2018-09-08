@@ -17,14 +17,6 @@ void sendDataToOpenGL() {
 		+1.0f, -1.0f,
 		+0.0f, +1.0f, +0.0f,
 
-		-1.0f, -1.0f,
-		+0.0f, +0.0f, +1.0f,
-
-		-1.0f, +0.0f,
-		+1.0f, +1.0f, +1.0f,
-
-		+1.0f, +0.0f,
-		+1.0f, +1.0f, +1.0f,
 	};
 	/*
 	GLfloat coordinate[]{
@@ -44,7 +36,7 @@ void sendDataToOpenGL() {
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (char*)(sizeof(float) * 2));
-
+	
 	GLushort indices[] = { 0,1,2, 0,2,3, 0,3,1};
 	GLuint indexBufferID;
 	glGenBuffers(1, &indexBufferID);
@@ -82,8 +74,8 @@ void MeGLWindow::initializeGL() {
 
 void MeGLWindow::paintGL() {
 	glViewport(0, 0, 512, 512);
-	glDrawElements(GL_LINE_LOOP, 9, GL_UNSIGNED_SHORT, 0);
-	//glDrawArrays(GL_TRIANGLES, 0, 2);
+	//glDrawElements(GL_LINE_LOOP, 9, GL_UNSIGNED_SHORT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 MeGLWindow::MeGLWindow()
