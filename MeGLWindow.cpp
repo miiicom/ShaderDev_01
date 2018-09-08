@@ -143,6 +143,8 @@ void MeGLWindow::paintGL() {
 
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
 
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+
 }
 
 void MeGLWindow::InjectUniformValue(GLfloat X_Offset, GLfloat Y_Offset) {
