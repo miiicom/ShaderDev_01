@@ -2,6 +2,7 @@
 #include <QtGui\qwidget.h>
 #include <Qt\qevent.h>
 #include <MeGLWindow.h>
+
 class MeWidget : public QWidget
 {
 public:
