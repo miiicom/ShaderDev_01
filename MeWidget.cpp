@@ -13,16 +13,27 @@ MeWidget::MeWidget()
 	QVBoxLayout* mainLayout;
 	setLayout(mainLayout = new QVBoxLayout);
 	mainLayout->addWidget(myGLWindow);
+
+	startTimer(20);
 }
 
 
 MeWidget::~MeWidget()
 {
+
+}
+
+void MeWidget::timerEvent(QTimerEvent *event) {
+
+	printf("One second passed");
+	myGLWindow->InjectUniformValue(+0.01f, +0.00f);
+	myGLWindow->repaint();
 }
 
 void MeWidget::keyPressEvent(QKeyEvent *event)
 {
-	printf("catch\n");
+	printf("catch\n"); 
+	/*
 	if (event->key() == Qt::Key_W)
 	{
 		printf("w");
@@ -81,5 +92,5 @@ void MeWidget::keyPressEvent(QKeyEvent *event)
 		myGLWindow->InjectUniformValue_2(+0.01f, +0.00f);
 		myGLWindow->repaint();
 	}
-
+	*/
 }

@@ -144,15 +144,16 @@ void MeGLWindow::paintGL() {
 
 	glUniform1f(y_Flip, +1.0f);
 	//-----Move Triangle-----
-	glUniform1f(x_MoveUniformLocation, X_Start);
-	glUniform1f(y_MoveUniformLocation, Y_Start);
+	
+	glUniform1f(x_MoveUniformLocation, X_Start + 0.8f);
+	glUniform1f(y_MoveUniformLocation, Y_Start - 0.8f);
 
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
-
+	/*
 	glUniform1f(x_MoveUniformLocation, X_Start_2+ 0.8f);
 	glUniform1f(y_MoveUniformLocation, Y_Start_2 - 0.8f);
 
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);*/
 
 
 

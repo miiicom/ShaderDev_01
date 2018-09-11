@@ -11,6 +11,7 @@ public:
 
 protected:
 	void keyPressEvent(QKeyEvent *);
+	void timerEvent(QTimerEvent *event);
 
 private:
 	MeGLWindow * myGLWindow;

@@ -17,5 +17,5 @@ void main()
 	gl_Position.y = gl_Position.y * Flip;
 	theColor = vertexColor;
 	theColor.x= xMove;
-	theColor.y= yMove;
+	theColor.y= 1 - yMove;
 }
