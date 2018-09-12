@@ -8,7 +8,6 @@ class MeGLWindow : public QGLWidget
 protected:
 	void paintGL();
 	void initializeGL();
-
 public:
 	MeGLWindow();
 	~MeGLWindow();
