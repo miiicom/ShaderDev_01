@@ -7,13 +7,13 @@ ShapeData ShapeGenerator::makeTriangle() {
 	ShapeData ret;
 	Vertex verts[] =
 	{	//Main sahpe
-		glm::vec3(-0.9f, +1.0f, +0.0f),
+		glm::vec3(+0.0f, +0.05f, +0.0f),
 		glm::vec3(+1.0f, +0.0f, +0.0f),
 
-		glm::vec3(-1.0f, 0.9f, +0.0f),
+		glm::vec3(+.1f, -0.05f, +0.0f),
 		glm::vec3(+0.0f, +1.0f, +0.0f),
 
-		glm::vec3(-0.8f, 0.9f, +0.0f),
+		glm::vec3(-0.1f, -0.05f, +0.0f),
 		glm::vec3(+0.0f, +0.0f, +1.0f),
 		// back ground image
 		glm::vec3(-1.0f, 0.0f, +0.1f),

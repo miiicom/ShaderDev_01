@@ -24,9 +24,9 @@ protected:
 
 private:
 	MeGLWindow * myGLWindow;
-	glm::vec2 InitialPosition;
-	glm::vec2 FlyingVector; 
-	glm::vec2 TriPosition;
+	glm::vec3 InitialPosition;
+	glm::vec3 FlyingVector; 
+	glm::vec3 TriPosition;
 
 	glm::vec3 boundaryPoint1 ;
 	glm::vec3 boundaryPoint2 ;

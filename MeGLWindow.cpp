@@ -155,7 +155,7 @@ void MeGLWindow::paintGL() {
 
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);*/
 
-	printf("%f", X_Start);
+	//printf("%f", X_Start);
 
 }
 

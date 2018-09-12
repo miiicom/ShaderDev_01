@@ -8,9 +8,9 @@
 
 MeWidget::MeWidget()
 {
-	FlyingVector = glm::vec2(-0.01f, +0.0f);
-	InitialPosition= glm::vec2(+0.8f, -0.8f);
-	TriPosition = glm::vec2(+0.0f, -0.0f);
+	FlyingVector = glm::vec3(-0.01f, +0.0f, +0.0f);
+	InitialPosition= glm::vec3(+0.0f,-0.3f, +0.0f);
+	TriPosition = glm::vec3(+0.0f, -0.0f, +0.0f);
 	TriPosition.x = InitialPosition.x + FlyingVector.x;
 	TriPosition.y = InitialPosition.y + FlyingVector.y;
 
@@ -20,13 +20,13 @@ MeWidget::MeWidget()
 	setLayout(mainLayout = new QVBoxLayout);
 	mainLayout->addWidget(myGLWindow);
 
-	startTimer(20);
+	startTimer(50);
 
 	//---Hard code boundaries---
-	boundaryPoint1 = glm::vec3(-1.0f, 0.0f, +0.1f);
-	boundaryPoint2 = glm::vec3(+1.0f, 0.0f, +0.1f);
-	boundaryPoint3 = glm::vec3(+0.0f, 1.0f, +0.1f);
-	boundaryPoint4 = glm::vec3(+0.0f, -1.0f, +0.1f);
+	boundaryPoint1 = glm::vec3(-1.0f, 0.0f, +0.0f);
+	boundaryPoint2 = glm::vec3(+1.0f, 0.0f, +0.0f);
+	boundaryPoint3 = glm::vec3(+0.0f, 1.0f, +0.0f);
+	boundaryPoint4 = glm::vec3(+0.0f, -1.0f, +0.0f);
 
 	
 }
@@ -59,10 +59,25 @@ GLfloat MeWidget::dot3d(glm::vec3 input1, glm::vec3 input2)
 }
 
 void MeWidget::handleBoundaries()
-{
-	glm::vec3 wall1 = subtraction3d(boundaryPoint1, boundaryPoint2);
+{	//Left up wall
+	glm::vec3 wall1 = subtraction3d(boundaryPoint1, boundaryPoint3);
 	glm::vec3 normal1 = perpCc3d(wall1);
-	//glm::vec3 respectivePosition = 
+	glm::vec3 respectivePosition = subtraction3d(TriPosition, boundaryPoint3);
+	GLfloat dotResult = dot3d(normal1, respectivePosition);
+	//printf("/n dotResult is %f/n", dotResult);
+	if (dotResult <= 0.0) {
+		printf("collided with Left up wall with dot produce %f", dotResult);
+	}
+
+	//Left Down wall
+	wall1 = subtraction3d(boundaryPoint1, boundaryPoint4);
+	normal1 = perpCw3d(wall1);
+	respectivePosition = subtraction3d(TriPosition, boundaryPoint4);
+	dotResult = dot3d(normal1, respectivePosition);
+	//printf("/n dotResult is %f/n", dotResult);
+	if (dotResult <= 0.0) {
+		printf("collided with Left down wall with dot produce %f", dotResult);
+	}
 }
 
 glm::vec3 MeWidget::subtraction3d(glm::vec3 left, glm::vec3 right) {
@@ -83,6 +98,7 @@ void MeWidget::timerEvent(QTimerEvent *event) {
 	TriPosition.x = TriPosition.x + FlyingVector.x;
 	TriPosition.y = TriPosition.y + FlyingVector.y;
 	myGLWindow->InitialValueSetter(TriPosition.x, TriPosition.y);
+	handleBoundaries();
 	myGLWindow->repaint();
 }
 
