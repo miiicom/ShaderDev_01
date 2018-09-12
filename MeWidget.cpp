@@ -10,7 +10,7 @@ MeWidget::MeWidget()
 {
 	collided = FALSE;
 
-	FlyingVector = glm::vec3(+0.01f, +0.00f, +0.0f);
+	FlyingVector = glm::vec3(+0.01f, +0.02f, +0.0f);
 	InitialPosition= glm::vec3(+0.0f,-0.3f, +0.0f);
 	TriPosition = glm::vec3(+0.0f, -0.0f, +0.0f);
 	OldTriPosition = glm::vec3(+0.0f, -0.0f, +0.0f);
@@ -23,7 +23,7 @@ MeWidget::MeWidget()
 	setLayout(mainLayout = new QVBoxLayout);
 	mainLayout->addWidget(myGLWindow);
 
-	startTimer(50);
+	startTimer(20);
 
 	//---Hard code boundaries---
 	boundaryPoint1 = glm::vec3(-1.0f, 0.0f, +0.0f);
