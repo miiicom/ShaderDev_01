@@ -11,6 +11,7 @@ protected:
 public:
 	MeGLWindow();
 	~MeGLWindow();
+	void InitialValueSetter(GLfloat X_Start, GLfloat Y_Start);
 	void InjectUniformValue(GLfloat X_Offset, GLfloat Y_Offset);
 	void InjectUniformValue_2(GLfloat X_Offset, GLfloat Y_Offset);
 private:

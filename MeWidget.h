@@ -8,10 +8,15 @@ class MeWidget : public QWidget
 public:
 	MeWidget();
 	~MeWidget();
+
 	glm::vec3 subtraction3d(glm::vec3 left, glm::vec3 right);
 	glm::vec2 subtraction2d(glm::vec2 left, glm::vec2 right);
-	glm::vec2 perpCw2d(glm::vec2 input);
-	glm::vec2 perpCc2d(glm::vec2 input);
+	glm::vec3 perpCw3d(glm::vec3 input);
+	glm::vec3 perpCc3d(glm::vec3 input);
+	GLfloat dot2d(glm::vec2 input1, glm::vec2 input2);
+	GLfloat dot3d(glm::vec3 input1, glm::vec3 input2);
+
+	void handleBoundaries();
 
 protected:
 	void keyPressEvent(QKeyEvent *);
@@ -19,7 +24,14 @@ protected:
 
 private:
 	MeGLWindow * myGLWindow;
-	glm::vec2 FlyingVector;
+	glm::vec2 InitialPosition;
+	glm::vec2 FlyingVector; 
+	glm::vec2 TriPosition;
+
+	glm::vec3 boundaryPoint1 ;
+	glm::vec3 boundaryPoint2 ;
+	glm::vec3 boundaryPoint3 ;
+	glm::vec3 boundaryPoint4 ;
 };
 
 

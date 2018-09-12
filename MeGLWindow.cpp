@@ -145,8 +145,8 @@ void MeGLWindow::paintGL() {
 	glUniform1f(y_Flip, +1.0f);
 	//-----Move Triangle-----
 	
-	glUniform1f(x_MoveUniformLocation, X_Start + 0.8f);
-	glUniform1f(y_MoveUniformLocation, Y_Start - 0.8f);
+	glUniform1f(x_MoveUniformLocation, X_Start);
+	glUniform1f(y_MoveUniformLocation, Y_Start);
 
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
 	/*
@@ -155,7 +155,7 @@ void MeGLWindow::paintGL() {
 
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);*/
 
-
+	printf("%f", X_Start);
 
 }
 
@@ -173,15 +173,21 @@ void MeGLWindow::InjectUniformValue_2(GLfloat X_Offset, GLfloat Y_Offset) {
 
 MeGLWindow::MeGLWindow()
 {
-	X_Start = +0.0f;
-	Y_Start = +0.0f;
+	//X_Start = +0.8f;
+	//Y_Start = -0.8f;
 
-	X_Start_2 = +0.0f;
-	Y_Start_2 = +0.0f;
+	//X_Start_2 = +0.0f;
+	//Y_Start_2 = +0.0f;
 }
 
 
 MeGLWindow::~MeGLWindow()
 {
+}
+
+void MeGLWindow::InitialValueSetter(GLfloat X_Start, GLfloat Y_Start)
+{
+	this->X_Start = X_Start;
+	this->Y_Start = Y_Start;
 }
 
