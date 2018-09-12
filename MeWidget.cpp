@@ -8,7 +8,7 @@
 
 MeWidget::MeWidget()
 {
-	FlyingVector = glm::vec3(-0.01f, +0.0f, +0.0f);
+	FlyingVector = glm::vec3(+0.01f, +0.0f, +0.0f);
 	InitialPosition= glm::vec3(+0.0f,-0.3f, +0.0f);
 	TriPosition = glm::vec3(+0.0f, -0.0f, +0.0f);
 	TriPosition.x = InitialPosition.x + FlyingVector.x;
@@ -64,7 +64,6 @@ void MeWidget::handleBoundaries()
 	glm::vec3 normal1 = perpCc3d(wall1);
 	glm::vec3 respectivePosition = subtraction3d(TriPosition, boundaryPoint3);
 	GLfloat dotResult = dot3d(normal1, respectivePosition);
-	//printf("/n dotResult is %f/n", dotResult);
 	if (dotResult <= 0.0) {
 		printf("collided with Left up wall with dot produce %f", dotResult);
 	}
@@ -74,9 +73,26 @@ void MeWidget::handleBoundaries()
 	normal1 = perpCw3d(wall1);
 	respectivePosition = subtraction3d(TriPosition, boundaryPoint4);
 	dotResult = dot3d(normal1, respectivePosition);
-	//printf("/n dotResult is %f/n", dotResult);
 	if (dotResult <= 0.0) {
 		printf("collided with Left down wall with dot produce %f", dotResult);
+	}
+
+	//Right up wall
+	wall1 = subtraction3d(boundaryPoint2, boundaryPoint3);
+	normal1 = perpCw3d(wall1);
+	respectivePosition = subtraction3d(TriPosition, boundaryPoint3);
+	dotResult = dot3d(normal1, respectivePosition);
+	if (dotResult <= 0.0) {
+		printf("collided with Right Up wall with dot produce %f", dotResult);
+	}
+
+	//Right down wall
+	wall1 = subtraction3d(boundaryPoint2, boundaryPoint4);
+	normal1 = perpCc3d(wall1);
+	respectivePosition = subtraction3d(TriPosition, boundaryPoint4);
+	dotResult = dot3d(normal1, respectivePosition);
+	if (dotResult <= 0.0) {
+		printf("collided with Right Down wall with dot produce %f", dotResult);
 	}
 }
 
