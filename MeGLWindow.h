@@ -19,6 +19,7 @@ private:
 	GLfloat rotationValue;
 
 	mat4 modelTransformMatrix;
+	mat4 modelRotateMatrix;
 	mat4 projectionMatrix;
 };
 

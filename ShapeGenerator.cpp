@@ -42,7 +42,7 @@ ShapeData ShapeGenerator::makeTriangle() {
 
 ShapeData ShapeGenerator::makeCube() {
 	ShapeData ret;
-	Vertex stackVerts[] = {
+	Vertex verts[] = {
 		glm::vec3(-1.0f, +1.0f, +1.0f), // 0
 		glm::vec3(+1.0f, +0.0f, +0.0f), // Color
 		glm::vec3(+1.0f, +1.0f, +1.0f), // 1
@@ -92,10 +92,10 @@ ShapeData ShapeGenerator::makeCube() {
 		glm::vec3(+1.0f, -1.0f, +1.0f), // 23
 		glm::vec3(+0.9f, +1.0f, +0.2f), // Color
 	};
-	ret.numVertices = NUM_ARRAY_ELEMENTS(stackVerts);
+	ret.numVertices = NUM_ARRAY_ELEMENTS(verts);
 	ret.vertices = new Vertex[ret.numVertices];
-	memcpy(ret.vertices, stackVerts, sizeof(stackVerts));
-	unsigned short stackIndices[] = {
+	memcpy(ret.vertices, verts, sizeof(verts));
+	unsigned short indices[] = {
 		0,   1,  2,  0,  2,  3, // Top
 		4,   5,  6,  4,  6,  7, // Front
 		8,   9, 10,  8, 10, 11, // Right
@@ -103,9 +103,9 @@ ShapeData ShapeGenerator::makeCube() {
 		16, 17, 18, 16, 18, 19, // Back
 		20, 22, 21, 20, 23, 22, // Bottom
 	};
-	ret.numIndices = NUM_ARRAY_ELEMENTS(stackIndices);
+	ret.numIndices = NUM_ARRAY_ELEMENTS(indices);
 	ret.indices = new GLushort[ret.numIndices];
-	memcpy(ret.indices, stackIndices, sizeof(stackIndices));
+	memcpy(ret.indices, indices, sizeof(indices));
 	return ret;
 }
 

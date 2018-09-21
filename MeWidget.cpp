@@ -8,7 +8,7 @@
 
 MeWidget::MeWidget()
 {
-	rotationValue = +0.0f;
+	rotationValue = +45.0f;
 	myGLWindow = new MeGLWindow();
 	myGLWindow->InitialValueSetter(rotationValue);
 	QVBoxLayout* mainLayout;

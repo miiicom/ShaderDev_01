@@ -120,6 +120,7 @@ void installShaders() {
 
 void MeGLWindow::initializeGL() {
 	glewInit();
+	glEnable(GL_DEPTH_TEST);
 	sendDataToOpenGL();
 	installShaders();
 }
@@ -129,27 +130,32 @@ void MeGLWindow::paintGL() {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
 
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, -4.0f)); // push 4 away from camera
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, -7.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), rotationValue, glm::vec3(1.0f, 0.5f, -0.3f));
 	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
+	mat4 fullTransformMatrix = projectionMatrix * modelTransformMatrix * modelRotateMatrix;
+
 
 	/*GLint x_MoveUniformLocation = glGetUniformLocation(programID, "xMove");
 	GLint y_MoveUniformLocation = glGetUniformLocation(programID, "yMove");
 	glUniform1f(x_MoveUniformLocation, +0.0f);
 	glUniform1f(y_MoveUniformLocation, +0.0f);*/
 
-	GLint modelTransMatUniformLoc = glGetUniformLocation(programID, "modelTransformMatrix");
-	GLint projectMatUniformLoc = glGetUniformLocation(programID, "projectionMatrix");
+	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
 
-	glUniformMatrix4fv(modelTransMatUniformLoc, 1, GL_FALSE, &modelTransformMatrix [0][0]);
-	glUniformMatrix4fv(projectMatUniformLoc, 1, GL_FALSE, &projectionMatrix[0][0]);
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	//printf("indices is %d ", numIndices);
 
-	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
+
+
 }
 
 MeGLWindow::MeGLWindow()
 {
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
-	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
+	//modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
+	//modelRotateMatrix = glm::rotate(mat4(), rotationValue, glm::vec3(0.0f, 0.0f, 0.0f));
+	//projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
 }
 
 
