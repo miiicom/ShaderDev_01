@@ -131,18 +131,18 @@ void MeGLWindow::paintGL() {
 
 	GLint x_MoveUniformLocation = glGetUniformLocation(programID, "xMove");
 	GLint y_MoveUniformLocation = glGetUniformLocation(programID, "yMove");
-	GLint y_Flip = glGetUniformLocation(programID, "Flip");
+	//GLint y_Flip = glGetUniformLocation(programID, "Flip");
 	//-----Draw outline-----
 	glUniform1f(x_MoveUniformLocation, +0.0f);
 	glUniform1f(y_MoveUniformLocation, +0.0f);
 
-	glDrawArrays(GL_TRIANGLES, 3, 4);
+	//glDrawArrays(GL_TRIANGLES, 3, 4);
 
-	glUniform1f(y_Flip, -1.0f);
+	//glUniform1f(y_Flip, -1.0f);
 
-	glDrawArrays(GL_TRIANGLES, 3, 4);
+	//glDrawArrays(GL_TRIANGLES, 3, 4);
 
-	glUniform1f(y_Flip, +1.0f);
+	//glUniform1f(y_Flip, +1.0f);
 	//-----Move Triangle-----
 	
 	glUniform1f(x_MoveUniformLocation, X_Start);
