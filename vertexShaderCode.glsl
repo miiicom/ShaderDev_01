@@ -3,17 +3,17 @@
 in layout(location=0) vec2 position;
 in layout(location=1) vec3 vertexColor;
 
-uniform float xMove;
-uniform float yMove;
+uniform mat4 modelTransformMatrix;
+uniform mat4 projectionMatrix;
 
 out vec3 theColor;
 
 void main()
 {
-	gl_Position = vec4(position, 0.0, 1.0);
-	gl_Position.x = gl_Position.x + xMove;
-	gl_Position.y = gl_Position.y + yMove;
+	vec4 Position = vec4(position, 0.0, 1.0);
+	vec4 TranslatedPosition = modelTransformMatrix *  Position;
+	vec4 ProjectedPositiopn = projectionMatrix * TranslatedPosition;
+
+	gl_Position = ProjectedPositiopn;
 	theColor = vertexColor;
-	theColor.x= xMove;
-	theColor.y= 1 - yMove;
 }

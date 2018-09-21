@@ -4,6 +4,7 @@
 #include <fstream>
 #include <MeGLWindow.h>
 #include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
 #include <ShapeGenerator.h>
 #include <vertex.h>
 using namespace std;
@@ -15,25 +16,26 @@ const uint NUM_VERTICES_PER_TRU = 3;
 const uint NUM_FLOATS_PER_VERTICE = 6;
 const uint VERTEX_BYTE_SIZE = NUM_FLOATS_PER_VERTICE * sizeof(float);
 GLuint programID;
+GLuint numIndices;
 
 void sendDataToOpenGL() {
-	ShapeData tri = ShapeGenerator::makeTriangle();
+	ShapeData shape = ShapeGenerator::makeCube();
 
 	GLuint vertexBufferID;
 	glGenBuffers(1, &vertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-	glBufferData(GL_ARRAY_BUFFER, tri.vertexBufferSize(), tri.vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
 
-	//GLushort indices[] = { 0,1,2 };
 	GLuint indexArrayBufferID;
 	glGenBuffers(1, &indexArrayBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexArrayBufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, tri.indexBufferSize(), tri.indices, GL_STATIC_DRAW);
-	tri.cleanup();
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
+	numIndices = shape.numIndices;
+	shape.cleanup();
 	}
 
 
@@ -127,36 +129,21 @@ void MeGLWindow::paintGL() {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
 
-	//glDrawArrays(GL_TRIANGLES, 3, 4);
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, -4.0f)); // push 4 away from camera
+	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
 
-	GLint x_MoveUniformLocation = glGetUniformLocation(programID, "xMove");
+	/*GLint x_MoveUniformLocation = glGetUniformLocation(programID, "xMove");
 	GLint y_MoveUniformLocation = glGetUniformLocation(programID, "yMove");
-	//GLint y_Flip = glGetUniformLocation(programID, "Flip");
-	//-----Draw outline-----
 	glUniform1f(x_MoveUniformLocation, +0.0f);
-	glUniform1f(y_MoveUniformLocation, +0.0f);
+	glUniform1f(y_MoveUniformLocation, +0.0f);*/
 
-	//glDrawArrays(GL_TRIANGLES, 3, 4);
+	GLint modelTransMatUniformLoc = glGetUniformLocation(programID, "modelTransformMatrix");
+	GLint projectMatUniformLoc = glGetUniformLocation(programID, "projectionMatrix");
 
-	//glUniform1f(y_Flip, -1.0f);
+	glUniformMatrix4fv(modelTransMatUniformLoc, 1, GL_FALSE, &modelTransformMatrix [0][0]);
+	glUniformMatrix4fv(projectMatUniformLoc, 1, GL_FALSE, &projectionMatrix[0][0]);
 
-	//glDrawArrays(GL_TRIANGLES, 3, 4);
-
-	//glUniform1f(y_Flip, +1.0f);
-	//-----Move Triangle-----
-	
-	glUniform1f(x_MoveUniformLocation, X_Start);
-	glUniform1f(y_MoveUniformLocation, Y_Start);
-
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
-	/*
-	glUniform1f(x_MoveUniformLocation, X_Start_2+ 0.8f);
-	glUniform1f(y_MoveUniformLocation, Y_Start_2 - 0.8f);
-
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);*/
-
-	//printf("%f", X_Start);
-
+	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
 }
 
 void MeGLWindow::InjectUniformValue(GLfloat X_Offset, GLfloat Y_Offset) {
@@ -173,11 +160,8 @@ void MeGLWindow::InjectUniformValue_2(GLfloat X_Offset, GLfloat Y_Offset) {
 
 MeGLWindow::MeGLWindow()
 {
-	//X_Start = +0.8f;
-	//Y_Start = -0.8f;
-
-	//X_Start_2 = +0.0f;
-	//Y_Start_2 = +0.0f;
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
+	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
 }
 
 

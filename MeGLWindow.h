@@ -3,6 +3,8 @@
 
 #include<QtOpenGL\qglwidget>
 #include <glm\glm.hpp>
+
+using glm::mat4;
 class MeGLWindow : public QGLWidget
 {
 protected:
@@ -20,6 +22,9 @@ private:
 
 	GLfloat X_Start_2;
 	GLfloat Y_Start_2;
+
+	mat4 modelTransformMatrix;
+	mat4 projectionMatrix;
 };
 
 #endif
