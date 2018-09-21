@@ -12,4 +12,5 @@ void main()
 	vec4 Position = vec4(position, 1.0);
 	gl_Position = fullTransformMatrix *  Position;
 	theColor = vertexColor;
+	theColor.y = 1-gl_Position.x;
 }
