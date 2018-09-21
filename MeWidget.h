@@ -28,17 +28,7 @@ protected:
 
 private:
 	MeGLWindow * myGLWindow;
-	glm::vec3 InitialPosition;
-	glm::vec3 FlyingVector; 
-	glm::vec3 TriPosition;
-	glm::vec3 OldTriPosition;
-
-	bool collided;
-
-	glm::vec3 boundaryPoint1 ;
-	glm::vec3 boundaryPoint2 ;
-	glm::vec3 boundaryPoint3 ;
-	glm::vec3 boundaryPoint4 ;
+	GLfloat rotationValue;
 };
 
 

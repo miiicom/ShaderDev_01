@@ -13,15 +13,10 @@ protected:
 public:
 	MeGLWindow();
 	~MeGLWindow();
-	void InitialValueSetter(GLfloat X_Start, GLfloat Y_Start);
-	void InjectUniformValue(GLfloat X_Offset, GLfloat Y_Offset);
-	void InjectUniformValue_2(GLfloat X_Offset, GLfloat Y_Offset);
-private:
-	GLfloat X_Start;
-	GLfloat Y_Start;
+	void InitialValueSetter(GLfloat rotationValue);
 
-	GLfloat X_Start_2;
-	GLfloat Y_Start_2;
+private:
+	GLfloat rotationValue;
 
 	mat4 modelTransformMatrix;
 	mat4 projectionMatrix;

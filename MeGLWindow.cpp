@@ -146,18 +146,6 @@ void MeGLWindow::paintGL() {
 	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
 }
 
-void MeGLWindow::InjectUniformValue(GLfloat X_Offset, GLfloat Y_Offset) {
-	
-	X_Start += X_Offset;
-	Y_Start += Y_Offset;
-}
-
-void MeGLWindow::InjectUniformValue_2(GLfloat X_Offset, GLfloat Y_Offset) {
-
-	X_Start_2 += X_Offset;
-	Y_Start_2 += Y_Offset;
-}
-
 MeGLWindow::MeGLWindow()
 {
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
@@ -169,9 +157,8 @@ MeGLWindow::~MeGLWindow()
 {
 }
 
-void MeGLWindow::InitialValueSetter(GLfloat X_Start, GLfloat Y_Start)
+void MeGLWindow::InitialValueSetter(GLfloat rotationValue)
 {
-	this->X_Start = X_Start;
-	this->Y_Start = Y_Start;
+	this->rotationValue = rotationValue;
 }
 

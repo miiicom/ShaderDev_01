@@ -8,30 +8,16 @@
 
 MeWidget::MeWidget()
 {
-	collided = FALSE;
-
-	FlyingVector = glm::vec3(+0.01f, +0.02f, +0.0f);
-	InitialPosition= glm::vec3(+0.0f,-0.3f, +0.0f);
-	TriPosition = glm::vec3(+0.0f, -0.0f, +0.0f);
-	OldTriPosition = glm::vec3(+0.0f, -0.0f, +0.0f);
-	TriPosition.x = InitialPosition.x + FlyingVector.x;
-	TriPosition.y = InitialPosition.y + FlyingVector.y;
-
+	rotationValue = +0.0f;
 	myGLWindow = new MeGLWindow();
-	myGLWindow->InitialValueSetter(InitialPosition.x, InitialPosition.y);
+	myGLWindow->InitialValueSetter(rotationValue);
 	QVBoxLayout* mainLayout;
 	setLayout(mainLayout = new QVBoxLayout);
 	mainLayout->addWidget(myGLWindow);
 
-	startTimer(20);
+	startTimer(30);
 
 	//---Hard code boundaries---
-	boundaryPoint1 = glm::vec3(-1.0f, 0.0f, +0.0f);
-	boundaryPoint2 = glm::vec3(+1.0f, 0.0f, +0.0f);
-	boundaryPoint3 = glm::vec3(+0.0f, 1.0f, +0.0f);
-	boundaryPoint4 = glm::vec3(+0.0f, -1.0f, +0.0f);
-
-	
 }
 
 
@@ -94,7 +80,9 @@ glm::vec2 MeWidget::subtraction2d(glm::vec2 left, glm::vec2 right)
 
 //--------vector maths------
 void MeWidget::handleBoundaries()
-{	//Left up wall
+{
+/*
+	//Left up wall
 	glm::vec3 OldTriPosition = TriPosition;
 
 	glm::vec3 wall1 = subtraction3d(boundaryPoint1, boundaryPoint3);
@@ -156,17 +144,11 @@ void MeWidget::handleBoundaries()
 	}
 	else {
 		collided = false;
-	}
+	}*/
 }
 void MeWidget::timerEvent(QTimerEvent *event) {
-	if (collided) {
-		TriPosition = OldTriPosition;
-	}
-	TriPosition.x = TriPosition.x + FlyingVector.x;
-	TriPosition.y = TriPosition.y + FlyingVector.y;
-	OldTriPosition = TriPosition;
-	myGLWindow->InitialValueSetter(TriPosition.x, TriPosition.y);
-	handleBoundaries();
+	rotationValue++;
+	myGLWindow->InitialValueSetter(rotationValue);
 	myGLWindow->repaint();
 }
 
