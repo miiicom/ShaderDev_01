@@ -1,14 +1,21 @@
 #ifndef ME_GL_WINDOW
 #define ME_GL_WINDOW
-
+#include <GL\glew.h>
 #include<QtOpenGL\qglwidget>
 #include <glm\glm.hpp>
+#include <String>
 
 using glm::mat4;
 class MeGLWindow : public QGLWidget
 {
 protected:
 	void paintGL();
+	void sendDataToOpenGL();
+	bool checkStatus(GLuint objectID, PFNGLGETSHADERIVPROC objectPropertyGetterFunc, PFNGLGETSHADERINFOLOGPROC getInfoLogFunc, GLenum statusType);
+	bool checkShaderStatus(GLuint shaderID);
+	bool checkProgramStatus(GLuint programID);
+	std::string readShaderCode(const char * filename);
+	void installShaders();
 	void initializeGL();
 public:
 	MeGLWindow();

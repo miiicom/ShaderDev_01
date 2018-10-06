@@ -15,7 +15,7 @@ MeWidget::MeWidget()
 	setLayout(mainLayout = new QVBoxLayout);
 	mainLayout->addWidget(myGLWindow);
 
-	startTimer(30);
+	//startTimer(30);
 
 	//---Hard code boundaries---
 }
