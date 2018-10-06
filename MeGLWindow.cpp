@@ -16,7 +16,12 @@ const uint NUM_VERTICES_PER_TRU = 3;
 const uint NUM_FLOATS_PER_VERTICE = 6;
 const uint VERTEX_BYTE_SIZE = NUM_FLOATS_PER_VERTICE * sizeof(float);
 GLuint programID;
+GLuint whitePlaneProgramID;
 GLuint numIndices;
+
+GLuint  vertexShaderID;
+GLuint  fragmentShaderID;
+GLuint  WhitePlanefragmentShaderID;
 
 void sendDataToOpenGL() {
 	ShapeData shape = ShapeGenerator::makeCube();
@@ -88,6 +93,7 @@ void installShaders() {
 	
 	GLuint  vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint  fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint  WhitePlanefragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	string temp = readShaderCode("VertexShaderCode.glsl");
 	const GLchar* adapter[1];
@@ -99,10 +105,15 @@ void installShaders() {
 	adapter[0] = temp.c_str();
 	glShaderSource(fragmentShaderID, 1, adapter, 0);
 
+	temp = readShaderCode("WhitePlaneFragmentShader.glsl");
+	adapter[0] = temp.c_str();
+	glShaderSource(WhitePlanefragmentShaderID, 1, adapter, 0);
+
 	glCompileShader(vertexShaderID);
 	glCompileShader(fragmentShaderID);
+	glCompileShader(WhitePlanefragmentShaderID);
 
-	if (!checkShaderStatus(vertexShaderID) || ! checkShaderStatus(fragmentShaderID)) {
+	if (!checkShaderStatus(vertexShaderID) ||!checkShaderStatus(fragmentShaderID) || !checkShaderStatus(WhitePlanefragmentShaderID)) {
 		return;
 	}
 
@@ -111,14 +122,14 @@ void installShaders() {
 	glAttachShader(programID, fragmentShaderID);
 	glLinkProgram(programID);
 	
-	if (!checkProgramStatus(programID)) {
+	whitePlaneProgramID = glCreateProgram();
+	glAttachShader(whitePlaneProgramID, vertexShaderID);
+	glAttachShader(whitePlaneProgramID, WhitePlanefragmentShaderID);
+	glLinkProgram(whitePlaneProgramID);
+
+	if (!checkProgramStatus(programID) || !checkProgramStatus(whitePlaneProgramID)) {
 		return;
 	}
-
-	glDeleteShader(vertexShaderID);
-	glDeleteShader(fragmentShaderID);
-
-	glUseProgram(programID);
 }
 
 void MeGLWindow::initializeGL() {
@@ -132,19 +143,28 @@ void MeGLWindow::paintGL() {
 	//Clean buffer before draw
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
-
+	
+	glUseProgram(programID);
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, -7.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), rotationValue, glm::vec3(1.0f, 0.5f, -0.3f));
 	modelScaleMatrix = glm::scale(mat4(),glm::vec3(1.0f,0.3f,1.0f));
 	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
 	mat4 fullTransformMatrix = projectionMatrix * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
-
 	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
-
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 
+	
+	glUseProgram(whitePlaneProgramID);
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -0.3f, -7.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 0.5f, -0.3f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(3.0f, 0.05f, 3.0f));
+	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
+	fullTransformMatrix = projectionMatrix * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
+		
+	fullTransformMatrixUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 
 }
 

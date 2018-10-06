@@ -54,5 +54,6 @@
   <ItemGroup>
     <None Include="vertexShaderCode.glsl" />
     <None Include="FragmentShaderCode.glsl" />
+    <None Include="WhitePlaneFragmentShader.glsl" />
   </ItemGroup>
 </Project>
