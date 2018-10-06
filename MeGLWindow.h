@@ -20,6 +20,7 @@ private:
 
 	mat4 modelTransformMatrix;
 	mat4 modelRotateMatrix;
+	mat4 modelScaleMatrix;
 	mat4 projectionMatrix;
 };
 

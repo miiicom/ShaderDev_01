@@ -135,19 +135,13 @@ void MeGLWindow::paintGL() {
 
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, -7.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), rotationValue, glm::vec3(1.0f, 0.5f, -0.3f));
+	modelScaleMatrix = glm::scale(mat4(),glm::vec3(1.0f,0.3f,1.0f));
 	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
-	mat4 fullTransformMatrix = projectionMatrix * modelTransformMatrix * modelRotateMatrix;
-
-
-	/*GLint x_MoveUniformLocation = glGetUniformLocation(programID, "xMove");
-	GLint y_MoveUniformLocation = glGetUniformLocation(programID, "yMove");
-	glUniform1f(x_MoveUniformLocation, +0.0f);
-	glUniform1f(y_MoveUniformLocation, +0.0f);*/
+	mat4 fullTransformMatrix = projectionMatrix * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
 
 	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
 
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	//printf("indices is %d ", numIndices);
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 
