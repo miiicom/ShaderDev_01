@@ -110,10 +110,13 @@ void installShaders() {
 	glAttachShader(programID, vertexShaderID);
 	glAttachShader(programID, fragmentShaderID);
 	glLinkProgram(programID);
-
+	
 	if (!checkProgramStatus(programID)) {
 		return;
 	}
+
+	glDeleteShader(vertexShaderID);
+	glDeleteShader(fragmentShaderID);
 
 	glUseProgram(programID);
 }
@@ -161,6 +164,8 @@ MeGLWindow::MeGLWindow()
 
 MeGLWindow::~MeGLWindow()
 {
+	glUseProgram(0);
+	glDeleteProgram(programID);
 }
 
 void MeGLWindow::InitialValueSetter(GLfloat rotationValue)
