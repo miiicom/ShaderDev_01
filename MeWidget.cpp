@@ -1,4 +1,6 @@
 #include "MeWidget.h"
+#include <Qt\qapplication.h>
+#include <QtGui\qmouseevent>
 #include <QtGui\qvboxlayout>
 #include <QtGui\qhboxlayout>
 #include <Qt\qevent.h>
@@ -15,6 +17,8 @@ MeWidget::MeWidget()
 	setLayout(mainLayout = new QVBoxLayout);
 	mainLayout->addWidget(myGLWindow);
 
+	IsPressing = false;
+	setMouseTracking(true);
 	//startTimer(30);
 
 	//---Hard code boundaries---
@@ -215,4 +219,33 @@ void MeWidget::keyPressEvent(QKeyEvent *event)
 		myGLWindow->repaint();
 	}
 	*/
+}
+
+void MeWidget::mousePressEvent(QMouseEvent * event)
+{
+	if (event->button() == Qt::LeftButton) {
+
+		printf("clicked");
+		IsPressing = true;
+		dragStartPosition = event->pos();
+	}
+}
+
+void MeWidget::mouseReleaseEvent(QMouseEvent * event)
+{
+	if (event->button() == Qt::LeftButton) {
+
+		printf("released");
+		IsPressing = false;
+	}
+}
+
+void MeWidget::mouseMoveEnvet(QMouseEvent * event)
+{
+	
+	if (event->button() == Qt::LeftButton) {
+
+		printf("Dragging");
+	}
+	
 }

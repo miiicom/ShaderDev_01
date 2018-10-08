@@ -17,3 +17,8 @@ glm::mat4 MeCamera::getWorldToViewMatrix() const
 {
 	return glm::lookAt(position, position + viewDirection, UP);
 }
+
+void MeCamera::mouseUpdate(const glm::vec2 & newMousePosition)
+{
+
+}

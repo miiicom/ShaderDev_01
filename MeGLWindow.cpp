@@ -166,6 +166,7 @@ void MeGLWindow::installShaders() {
 }
 
 void MeGLWindow::initializeGL() {
+	
 	glewInit();
 	glEnable(GL_DEPTH_TEST);
 	sendDataToOpenGL();
@@ -197,6 +198,7 @@ void MeGLWindow::paintGL() {
 MeGLWindow::MeGLWindow()
 {
 	meCamera = new MeCamera;
+	setMouseTracking(true);
 }
 
 

@@ -24,11 +24,16 @@ public:
 
 protected:
 	void keyPressEvent(QKeyEvent *);
+	void mousePressEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
+	void mouseMoveEnvet(QMouseEvent *event);
 	void timerEvent(QTimerEvent *event);
 
 private:
 	MeGLWindow * myGLWindow;
 	GLfloat rotationValue;
+	QPoint dragStartPosition;
+	bool IsPressing;
 };
 
 
