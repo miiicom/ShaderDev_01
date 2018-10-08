@@ -7,6 +7,7 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <ShapeGenerator.h>
 #include <vertex.h>
+#include <MeCamera.h>
 using namespace std;
 
 //extern const char* vertexShaderCode;
@@ -48,8 +49,8 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
 	mat4 fullTransform[] = {
-		projectionMatrix * glm::translate(mat4(),glm::vec3(0.0f,0.0f,-7.0f)) * glm::rotate(mat4(),90.0f,glm::vec3(1.0f, 0.5f, -0.3f)),
-		projectionMatrix * glm::translate(mat4(),glm::vec3(0.0f,-0.3f,-6.0f)) * glm::rotate(mat4(),-90.0f,glm::vec3(1.0f, 0.5f, -0.3f)),
+		projectionMatrix * meCamera->getWorldToViewMatrix() * glm::translate(mat4(),glm::vec3(0.0f,0.0f,-7.0f)) * glm::rotate(mat4(),90.0f,glm::vec3(1.0f, 0.5f, -0.3f)),
+		projectionMatrix * meCamera->getWorldToViewMatrix() * glm::translate(mat4(),glm::vec3(0.0f,-0.3f,-6.0f)) * glm::rotate(mat4(),-90.0f,glm::vec3(1.0f, 0.5f, -0.3f)),
 	};
 	glBufferData(GL_ARRAY_BUFFER, sizeof(fullTransform), fullTransform, GL_STATIC_DRAW);
 	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(float) * 0));
@@ -179,13 +180,13 @@ void MeGLWindow::paintGL() {
 	glUseProgram(programID);
 	glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0,2);
 
-	// Draw white plane
+	// Draw white plane using different shader
 	glUseProgram(whitePlaneProgramID);
 	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -0.3f, -7.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(3.0f, 0.05f, 3.0f));
-	mat4 fullTransformMatrix = projectionMatrix * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
+	mat4 fullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
 		
 	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "fullTransformMatrix");
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
@@ -195,9 +196,7 @@ void MeGLWindow::paintGL() {
 
 MeGLWindow::MeGLWindow()
 {
-	//modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
-	//modelRotateMatrix = glm::rotate(mat4(), rotationValue, glm::vec3(0.0f, 0.0f, 0.0f));
-	//projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
+	meCamera = new MeCamera;
 }
 
 

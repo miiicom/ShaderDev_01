@@ -124,12 +124,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Mainer.cpp" />
+    <ClCompile Include="MeCamera.cpp" />
     <ClCompile Include="MeGLWindow.cpp" />
     <ClCompile Include="MeShaderCode.cpp" />
     <ClCompile Include="MeWidget.cpp" />
     <ClCompile Include="ShapeGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MeCamera.h" />
     <ClInclude Include="MeGLWindow.h" />
     <ClInclude Include="MeWidget.h" />
     <ClInclude Include="ShapeData.h" />

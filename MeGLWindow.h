@@ -4,6 +4,7 @@
 #include<QtOpenGL\qglwidget>
 #include <glm\glm.hpp>
 #include <String>
+#include <MeCamera.h>
 
 using glm::mat4;
 class MeGLWindow : public QGLWidget
@@ -29,6 +30,8 @@ private:
 	mat4 modelRotateMatrix;
 	mat4 modelScaleMatrix;
 	mat4 projectionMatrix;
+
+	MeCamera * meCamera;
 };
 
 #endif
