@@ -6,6 +6,7 @@
 #include <Qt\qevent.h>
 #include <MeGLwindow.h>
 #include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
 
 
 MeWidget::MeWidget()
@@ -156,15 +157,6 @@ void MeWidget::timerEvent(QTimerEvent *event) {
 	myGLWindow->repaint();
 }
 
-//bool MeWidget::eventFilter(QObject * obj, QEvent * event)
-//{
-//	if (event->type() == QEvent::MouseMove)
-//	{
-//		QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-//	}
-//	return false;
-//}
-
 void MeWidget::keyPressEvent(QKeyEvent *event)
 {
 	printf("catch\n"); 
@@ -257,5 +249,16 @@ void MeWidget::mouseReleaseEvent(QMouseEvent * event)
 
 void MeWidget::mouseMoveEvent(QMouseEvent * event)
 {
+	if (!(event->buttons() & Qt::LeftButton))
+		return;
+	if ((event->pos() - dragStartPosition).manhattanLength()
+		< QApplication::startDragDistance())
+		return;
+	float xMovement = event->pos().x() - dragStartPosition.x();
+	float yMovement = event->pos().y() - dragStartPosition.y();
+	dragStartPosition = event->pos();
+	glm::vec2 Displacement = glm::vec2(xMovement, yMovement);
+	myGLWindow->meCamera->mouseUpdate(Displacement);
 	printf("Dragging");
+	myGLWindow->repaint();
 }

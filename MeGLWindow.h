@@ -23,6 +23,7 @@ public:
 	MeGLWindow();
 	~MeGLWindow();
 	void InitialValueSetter(GLfloat rotationValue);
+	MeCamera * meCamera;
 
 private:
 	GLfloat rotationValue;
@@ -32,7 +33,7 @@ private:
 	mat4 modelScaleMatrix;
 	mat4 projectionMatrix;
 
-	MeCamera * meCamera;
+	
 };
 
 #endif

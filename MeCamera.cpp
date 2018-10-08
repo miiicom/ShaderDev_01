@@ -20,5 +20,24 @@ glm::mat4 MeCamera::getWorldToViewMatrix() const
 
 void MeCamera::mouseUpdate(const glm::vec2 & newMousePosition)
 {
+	viewDirection = glm::mat3(glm::rotate(newMousePosition.x, UP)) *viewDirection;
 
+	glm::vec3 toRotateAround = glm::cross(viewDirection, UP);
+	viewDirection = glm::mat3(glm::rotate(newMousePosition.y, toRotateAround)) * viewDirection;
 }
+
+void MeCamera::setViewDirection(glm::vec3 newViewDirection)
+{
+	viewDirection = newViewDirection;
+}
+
+glm::vec3 MeCamera::getViewDirection()
+{
+	return viewDirection;
+}
+
+glm::vec3 MeCamera::getUp()
+{
+	return UP;
+}
+
