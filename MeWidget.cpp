@@ -18,7 +18,7 @@ MeWidget::MeWidget()
 	mainLayout->addWidget(myGLWindow);
 
 	IsPressing = false;
-	setMouseTracking(true);
+	myGLWindow->setMouseTracking(true);
 	//startTimer(30);
 
 	//---Hard code boundaries---
@@ -156,6 +156,15 @@ void MeWidget::timerEvent(QTimerEvent *event) {
 	myGLWindow->repaint();
 }
 
+//bool MeWidget::eventFilter(QObject * obj, QEvent * event)
+//{
+//	if (event->type() == QEvent::MouseMove)
+//	{
+//		QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+//	}
+//	return false;
+//}
+
 void MeWidget::keyPressEvent(QKeyEvent *event)
 {
 	printf("catch\n"); 
@@ -226,6 +235,9 @@ void MeWidget::mousePressEvent(QMouseEvent * event)
 	if (event->button() == Qt::LeftButton) {
 
 		printf("clicked");
+		if (hasMouseTracking()) {
+			printf("tracking\n");
+		}
 		IsPressing = true;
 		dragStartPosition = event->pos();
 	}
@@ -236,16 +248,14 @@ void MeWidget::mouseReleaseEvent(QMouseEvent * event)
 	if (event->button() == Qt::LeftButton) {
 
 		printf("released");
+		if (hasMouseTracking()) {
+			printf("tracking\n");
+		}
 		IsPressing = false;
 	}
 }
 
-void MeWidget::mouseMoveEnvet(QMouseEvent * event)
+void MeWidget::mouseMoveEvent(QMouseEvent * event)
 {
-	
-	if (event->button() == Qt::LeftButton) {
-
-		printf("Dragging");
-	}
-	
+	printf("Dragging");
 }

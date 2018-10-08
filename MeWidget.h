@@ -26,9 +26,9 @@ protected:
 	void keyPressEvent(QKeyEvent *);
 	void mousePressEvent(QMouseEvent *event);
 	void mouseReleaseEvent(QMouseEvent *event);
-	void mouseMoveEnvet(QMouseEvent *event);
+	void mouseMoveEvent(QMouseEvent *event);
 	void timerEvent(QTimerEvent *event);
-
+	//bool eventFilter(QObject *obj, QEvent *event) override;
 private:
 	MeGLWindow * myGLWindow;
 	GLfloat rotationValue;

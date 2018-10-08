@@ -18,6 +18,7 @@ protected:
 	std::string readShaderCode(const char * filename);
 	void installShaders();
 	void initializeGL();
+	void mouseMoveEvent(QMouseEvent *event) ;
 public:
 	MeGLWindow();
 	~MeGLWindow();

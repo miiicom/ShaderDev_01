@@ -8,6 +8,7 @@
 #include <ShapeGenerator.h>
 #include <vertex.h>
 #include <MeCamera.h>
+#include <QtGui\qmouseevent>
 using namespace std;
 
 //extern const char* vertexShaderCode;
@@ -166,11 +167,16 @@ void MeGLWindow::installShaders() {
 }
 
 void MeGLWindow::initializeGL() {
-	
 	glewInit();
 	glEnable(GL_DEPTH_TEST);
 	sendDataToOpenGL();
 	installShaders();
+}
+
+void MeGLWindow::mouseMoveEvent(QMouseEvent * event)
+{
+	//printf("moving in QGLWidget\n");
+	event->ignore();
 }
 
 void MeGLWindow::paintGL() {
@@ -198,7 +204,6 @@ void MeGLWindow::paintGL() {
 MeGLWindow::MeGLWindow()
 {
 	meCamera = new MeCamera;
-	setMouseTracking(true);
 }
 
 
