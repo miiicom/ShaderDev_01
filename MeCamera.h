@@ -14,6 +14,17 @@ public:
 	glm::vec3 position;
 	glm::vec3 viewDirection;
 	const glm::vec3 UP;
+	glm::vec3 strafeDirection;
+	static const float MOVEMENT_SPEED;
+
+	void moveForward();
+	void moveBackward();
+	void strafeLeft();
+	void strafeRight();
+	void moveUP();
+	void moveDown();
+
+	void reset();
 
 private:
 
