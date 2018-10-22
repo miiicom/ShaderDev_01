@@ -43,29 +43,6 @@ void MeGLWindow::sendDataToOpenGL() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	numIndices = shape.numIndices;
 	shape.cleanup();
-
-	GLuint transformationMatriuxBufferID;
-	glGenBuffers(1, &transformationMatriuxBufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, transformationMatriuxBufferID);
-
-	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
-	mat4 fullTransform[] = {
-		projectionMatrix * meCamera->getWorldToViewMatrix() * glm::translate(mat4(),glm::vec3(0.0f,0.0f,-7.0f)) * glm::rotate(mat4(),90.0f,glm::vec3(1.0f, 0.5f, -0.3f)),
-		projectionMatrix * meCamera->getWorldToViewMatrix() * glm::translate(mat4(),glm::vec3(0.0f,-0.3f,-6.0f)) * glm::rotate(mat4(),-90.0f,glm::vec3(1.0f, 0.5f, -0.3f)),
-	};
-	glBufferData(GL_ARRAY_BUFFER, sizeof(mat4) * 2, 0, GL_DYNAMIC_DRAW);
-	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(float) * 0));
-	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(float) * 4));
-	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(float) * 8));
-	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(sizeof(float) * 12));
-	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
-	glEnableVertexAttribArray(5);
-	glVertexAttribDivisor(2, 1);
-	glVertexAttribDivisor(3, 1);
-	glVertexAttribDivisor(4, 1);
-	glVertexAttribDivisor(5, 1);
 }
 
 
@@ -176,7 +153,7 @@ void MeGLWindow::initializeGL() {
 void MeGLWindow::mouseMoveEvent(QMouseEvent * event)
 {
 	//printf("moving in QGLWidget\n");
-	event->ignore();
+	event->ignore();// the key!!!
 }
 
 void MeGLWindow::paintGL() {
@@ -185,13 +162,29 @@ void MeGLWindow::paintGL() {
 		projectionMatrix * meCamera->getWorldToViewMatrix() * glm::translate(mat4(),glm::vec3(0.0f,0.0f,-7.0f)) * glm::rotate(mat4(),90.0f,glm::vec3(1.0f, 0.5f, -0.3f)),
 		projectionMatrix * meCamera->getWorldToViewMatrix() * glm::translate(mat4(),glm::vec3(0.0f,-0.3f,-6.0f)) * glm::rotate(mat4(),-90.0f,glm::vec3(1.0f, 0.5f, -0.3f)),
 	};
-	glBufferData(GL_ARRAY_BUFFER, sizeof(fullTransform) * 2, fullTransform, GL_DYNAMIC_DRAW);
+
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(fullTransform) * 2, fullTransform, GL_DYNAMIC_DRAW);
 	//Clean buffer before draw
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
-	//Draw a cube
+
 	glUseProgram(programID);
-	glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0,2);
+	//Draw cube in old fashion way
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.3f, -7.0f));
+	modelRotateMatrix = glm::rotate(mat4(), 90.0f, glm::vec3(1.0f, 0.5f, -0.3f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	mat4 Cube1FullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
+	GLint CubefullTransformMatrixUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
+	glUniformMatrix4fv(CubefullTransformMatrixUniformLocation, 1, GL_FALSE, &Cube1FullTransformMatrix[0][0]);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
+	//Draw another cube 
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -0.3f, -6.0f));
+	modelRotateMatrix = glm::rotate(mat4(), -90.0f, glm::vec3(1.0f, 0.5f, -0.3f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	mat4 Cube2FullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
+	
+	glUniformMatrix4fv(CubefullTransformMatrixUniformLocation, 1, GL_FALSE, &Cube2FullTransformMatrix[0][0]);
+	glDrawElements(GL_TRIANGLES,36, GL_UNSIGNED_SHORT, 0);
 
 	// Draw white plane using different shader
 	glUseProgram(whitePlaneProgramID);
