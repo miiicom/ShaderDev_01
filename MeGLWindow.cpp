@@ -17,31 +17,48 @@ using namespace std;
 const uint NUM_VERTICES_PER_TRU = 3;
 const uint NUM_FLOATS_PER_VERTICE = 6;
 const uint VERTEX_BYTE_SIZE = NUM_FLOATS_PER_VERTICE * sizeof(float);
+
 GLuint programID;
 GLuint whitePlaneProgramID;
-GLuint numIndices;
+GLuint cubeIndices;
+GLuint arrowIndices;
 
 GLuint  vertexShaderID;
 GLuint  fragmentShaderID;
 GLuint  WhitePlanefragmentShaderID;
 
+GLuint cubeVertexBufferID;
+GLuint cubeIndexBufferID;
+GLuint ArrowVertexBufferID;
+GLuint ArrowIndexBufferID;
+
 void MeGLWindow::sendDataToOpenGL() {
 	ShapeData shape = ShapeGenerator::makeCube();
 
-	GLuint vertexBufferID;
-	glGenBuffers(1, &vertexBufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+	glGenBuffers(1, &cubeVertexBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferID);
 	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
-
-	GLuint indexArrayBufferID;
-	glGenBuffers(1, &indexArrayBufferID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexArrayBufferID);
+	glEnableVertexAttribArray(1);// enable only once
+	
+	glGenBuffers(1, &cubeIndexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIndexBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
-	numIndices = shape.numIndices;
+	cubeIndices = shape.numIndices;
+	shape.cleanup();
+
+	shape = ShapeGenerator::makeArrow();
+
+	glGenBuffers(1, &ArrowVertexBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, ArrowVertexBufferID);
+	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
+	/*glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));*/
+
+	glGenBuffers(1, &ArrowIndexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ArrowIndexBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
+	arrowIndices = shape.numIndices;
 	shape.cleanup();
 }
 
@@ -170,6 +187,12 @@ void MeGLWindow::paintGL() {
 
 	glUseProgram(programID);
 	//Draw cube in old fashion way
+	// in here rebind for cube
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferID);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIndexBufferID);
+
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.3f, -7.0f));
 	modelRotateMatrix = glm::rotate(mat4(), 90.0f, glm::vec3(1.0f, 0.5f, -0.3f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -177,7 +200,12 @@ void MeGLWindow::paintGL() {
 	GLint CubefullTransformMatrixUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
 	glUniformMatrix4fv(CubefullTransformMatrixUniformLocation, 1, GL_FALSE, &Cube1FullTransformMatrix[0][0]);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
-	//Draw another cube 
+	//Draw arrow
+	glBindBuffer(GL_ARRAY_BUFFER, ArrowVertexBufferID);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ArrowIndexBufferID);
+
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -0.3f, -6.0f));
 	modelRotateMatrix = glm::rotate(mat4(), -90.0f, glm::vec3(1.0f, 0.5f, -0.3f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -188,6 +216,12 @@ void MeGLWindow::paintGL() {
 
 	// Draw white plane using different shader
 	glUseProgram(whitePlaneProgramID);
+	// in here rebind for cube
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferID);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIndexBufferID);
+
 	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -0.3f, -7.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
