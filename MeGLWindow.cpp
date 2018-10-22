@@ -206,7 +206,7 @@ void MeGLWindow::paintGL() {
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ArrowIndexBufferID);
 
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -0.3f, -6.0f));
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -1.3f, -6.0f));
 	modelRotateMatrix = glm::rotate(mat4(), -90.0f, glm::vec3(1.0f, 0.5f, -0.3f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
 	mat4 Cube2FullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
