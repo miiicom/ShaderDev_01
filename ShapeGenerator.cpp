@@ -1,6 +1,11 @@
 #include "ShapeGenerator.h"
 #include <vertex.h>
 #include <glm\glm.hpp>
+#include <iostream>     
+#include <fstream> 
+#include <string>
+#include <vector>
+#include <sstream>
 #define NUM_ARRAY_ELEMENTS(a) sizeof(a)/ sizeof(*a)
 ShapeData ShapeGenerator::makeTriangle() {
 
@@ -237,6 +242,48 @@ ShapeData ShapeGenerator::makeArrow()
 	ret.indices = new GLushort[ret.numIndices];
 	memcpy(ret.indices, stackIndices, sizeof(stackIndices));
 	return ret;
+}
+
+ShapeData ShapeGenerator::readObj(const char* path)
+{
+	ShapeData ret;
+	std::vector<glm::vec4> vertices;
+	std::vector<glm::vec3> normalsl;
+	std::vector<GLushort> Indices;
+
+	std::ifstream in(path, std::ifstream::in);
+	if (!in)
+	{
+		std::cerr << "Cannot open " << path << std::endl; exit(1);
+	}
+	std::string line;
+	while (getline(in, line)) 
+	{
+		if (line.substr(0, 2) == "v ")
+		{
+			std::istringstream linePiece(line.substr(2));
+			glm::vec4 v;
+			linePiece >> v.x; linePiece >> v.y; linePiece >> v.z; v.w = 1.0f;
+			vertices.push_back(v);
+			glm::vec
+		}
+		else if (line.substr(0, 2) == "f ")
+		{
+			std::istringstream linePiece(line.substr(2));
+			GLushort a, b, c;
+			linePiece >> a; linePiece >> b; linePiece >> c;
+			a--; b--; c--;
+			Indices.push_back(a); Indices.push_back(b); Indices.push_back(c);
+		}
+		else if (line[0] == '#')
+		{
+			/* ignoring this line */
+		}
+	}
+
+
+
+	return ShapeData();
 }
 
 ShapeGenerator::ShapeGenerator()
