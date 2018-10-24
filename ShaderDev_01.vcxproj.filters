@@ -63,4 +63,8 @@
     <None Include="WhitePlaneFragmentShader.glsl" />
     <None Include="WhitePlaneVertexShader.glsl" />
   </ItemGroup>
+  <ItemGroup>
+    <Object Include="box.obj" />
+    <Object Include="pighead.obj" />
+  </ItemGroup>
 </Project>

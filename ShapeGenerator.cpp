@@ -247,7 +247,7 @@ ShapeData ShapeGenerator::makeArrow()
 ShapeData ShapeGenerator::readObj(const char* path)
 {
 	ShapeData ret;
-	std::vector<glm::vec4> vertices;
+	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normalsl;
 	std::vector<GLushort> Indices;
 
@@ -262,10 +262,11 @@ ShapeData ShapeGenerator::readObj(const char* path)
 		if (line.substr(0, 2) == "v ")
 		{
 			std::istringstream linePiece(line.substr(2));
-			glm::vec4 v;
-			linePiece >> v.x; linePiece >> v.y; linePiece >> v.z; v.w = 1.0f;
+			glm::vec3 v;
+			linePiece >> v.x; linePiece >> v.y; linePiece >> v.z;
 			vertices.push_back(v);
-			glm::vec
+			glm::vec3 color = glm::vec3(+1.0f, +1.0f, +1.0f);
+			vertices.push_back(color);
 		}
 		else if (line.substr(0, 2) == "f ")
 		{
@@ -281,9 +282,16 @@ ShapeData ShapeGenerator::readObj(const char* path)
 		}
 	}
 
+	ret.numVertices = vertices.size();
+	ret.vertices = new Vertex[vertices.size()];
+	memcpy(ret.vertices, vertices.data(), vertices.size());
+
+	ret.numIndices = Indices.size();
+	ret.indices = new GLushort[Indices.size()];
+	memcpy(ret.indices, Indices.data(), Indices.size());
 
 
-	return ShapeData();
+	return ret;
 }
 
 ShapeGenerator::ShapeGenerator()

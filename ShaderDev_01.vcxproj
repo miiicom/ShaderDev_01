@@ -144,6 +144,14 @@
     <None Include="WhitePlaneFragmentShader.glsl" />
     <None Include="WhitePlaneVertexShader.glsl" />
   </ItemGroup>
+  <ItemGroup>
+    <Object Include="box.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="pighead.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

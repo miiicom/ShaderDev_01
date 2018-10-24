@@ -33,7 +33,7 @@ GLuint ArrowVertexBufferID;
 GLuint ArrowIndexBufferID;
 
 void MeGLWindow::sendDataToOpenGL() {
-	ShapeData shape = ShapeGenerator::makeCube();
+	ShapeData shape = ShapeGenerator::readObj("box.obj");
 
 	glGenBuffers(1, &cubeVertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferID);

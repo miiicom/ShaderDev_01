@@ -6,6 +6,7 @@ public:
 	static ShapeData makeTriangle();
 	static ShapeData makeCube();
 	static ShapeData makeArrow();
+	static ShapeData readObj(const char* path);
 	ShapeGenerator();
 	~ShapeGenerator();
 };
