@@ -280,6 +280,10 @@ ShapeData ShapeGenerator::readObj(const char* path)
 		{
 			/* ignoring this line */
 		}
+		else
+		{
+			/* ignoring this line */
+		}
 	}
 
 	ret.numVertices = vertices.size();
