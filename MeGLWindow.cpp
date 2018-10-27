@@ -48,7 +48,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIndexBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	cubeIndices = shape.numIndices;
-	shape.cleanup();
+	//shape.cleanup();
 
 	shape = ShapeGenerator::makeArrow();
 
@@ -259,6 +259,8 @@ MeGLWindow::MeGLWindow()
 
 MeGLWindow::~MeGLWindow()
 {
+	glDeleteBuffers(1, &cubeVertexBufferID);
+	glDeleteBuffers(1, &ArrowIndexBufferID);
 	glUseProgram(0);
 	glDeleteProgram(programID);
 }
