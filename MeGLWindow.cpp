@@ -15,13 +15,14 @@ using namespace std;
 //extern const char* fragmentShaderCode;
 
 const uint NUM_VERTICES_PER_TRU = 3;
-const uint NUM_FLOATS_PER_VERTICE = 6;
+const uint NUM_FLOATS_PER_VERTICE = 9;
 const uint VERTEX_BYTE_SIZE = NUM_FLOATS_PER_VERTICE * sizeof(float);
 
 GLuint programID;
 GLuint whitePlaneProgramID;
 GLuint cubeIndices;
 GLuint arrowIndices;
+GLuint planeIndices;
 
 GLuint  vertexShaderID;
 GLuint  fragmentShaderID;
@@ -31,9 +32,12 @@ GLuint cubeVertexBufferID;
 GLuint cubeIndexBufferID;
 GLuint ArrowVertexBufferID;
 GLuint ArrowIndexBufferID;
+GLuint PlaneVertexBufferID;
+GLuint PlaneIndexBufferID;
 
 GLuint cubeVertexArrayObjectID;
 GLuint arrowVertexArrayObjectID;
+GLuint PlaneVertexArrayObjectID;
 
 void MeGLWindow::sendDataToOpenGL() {
 	ShapeData shape = ShapeGenerator::makeCube();
@@ -41,27 +45,34 @@ void MeGLWindow::sendDataToOpenGL() {
 	glGenBuffers(1, &cubeVertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferID);
 	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);// enable only once
 	
 	glGenBuffers(1, &cubeIndexBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIndexBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	cubeIndices = shape.numIndices;
-	//shape.cleanup();
 
 	shape = ShapeGenerator::makeArrow();
 
 	glGenBuffers(1, &ArrowVertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, ArrowVertexBufferID);
 	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
-	/*glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));*/
 
 	glGenBuffers(1, &ArrowIndexBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ArrowIndexBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	arrowIndices = shape.numIndices;
+
+	shape = ShapeGenerator::makePlaneVerts(10);
+
+	glGenBuffers(1, &PlaneVertexBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, PlaneVertexBufferID);
+	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &PlaneIndexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, PlaneIndexBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
+	planeIndices = shape.numIndices;
+
 	shape.cleanup();
 }
 
@@ -74,17 +85,28 @@ void MeGLWindow::setupVertexArrays()
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferID);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (char*)(sizeof(float) * 3));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 6));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIndexBufferID);
 
 	glBindVertexArray(arrowVertexArrayObjectID);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, ArrowVertexBufferID);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (char*)(sizeof(float) * 3));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 6));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ArrowVertexBufferID);
+
+	glBindVertexArray(PlaneVertexArrayObjectID);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, PlaneVertexBufferID);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (char*)(sizeof(float) * 3));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 6));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, PlaneVertexBufferID);
 }
 
 
