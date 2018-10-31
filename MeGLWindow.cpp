@@ -222,8 +222,10 @@ void MeGLWindow::paintGL() {
 	mat4 Cube1FullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
 	GLint CubefullTransformMatrixUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
 	glUniformMatrix4fv(CubefullTransformMatrixUniformLocation, 1, GL_FALSE, &Cube1FullTransformMatrix[0][0]);
+	GLint ambientLightUniformLocation = glGetUniformLocation(programID, "ambientLightUniform");
+	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
 	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
-	//Draw arrow
+	//Draw arrow //Not actually drawing 
 	glBindVertexArray(arrowVertexArrayObjectID);
 
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -1.3f, -6.0f));
@@ -232,6 +234,7 @@ void MeGLWindow::paintGL() {
 	mat4 Cube2FullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
 	
 	glUniformMatrix4fv(CubefullTransformMatrixUniformLocation, 1, GL_FALSE, &Cube2FullTransformMatrix[0][0]);
+	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
 	glDrawElements(GL_TRIANGLES,arrowIndices, GL_UNSIGNED_SHORT, 0);
 
 	// Draw white plane using different shader
@@ -247,6 +250,8 @@ void MeGLWindow::paintGL() {
 		
 	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "fullTransformMatrix");
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	ambientLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "ambientLightUniform");
+	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
 	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
 
 }
@@ -254,6 +259,7 @@ void MeGLWindow::paintGL() {
 MeGLWindow::MeGLWindow()
 {
 	meCamera = new MeCamera;
+	ambientLight = glm::vec3(0.1f, 0.1f, 0.1f);
 }
 
 

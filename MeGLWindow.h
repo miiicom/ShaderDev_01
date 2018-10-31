@@ -34,6 +34,8 @@ private:
 	mat4 modelScaleMatrix;
 	mat4 projectionMatrix;
 
+	glm::vec3 ambientLight;
+
 	
 };
 
