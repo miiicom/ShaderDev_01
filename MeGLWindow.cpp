@@ -85,6 +85,7 @@ void MeGLWindow::setupVertexArrays()
 	glBindVertexArray(cubeVertexArrayObjectID);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferID);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (char*)(sizeof(float) * 3));
@@ -94,6 +95,7 @@ void MeGLWindow::setupVertexArrays()
 	glBindVertexArray(arrowVertexArrayObjectID);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, ArrowVertexBufferID);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (char*)(sizeof(float) * 3));
@@ -103,6 +105,7 @@ void MeGLWindow::setupVertexArrays()
 	glBindVertexArray(PlaneVertexArrayObjectID);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, PlaneVertexBufferID);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (char*)(sizeof(float) * 3));
@@ -240,15 +243,18 @@ void MeGLWindow::paintGL() {
 	glBindVertexArray(cubeVertexArrayObjectID);
 
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.3f, -7.0f));
-	modelRotateMatrix = glm::rotate(mat4(), 90.0f, glm::vec3(1.0f, 0.5f, -0.3f));
+	modelRotateMatrix = glm::rotate(mat4(), 45.0f, glm::vec3(1.0f, 0.5f, -0.3f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
 	mat4 Cube1FullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
 	GLint CubefullTransformMatrixUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
 	glUniformMatrix4fv(CubefullTransformMatrixUniformLocation, 1, GL_FALSE, &Cube1FullTransformMatrix[0][0]);
 	GLint ambientLightUniformLocation = glGetUniformLocation(programID, "ambientLightUniform");
 	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
+	GLuint pointLightUniformLocation = glGetUniformLocation(programID, "pointLightPosition");
+	glUniform3fv(pointLightUniformLocation, 1, &pointLightPosition[0]);
+
 	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
-	//Draw arrow //Not actually drawing 
+	//Draw arrow 
 	glBindVertexArray(arrowVertexArrayObjectID);
 
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -1.3f, -6.0f));
@@ -258,6 +264,7 @@ void MeGLWindow::paintGL() {
 	
 	glUniformMatrix4fv(CubefullTransformMatrixUniformLocation, 1, GL_FALSE, &Cube2FullTransformMatrix[0][0]);
 	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
+	glUniform3fv(pointLightUniformLocation, 1, &pointLightPosition[0]);
 	glDrawElements(GL_TRIANGLES,arrowIndices, GL_UNSIGNED_SHORT, 0);
 
 	// Draw white plane using different shader
@@ -275,6 +282,8 @@ void MeGLWindow::paintGL() {
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	ambientLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "ambientLightUniform");
 	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
+	pointLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "pointLightPosition");
+	glUniform3fv(pointLightUniformLocation, 1, &pointLightPosition[0]);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 
 }
@@ -283,6 +292,7 @@ MeGLWindow::MeGLWindow()
 {
 	meCamera = new MeCamera;
 	ambientLight = glm::vec3(0.1f, 0.1f, 0.1f);
+	pointLightPosition = glm::vec3(0.0f, 4.0f, 0.0f);
 }
 
 

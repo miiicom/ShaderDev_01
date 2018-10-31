@@ -35,7 +35,7 @@ private:
 	mat4 projectionMatrix;
 
 	glm::vec3 ambientLight;
-
+	glm::vec3 pointLightPosition;
 	
 };
 
