@@ -62,8 +62,9 @@ void MeGLWindow::sendDataToOpenGL() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	arrowIndices = shape.numIndices;
 
-	shape = ShapeGenerator::makePlaneVerts(10);
+	GLuint PlaneDimension = 10;
 
+	shape = ShapeGenerator::makePlane(PlaneDimension);
 	glGenBuffers(1, &PlaneVertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, PlaneVertexBufferID);
 	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
@@ -97,7 +98,7 @@ void MeGLWindow::setupVertexArrays()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (char*)(sizeof(float) * 3));
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 6));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ArrowVertexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ArrowIndexBufferID);
 
 	glBindVertexArray(PlaneVertexArrayObjectID);
 	glEnableVertexAttribArray(0);
@@ -106,7 +107,7 @@ void MeGLWindow::setupVertexArrays()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (char*)(sizeof(float) * 3));
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 6));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, PlaneVertexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, PlaneIndexBufferID);
 }
 
 
@@ -262,19 +263,19 @@ void MeGLWindow::paintGL() {
 	// Draw white plane using different shader
 	glUseProgram(whitePlaneProgramID);
 	// in here rebind for cube
-	glBindVertexArray(cubeVertexArrayObjectID);
+	glBindVertexArray(PlaneVertexArrayObjectID);
 
 	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -0.3f, -7.0f)); // push 4 away from camera
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -0.8f, -7.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(3.0f, 0.05f, 3.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f,1.0f, 1.0f));
 	mat4 fullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
 		
 	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "fullTransformMatrix");
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	ambientLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "ambientLightUniform");
 	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
-	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 
 }
 

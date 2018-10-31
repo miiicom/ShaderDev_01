@@ -8,6 +8,8 @@ public:
 	static ShapeData makeCube();
 	static ShapeData makeArrow();
 	static ShapeData makePlaneVerts(GLuint dimensions);
+	static ShapeData makePlaneIndices(GLuint dimensions);
+	static ShapeData makePlane(GLuint dimensions);
 	static ShapeData readObj(const char* path);
 	ShapeGenerator();
 	~ShapeGenerator();

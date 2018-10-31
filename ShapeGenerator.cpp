@@ -391,6 +391,39 @@ ShapeData ShapeGenerator::makePlaneVerts(GLuint dimensions)
 	return ret;
 }
 
+ShapeData ShapeGenerator::makePlaneIndices(GLuint dimensions)
+{
+	ShapeData ret;
+	ret.numIndices = (dimensions - 1) * (dimensions - 1) * 2 * 3; // 2 triangles per square, 3 indices per triangle
+	ret.indices = new unsigned short[ret.numIndices];
+	int runner = 0;
+	for (int row = 0; row < dimensions - 1; row++)
+	{
+		for (int col = 0; col < dimensions - 1; col++)
+		{
+			ret.indices[runner++] = dimensions * row + col;
+			ret.indices[runner++] = dimensions * row + col + dimensions;
+			ret.indices[runner++] = dimensions * row + col + dimensions + 1;
+
+			ret.indices[runner++] = dimensions * row + col;
+			ret.indices[runner++] = dimensions * row + col + dimensions + 1;
+			ret.indices[runner++] = dimensions * row + col + 1;
+		}
+	}
+	assert(runner = ret.numIndices);
+	return ret;
+}
+
+
+ShapeData ShapeGenerator::makePlane(GLuint dimensions)
+{
+	ShapeData ret = makePlaneVerts(dimensions);
+	ShapeData ret2 = makePlaneIndices(dimensions);
+	ret.numIndices = ret2.numIndices;
+	ret.indices = ret2.indices;
+	return ret;
+}
+
 ShapeGenerator::ShapeGenerator()
 {
 }
