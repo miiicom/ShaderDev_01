@@ -12,5 +12,5 @@ void main()
 {
 	vec3 lightVector = normalize(pointLightPosition - thePosition);
 	float Intensity = dot(lightVector,theNormal);
-	daColor = vec4(Intensity + fragColor.x * ambientLightUniform.x,Intensity + fragColor.y * ambientLightUniform.y,Intensity + fragColor.z * ambientLightUniform.z,1.0);
+	daColor = vec4(Intensity,Intensity,Intensity,1.0);
 }

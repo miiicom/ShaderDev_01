@@ -8,6 +8,8 @@ uniform vec3 ambientLightUniform;
 uniform vec3 pointLightPosition;
 uniform mat4 fullTransformMatrix;
 
+uniform mat4 modelToWorldTransMatrix;
+
 out vec3 theNormal;
 out vec3 thePosition;
 out vec3 fragColor;
@@ -17,6 +19,6 @@ void main()
 	vec4 Position = vec4(position, 1.0);
 	gl_Position = fullTransformMatrix *  Position;
 	theNormal = normal;
-	thePosition = position;
+	thePosition = vec3(modelToWorldTransMatrix * Position);
 	fragColor = vertexColor;
 }
