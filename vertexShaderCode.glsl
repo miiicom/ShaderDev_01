@@ -18,7 +18,7 @@ void main()
 {
 	vec4 Position = vec4(position, 1.0);
 	gl_Position = fullTransformMatrix *  Position;
-	theNormal = normal;
+	theNormal = vec3(modelToWorldTransMatrix * vec4(normal,0));
 	thePosition = vec3(modelToWorldTransMatrix * Position);
 	fragColor = vertexColor;
 }

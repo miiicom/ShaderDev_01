@@ -11,6 +11,6 @@ uniform vec3 pointLightPosition;
 void main()
 {
 	vec3 lightVector = normalize(pointLightPosition - thePosition);
-	float Intensity = dot(lightVector,theNormal);
+	float Intensity = dot(lightVector,normalize(theNormal));
 	daColor = vec4(Intensity,Intensity,Intensity,1.0);
 }

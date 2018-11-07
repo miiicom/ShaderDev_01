@@ -243,9 +243,10 @@ void MeGLWindow::paintGL() {
 	glBindVertexArray(cubeVertexArrayObjectID);
 
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.3f, -7.0f));
-	modelRotateMatrix = glm::rotate(mat4(), 0.0f, glm::vec3(1.0f, 0.5f, -0.3f));
+	modelRotateMatrix = glm::rotate(mat4(), 45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
-	mat4 Cube1FullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
+	mat4 ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	mat4 Cube1FullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() *ModelToWorldMatrix;
 	GLint CubefullTransformMatrixUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
 	glUniformMatrix4fv(CubefullTransformMatrixUniformLocation, 1, GL_FALSE, &Cube1FullTransformMatrix[0][0]);
 	GLint ambientLightUniformLocation = glGetUniformLocation(programID, "ambientLightUniform");
@@ -253,21 +254,22 @@ void MeGLWindow::paintGL() {
 	GLuint pointLightUniformLocation = glGetUniformLocation(programID, "pointLightPosition");
 	glUniform3fv(pointLightUniformLocation, 1, &pointLightPosition[0]);
 	GLuint modelTransformMatrixUniformLocation = glGetUniformLocation(programID, "modelToWorldTransMatrix");
-	glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &modelTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
 
 	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
 	//Draw arrow 
 	glBindVertexArray(arrowVertexArrayObjectID);
 
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -1.3f, -6.0f));
-	modelRotateMatrix = glm::rotate(mat4(), 0.0f, glm::vec3(1.0f, 0.5f, -0.3f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
-	mat4 Cube2FullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f,0.0f, -6.0f));
+	modelRotateMatrix = glm::rotate(mat4(), 45.0f, glm::vec3(0.0f, 0.5f, 0.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(3.0f, 0.5f, 1.0f));
+	ModelToWorldMatrix = modelTransformMatrix* modelRotateMatrix *  modelScaleMatrix;
+	mat4 Cube2FullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() *ModelToWorldMatrix;
 	
 	glUniformMatrix4fv(CubefullTransformMatrixUniformLocation, 1, GL_FALSE, &Cube2FullTransformMatrix[0][0]);
 	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
 	glUniform3fv(pointLightUniformLocation, 1, &pointLightPosition[0]);
-	glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &modelTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
 	glDrawElements(GL_TRIANGLES,arrowIndices, GL_UNSIGNED_SHORT, 0);
 
 	// Draw white plane using different shader
@@ -279,7 +281,8 @@ void MeGLWindow::paintGL() {
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -1.0f, -5.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(3.0f,1.0f, 3.0f));
-	mat4 fullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() * modelTransformMatrix * modelRotateMatrix * modelScaleMatrix;
+	ModelToWorldMatrix = modelTransformMatrix* modelRotateMatrix *  modelScaleMatrix;
+	mat4 fullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() *ModelToWorldMatrix;
 		
 	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "fullTransformMatrix");
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
