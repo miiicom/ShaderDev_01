@@ -12,5 +12,6 @@ void main()
 {
 	vec3 lightVectorWorld = normalize(pointLightPositionWorld - VertexPositionWorld);
 	float Intensity = dot(lightVectorWorld,normalize(NormalWorld));
-	FragmentColor = vec4(Intensity,0.0,0.0,1.0);
+	vec4 diffuseLight = vec4(Intensity,0.0,0.0,1.0);
+	FragmentColor = clamp(diffuseLight,0,1) + vec4(ambientLightUniform,0.0);
 }

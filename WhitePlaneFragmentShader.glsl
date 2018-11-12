@@ -1,6 +1,6 @@
 #version 430
 
-out vec4 daColor;
+out vec4 FragmentColor;
 in vec3 NormalWorld;
 in vec3 VertexPositionWorld;
 in vec3 fragColor;
@@ -12,5 +12,5 @@ void main()
 {
 	vec3 lightVectorWorld = normalize(pointLightPositionWorld - VertexPositionWorld);
 	float Intensity = dot(lightVectorWorld,normalize(NormalWorld));
-	daColor = vec4(Intensity,Intensity,Intensity,1.0);
+	FragmentColor = vec4(Intensity,Intensity,Intensity,1.0) + vec4(ambientLightUniform,0.0);
 }
