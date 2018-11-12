@@ -23,7 +23,7 @@ public:
 	void strafeRight();
 	void moveUP();
 	void moveDown();
-
+	glm::vec3 getPosition();
 	void reset();
 
 private:

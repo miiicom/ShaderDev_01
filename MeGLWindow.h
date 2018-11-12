@@ -20,6 +20,7 @@ protected:
 	void installShaders();
 	void initializeGL();
 	void mouseMoveEvent(QMouseEvent *event) ;
+	
 public:
 	MeGLWindow();
 	~MeGLWindow();

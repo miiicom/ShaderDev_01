@@ -65,6 +65,11 @@ void MeCamera::moveDown() {
 	position -= MOVEMENT_SPEED * UP;
 }
 
+glm::vec3 MeCamera::getPosition()
+{
+	return position;
+}
+
 void MeCamera::reset()
 {
 	viewDirection = glm::vec3(0.0f, 0.0f, -1.0f);
