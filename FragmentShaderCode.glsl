@@ -1,9 +1,11 @@
 #version 430
 
 out vec4 FragmentColor;
+
 in vec3 NormalWorld;
 in vec3 VertexPositionWorld;
 in vec3 fragColor;
+in vec2 vertexUV0;
 
 uniform vec3 ambientLightUniform;
 uniform vec3 pointLightPositionWorld;

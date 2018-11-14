@@ -67,4 +67,9 @@
     <Object Include="box.obj" />
     <Object Include="pighead.obj" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="normalMap">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

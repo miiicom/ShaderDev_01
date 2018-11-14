@@ -4,6 +4,7 @@ out vec4 FragmentColor;
 in vec3 NormalWorld;
 in vec3 VertexPositionWorld;
 in vec3 fragColor;
+in vec2 fragmentUV0;
 
 uniform vec3 ambientLightUniform;
 uniform vec3 pointLightPositionWorld;
@@ -12,7 +13,7 @@ uniform sampler2D normalTextureTC;
 
 void main()
 {	//readTexture 
-	vec4 normalTextureInfo = texture()
+	vec4 normalTextureInfo = texture(normalTextureTC,fragmentUV0);
 
 	// diffuse
 	vec3 lightVectorWorld = normalize(pointLightPositionWorld - VertexPositionWorld);
@@ -26,4 +27,5 @@ void main()
 	SpecIntensity = pow(SpecIntensity,20);
 	vec4 specLight = vec4(0.0,SpecIntensity,SpecIntensity,1.0);
 	//FragmentColor = clamp(diffuseLight,0,1) + vec4(ambientLightUniform,0.0) +  clamp(specLight,0,1);
+	FragmentColor = normalTextureInfo;
 }
