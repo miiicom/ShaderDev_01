@@ -75,6 +75,22 @@ void MeGLWindow::sendDataToOpenGL() {
 	planeIndices = shape.numIndices;
 
 	shape.cleanup();
+	//Create QImage obj
+	const char * texName = "normalMap";
+	QImage normalMap = loadTexture(texName);
+	// send Image to OpenGL
+	glActiveTexture(GL_TEXTURE0);
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, normalMap.width(),
+		normalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		normalMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+
 }
 
 void MeGLWindow::setupVertexArrays()
@@ -225,6 +241,11 @@ void MeGLWindow::mouseMoveEvent(QMouseEvent * event)
 	event->ignore();// the key!!!
 }
 
+QImage MeGLWindow::loadTexture(const char * texName)
+{
+	return QGLWidget::convertToGLFormat(QImage(texName, "PNG"));;
+}
+
 
 
 void MeGLWindow::paintGL() {
@@ -249,6 +270,8 @@ void MeGLWindow::paintGL() {
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
 	mat4 ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 	mat4 Cube1FullTransformMatrix = projectionMatrix * meCamera->getWorldToViewMatrix() *ModelToWorldMatrix;
+
+	//In here find all Uniforms and assign them
 	GLint CubefullTransformMatrixUniformLocation = glGetUniformLocation(programID, "modelToProjectionMatrix");
 	glUniformMatrix4fv(CubefullTransformMatrixUniformLocation, 1, GL_FALSE, &Cube1FullTransformMatrix[0][0]);
 	GLint ambientLightUniformLocation = glGetUniformLocation(programID, "ambientLightUniform");
@@ -260,6 +283,7 @@ void MeGLWindow::paintGL() {
 	glUniform3fv(eyeUniformLocation, 1,&eyePosition[0]);
 	GLuint modelTransformMatrixUniformLocation = glGetUniformLocation(programID, "modelToWorldTransMatrix");
 	glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	
 
 	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
 	//Draw arrow 
@@ -300,6 +324,8 @@ void MeGLWindow::paintGL() {
 	glUniform3fv(eyeUniformLocation, 1, &eyePosition[0]);
 	modelTransformMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "modelToWorldTransMatrix");
 	glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &modelTransformMatrix[0][0]);
+	GLuint normalTextureUniformLocation = glGetUniformLocation(whitePlaneProgramID, "normalTextureTC");
+	glUniform1i(normalTextureUniformLocation, 0);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 
 }

@@ -5,7 +5,7 @@
 #include <glm\glm.hpp>
 #include <String>
 #include <MeCamera.h>
-
+#include <Qt\qimage.h>
 using glm::mat4;
 class MeGLWindow : public QGLWidget
 {
@@ -20,6 +20,7 @@ protected:
 	void installShaders();
 	void initializeGL();
 	void mouseMoveEvent(QMouseEvent *event) ;
+	QImage loadTexture(const char * texName);
 	
 public:
 	MeGLWindow();
