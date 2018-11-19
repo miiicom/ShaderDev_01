@@ -8,8 +8,8 @@ in layout(location=3) vec2 vertexUV0;
 uniform vec3 ambientLightUniform;
 uniform vec3 pointLightPosition;
 uniform mat4 modelToProjectionMatrix;
-
 uniform mat4 modelToWorldTransMatrix;
+uniform float time;
 
 out vec3 NormalWorld;
 out vec3 VertexPositionWorld;

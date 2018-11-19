@@ -10,10 +10,13 @@ uniform vec3 ambientLightUniform;
 uniform vec3 pointLightPositionWorld;
 uniform vec3 eyePositionWorld;
 uniform sampler2D normalTextureTC;
+uniform float time;
 
 void main()
 {	//readTexture 
-	vec4 normalTextureInfo = texture(normalTextureTC,fragmentUV0);
+	vec2 timeVector = vec2(time/20.0,0);
+	vec2 MovedFragmentUV0 = fragmentUV0 + timeVector;
+	vec4 normalTextureInfo = texture(normalTextureTC,MovedFragmentUV0);
 
 	// diffuse
 	vec3 lightVectorWorld = normalize(pointLightPositionWorld - VertexPositionWorld);

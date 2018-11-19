@@ -27,6 +27,7 @@ public:
 	~MeGLWindow();
 	void InitialValueSetter(GLfloat rotationValue);
 	MeCamera * meCamera;
+	GLfloat time;
 
 private:
 	GLfloat rotationValue;

@@ -332,8 +332,10 @@ void MeGLWindow::paintGL() {
 	glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &modelTransformMatrix[0][0]);
 	GLuint normalTextureUniformLocation = glGetUniformLocation(whitePlaneProgramID, "normalTextureTC");
 	glUniform1i(normalTextureUniformLocation, 0);
+	GLuint timeUniformLocation = glGetUniformLocation(whitePlaneProgramID, "time");
+	glUniform1f(timeUniformLocation, this->time);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
-
+	printf("time is %f", this->time);
 }
 
 MeGLWindow::MeGLWindow()
@@ -341,6 +343,7 @@ MeGLWindow::MeGLWindow()
 	meCamera = new MeCamera;
 	ambientLight = glm::vec3(0.1f, 0.1f, 0.1f);
 	pointLightPosition = glm::vec3(0.0f, 0.2f,-5.0f);
+	time = 0.0f;
 }
 
 
