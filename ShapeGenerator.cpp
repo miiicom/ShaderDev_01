@@ -398,9 +398,10 @@ ShapeData ShapeGenerator::makeArrow()
 ShapeData ShapeGenerator::readObj(const char* path)
 {
 	ShapeData ret;
-	std::vector<glm::vec3> vertices;
-	std::vector<glm::vec3> normalsl;
-	std::vector<GLushort> Indices;
+	std::vector<glm::vec3> verticesVector;
+	std::vector<glm::vec3> normalslVector;
+	std::vector<GLushort> IndicesVector;
+	std::vector<glm::vec2> uv0Vector;
 
 	std::ifstream in(path, std::ifstream::in);
 	if (!in)
@@ -415,9 +416,9 @@ ShapeData ShapeGenerator::readObj(const char* path)
 			std::istringstream linePiece(line.substr(2));
 			glm::vec3 v;
 			linePiece >> v.x; linePiece >> v.y; linePiece >> v.z;
-			vertices.push_back(v);
+			verticesVector.push_back(v);
 			glm::vec3 color = glm::vec3(+1.0f, +1.0f, +1.0f);
-			vertices.push_back(color);
+			verticesVector.push_back(color);
 		}
 		else if (line.substr(0, 2) == "f ")
 		{
@@ -425,7 +426,7 @@ ShapeData ShapeGenerator::readObj(const char* path)
 			GLushort a, b, c;
 			linePiece >> a; linePiece >> b; linePiece >> c;
 			a--; b--; c--;
-			Indices.push_back(a); Indices.push_back(b); Indices.push_back(c);
+			IndicesVector.push_back(a); IndicesVector.push_back(b); IndicesVector.push_back(c);
 		}
 		else if (line[0] == '#')
 		{
@@ -437,13 +438,13 @@ ShapeData ShapeGenerator::readObj(const char* path)
 		}
 	}
 
-	ret.numVertices = vertices.size();
-	ret.vertices = new Vertex[vertices.size()];
-	memcpy(ret.vertices, vertices.data(), vertices.size());
+	ret.numVertices = verticesVector.size();
+	ret.vertices = new Vertex[verticesVector.size()];
+	memcpy(ret.vertices, verticesVector.data(), verticesVector.size());
 
-	ret.numIndices = Indices.size();
-	ret.indices = new GLushort[Indices.size()];
-	memcpy(ret.indices, Indices.data(), Indices.size());
+	ret.numIndices = IndicesVector.size();
+	ret.indices = new GLushort[IndicesVector.size()];
+	memcpy(ret.indices, IndicesVector.data(), IndicesVector.size());
 
 
 	return ret;
