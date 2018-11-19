@@ -395,6 +395,15 @@ ShapeData ShapeGenerator::makeArrow()
 	return ret;
 }
 
+//
+//# is a comment, just like // in C++
+//usemtl and mtllib describe the look of the model.We won’t use this in this tutorial.
+//v is a vertex
+//vt is the texture coordinate of one vertex
+//vn is the normal of one vertex
+//f is a face
+
+
 ShapeData ShapeGenerator::readObj(const char* path)
 {
 	ShapeData ret;
@@ -419,6 +428,12 @@ ShapeData ShapeGenerator::readObj(const char* path)
 			verticesVector.push_back(v);
 			glm::vec3 color = glm::vec3(+1.0f, +1.0f, +1.0f);
 			verticesVector.push_back(color);
+		}
+		else if (line.substr(0, 2) == "vt ") {
+			std::istringstream linePiece(line.substr(2));
+			glm::vec3 uv0;
+			linePiece >> uv0.x; linePiece >> uv0.y;
+			verticesVector.push_back(uv0);
 		}
 		else if (line.substr(0, 2) == "f ")
 		{
