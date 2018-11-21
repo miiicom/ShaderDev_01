@@ -62,13 +62,19 @@
     <None Include="FragmentShaderCode.glsl" />
     <None Include="WhitePlaneFragmentShader.glsl" />
     <None Include="WhitePlaneVertexShader.glsl" />
+    <None Include="texture\normalMap">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="box.obj" />
     <Object Include="pighead.obj" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="normalMap">
+    <Image Include="texture\Checker">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\ColorChecker.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="FragmentShaderCode.glsl" />
+    <None Include="texture\normalMap" />
     <None Include="vertexShaderCode.glsl" />
     <None Include="WhitePlaneFragmentShader.glsl" />
     <None Include="WhitePlaneVertexShader.glsl" />
@@ -153,7 +154,8 @@
     </Object>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="normalMap" />
+    <Image Include="texture\Checker" />
+    <Image Include="texture\ColorChecker.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

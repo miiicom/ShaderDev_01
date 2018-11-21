@@ -76,7 +76,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	shape.cleanup();
 	//Create QImage obj
-	const char * texName = "normalMap";
+	const char * texName = "texture/fireSprite.png";
 	QImage normalMap = loadTexture(texName);
 	// send Image to OpenGL
 	glActiveTexture(GL_TEXTURE0);
@@ -249,7 +249,7 @@ void MeGLWindow::mouseMoveEvent(QMouseEvent * event)
 
 QImage MeGLWindow::loadTexture(const char * texName)
 {
-	return QGLWidget::convertToGLFormat(QImage(texName, "PNG"));;
+	return QGLWidget::convertToGLFormat(QImage(texName, "PNG"));
 }
 
 
@@ -257,7 +257,7 @@ glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YS
 {
 	GLfloat UnitDistanceX = 1.0f / (float)XSegNum;
 	GLfloat UnitDistanceY = 1.0f / (float)YSegNum;
-	GLfloat SpriteNum = (int)time % (XSegNum * YSegNum);
+	GLfloat SpriteNum = (int)(time) % (XSegNum * YSegNum);
 	printf(" SpriteNum is %f\n", SpriteNum);
 
 	GLfloat XCellNum = (int)SpriteNum / XSegNum;
@@ -349,6 +349,9 @@ void MeGLWindow::paintGL() {
 	glUniform1i(normalTextureUniformLocation, 0);
 	GLuint timeUniformLocation = glGetUniformLocation(whitePlaneProgramID, "time");
 	glUniform1f(timeUniformLocation, this->time);
+	GLuint SpriteOffsetUniformLoc = glGetUniformLocation(whitePlaneProgramID, "SpriteOffset");
+	glm::vec2 SpriteOffset = Calculate2DSpriteLoc(time, 6, 6);
+	glUniform2fv(SpriteOffsetUniformLoc, 1, &SpriteOffset[0]);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 	printf("time is %f", this->time);
 }
@@ -358,7 +361,7 @@ MeGLWindow::MeGLWindow()
 	meCamera = new MeCamera;
 	ambientLight = glm::vec3(0.1f, 0.1f, 0.1f);
 	pointLightPosition = glm::vec3(0.0f, 0.2f,-5.0f);
-	time = -1.0f;
+	time = 0.0f;
 }
 
 

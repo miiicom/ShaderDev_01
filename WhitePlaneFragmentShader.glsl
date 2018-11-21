@@ -11,11 +11,18 @@ uniform vec3 pointLightPositionWorld;
 uniform vec3 eyePositionWorld;
 uniform sampler2D normalTextureTC;
 uniform float time;
+uniform vec2 SpriteOffset;
 
 void main()
-{	//readTexture 
-	vec2 timeVector = vec2(time/60.0,0);
-	vec2 MovedFragmentUV0 = fragmentUV0 + timeVector;
+{	//Panner 
+	//vec2 timeVector = vec2(time/60.0,0);
+	//vec2 MovedFragmentUV0 = fragmentUV0 + timeVector;
+
+	//SpriteLoc
+	vec2 ShrinkFragUV0 = vec2(fragmentUV0.x / 6,fragmentUV0.y/ 6);
+	vec2 MovedFragmentUV0 = ShrinkFragUV0 + SpriteOffset;
+
+	//read Texture
 	vec4 normalTextureInfo = texture(normalTextureTC,MovedFragmentUV0);
 
 	// diffuse
