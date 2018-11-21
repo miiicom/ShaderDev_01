@@ -154,7 +154,8 @@ void MeWidget::handleBoundaries()
 void MeWidget::timerEvent(QTimerEvent *event) {
 	rotationValue++;
 	//myGLWindow->InitialValueSetter(rotationValue);
-	myGLWindow->time = myGLWindow->time + 1.0 / 30.0;
+	myGLWindow->time = myGLWindow->time + 1.0;
+	myGLWindow->Calculate2DSpriteLoc(myGLWindow->time,8,8);
 	myGLWindow->repaint();
 }
 

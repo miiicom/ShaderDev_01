@@ -253,6 +253,21 @@ QImage MeGLWindow::loadTexture(const char * texName)
 }
 
 
+glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YSegNum)
+{
+	GLfloat UnitDistanceX = 1.0f / (float)XSegNum;
+	GLfloat UnitDistanceY = 1.0f / (float)YSegNum;
+	GLfloat SpriteNum = (int)time % (XSegNum * YSegNum);
+	printf(" SpriteNum is %f\n", SpriteNum);
+
+	GLfloat XCellNum = (int)SpriteNum / XSegNum;
+	GLfloat YCellNum = (int)SpriteNum % YSegNum;
+	printf(" Sprite  Choice is %f in X, %f in Y \n", XCellNum, YCellNum);
+	GLfloat SpriteUVOffsetX = XCellNum * UnitDistanceX;
+	GLfloat SpriteUVOffsetY = YCellNum * UnitDistanceY;
+	printf(" Sprite offset is %f in X, %f in Y", SpriteUVOffsetX, SpriteUVOffsetY);
+	return glm::vec2(SpriteUVOffsetX, SpriteUVOffsetY);
+}
 
 void MeGLWindow::paintGL() {
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
@@ -343,7 +358,7 @@ MeGLWindow::MeGLWindow()
 	meCamera = new MeCamera;
 	ambientLight = glm::vec3(0.1f, 0.1f, 0.1f);
 	pointLightPosition = glm::vec3(0.0f, 0.2f,-5.0f);
-	time = 0.0f;
+	time = -1.0f;
 }
 
 

@@ -21,6 +21,7 @@ protected:
 	void initializeGL();
 	void mouseMoveEvent(QMouseEvent *event) ;
 	QImage loadTexture(const char * texName);
+
 	
 public:
 	MeGLWindow();
@@ -28,6 +29,7 @@ public:
 	void InitialValueSetter(GLfloat rotationValue);
 	MeCamera * meCamera;
 	GLfloat time;
+	glm::vec2 Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YSegNum);
 
 private:
 	GLfloat rotationValue;
