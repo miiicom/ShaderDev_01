@@ -19,7 +19,7 @@ void main()
 	//vec2 MovedFragmentUV0 = fragmentUV0 + timeVector;
 
 	//SpriteLoc
-	vec2 ShrinkFragUV0 = vec2(fragmentUV0.x / 6,fragmentUV0.y/ 6);
+	vec2 ShrinkFragUV0 = vec2(fragmentUV0.x / 8,fragmentUV0.y/ 8);
 	vec2 MovedFragmentUV0 = ShrinkFragUV0 + SpriteOffset;
 
 	//read Texture

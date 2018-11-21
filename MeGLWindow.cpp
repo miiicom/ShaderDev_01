@@ -76,7 +76,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	shape.cleanup();
 	//Create QImage obj
-	const char * texName = "texture/fireSprite.png";
+	const char * texName = "texture/ColorChecker.png";
 	QImage normalMap = loadTexture(texName);
 	// send Image to OpenGL
 	glActiveTexture(GL_TEXTURE0);
@@ -350,7 +350,7 @@ void MeGLWindow::paintGL() {
 	GLuint timeUniformLocation = glGetUniformLocation(whitePlaneProgramID, "time");
 	glUniform1f(timeUniformLocation, this->time);
 	GLuint SpriteOffsetUniformLoc = glGetUniformLocation(whitePlaneProgramID, "SpriteOffset");
-	glm::vec2 SpriteOffset = Calculate2DSpriteLoc(time, 6, 6);
+	glm::vec2 SpriteOffset = Calculate2DSpriteLoc(time, 8, 8);
 	glUniform2fv(SpriteOffsetUniformLoc, 1, &SpriteOffset[0]);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 	printf("time is %f", this->time);

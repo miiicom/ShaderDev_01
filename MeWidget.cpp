@@ -20,7 +20,7 @@ MeWidget::MeWidget()
 
 	IsPressing = false;
 	myGLWindow->setMouseTracking(true);
-	startTimer(30);
+	startTimer(1000);
 
 	//---Hard code boundaries---
 }
