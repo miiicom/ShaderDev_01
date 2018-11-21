@@ -14,7 +14,7 @@ uniform float time;
 
 void main()
 {	//readTexture 
-	vec2 timeVector = vec2(time/20.0,0);
+	vec2 timeVector = vec2(0/20.0,0);
 	vec2 MovedFragmentUV0 = fragmentUV0 + timeVector;
 	vec4 normalTextureInfo = texture(normalTextureTC,MovedFragmentUV0);
 

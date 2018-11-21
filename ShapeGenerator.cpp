@@ -481,8 +481,8 @@ ShapeData ShapeGenerator::makePlaneVerts(GLuint dimensions)
 			thisVert.position.y = 0;
 			thisVert.normal = glm::vec3(0.0f, 1.0f, 0.0f);
 			thisVert.color = glm::vec3(1.0f, 1.0f, 1.0f);
-			thisVert.uv0.x = j;
-			thisVert.uv0.y = i;
+			thisVert.uv0.x = (float) j / (float)dimensions;
+			thisVert.uv0.y = (float) i / (float)dimensions;
 		}
 	}
 	return ret;
