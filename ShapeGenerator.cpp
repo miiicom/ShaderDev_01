@@ -11,40 +11,23 @@ ShapeData ShapeGenerator::makeTriangle() {
 	ShapeData ret;
 	Vertex verts[] =
 	{	//Main sahpe
-		glm::vec3(+0.0f, +0.05f, +0.0f),
-		glm::vec3(+1.0f, +0.0f, +0.0f),
-		glm::vec3(+1.0f, +0.0f, +0.0f),
-		glm::vec2(+0.0f,+0.0f),			//UV0
-
-		glm::vec3(+.1f, -0.05f, +0.0f),
-		glm::vec3(+0.0f, +1.0f, +0.0f),
-		glm::vec3(+1.0f, +0.0f, +0.0f),
-		glm::vec2(+0.0f,+0.0f),			//UV0
-
-		glm::vec3(-0.1f, -0.05f, +0.0f),
-		glm::vec3(+0.0f, +0.0f, +1.0f),
-		glm::vec3(+1.0f, +0.0f, +0.0f),
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		// back ground image
-		glm::vec3(-1.0f, 0.0f, +0.1f),
-		glm::vec3(+0.0f, +0.0f, +1.0f),
-		glm::vec3(+1.0f, +0.0f, +0.0f),
-		glm::vec2(+0.0f,+0.0f),			//UV0
-
-		glm::vec3(+1.0f, 0.0f, +0.1f),
-		glm::vec3(+0.0f, +0.0f, +1.0f),
-		glm::vec3(+1.0f, +0.0f, +0.0f),
-		glm::vec2(+0.0f,+0.0f),			//UV0
-
-		glm::vec3(+0.0f, 1.0f, +0.1f),
-		glm::vec3(+0.0f, +0.0f, +1.0f),
-		glm::vec3(+1.0f, +0.0f, +0.0f),
-		glm::vec2(+0.0f,+0.0f),			//UV0
-
-		glm::vec3(+0.0f, -1.0f, +0.1f),
-		glm::vec3(+0.0f, +0.0f, +1.0f),
-		glm::vec3(+1.0f, +0.0f, +0.0f),
-		glm::vec2(+0.0f,+0.0f),			//UV0
+		glm::vec3(+0.0f, +1.0f, +0.0f),			// position
+		glm::vec4(+1.0f, +0.0f, +0.0f, +0.0f),	// color
+		glm::vec3(+0.0f, +0.0f, +1.0f),			// normal
+		glm::vec2(+0.5f, +0.0f),					// uv
+		glm::vec3(+1.0f, +0.0f, 0.0f),			// tangent
+		
+		glm::vec3(-1.0f, -1.0f, +0.0f),			// position
+		glm::vec4(+0.0f, +1.0f, +0.0f, +0.0f),	// color
+		glm::vec3(+0.0f, +0.0f, +1.0f),			// normal
+		glm::vec2(+0.0f, +1.0f),					// uv
+		glm::vec3(+1.0f, +0.0f, 0.0f),			// tangent
+		
+		glm::vec3(+1.0f, -1.0f, +0.0f),			// position
+		glm::vec4(+0.0f, +0.0f, +1.0f, +0.0f),	// color
+		glm::vec3(+0.0f, +0.0f, +1.0f),			// normal
+		glm::vec2(+1.0f, +1.0f),					// uv
+		glm::vec3(+1.0f, +0.0f, 0.0f),			// tangent
 	};
 	ret.numVertices = NUM_ARRAY_ELEMENTS(verts);
 	ret.vertices = new Vertex[ret.numVertices];
@@ -62,107 +45,137 @@ ShapeData ShapeGenerator::makeCube() {
 	ShapeData ret;
 	Vertex stackVerts[] =
 	{
-		glm::vec3(-1.0f, +1.0f, +1.0f),  // 0
-		glm::vec3(+1.0f, +0.0f, +0.0f),	// Color
-		glm::vec3(+0.0f, +1.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(+1.0f, +1.0f, +1.0f),  // 1
-		glm::vec3(+0.0f, +1.0f, +0.0f),	// Color
-		glm::vec3(+0.0f, +1.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(+1.0f, +1.0f, -1.0f),  // 2
-		glm::vec3(+0.0f, +0.0f, +1.0f),  // Color
-		glm::vec3(+0.0f, +1.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(-1.0f, +1.0f, -1.0f),  // 3
-		glm::vec3(+1.0f, +1.0f, +1.0f),  // Color
-		glm::vec3(+0.0f, +1.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		
-		glm::vec3(-1.0f, +1.0f, -1.0f),  // 4
-		glm::vec3(+1.0f, +0.0f, +1.0f),  // Color
-		glm::vec3(+0.0f, +0.0f, -1.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(+1.0f, +1.0f, -1.0f),  // 5
-		glm::vec3(+0.0f, +0.5f, +0.2f),  // Color
-		glm::vec3(+0.0f, +0.0f, -1.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(+1.0f, -1.0f, -1.0f),  // 6
-		glm::vec3(+0.8f, +0.6f, +0.4f),  // Color
-		glm::vec3(+0.0f, +0.0f, -1.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(-1.0f, -1.0f, -1.0f),  // 7
-		glm::vec3(+0.3f, +1.0f, +0.5f),  // Color
-		glm::vec3(+0.0f, +0.0f, -1.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		
-		glm::vec3(+1.0f, +1.0f, -1.0f),  // 8
-		glm::vec3(+0.2f, +0.5f, +0.2f),  // Color
-		glm::vec3(+1.0f, +0.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(+1.0f, +1.0f, +1.0f),  // 9
-		glm::vec3(+0.9f, +0.3f, +0.7f),  // Color
-		glm::vec3(+1.0f, +0.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(+1.0f, -1.0f, +1.0f),  // 10
-		glm::vec3(+0.3f, +0.7f, +0.5f),  // Color
-		glm::vec3(+1.0f, +0.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(+1.0f, -1.0f, -1.0f),  // 11
-		glm::vec3(+0.5f, +0.7f, +0.5f),  // Color
-		glm::vec3(+1.0f, +0.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		
-		glm::vec3(-1.0f, +1.0f, +1.0f),  // 12
-		glm::vec3(+0.7f, +0.8f, +0.2f),  // Color
-		glm::vec3(-1.0f, +0.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(-1.0f, +1.0f, -1.0f),  // 13
-		glm::vec3(+0.5f, +0.7f, +0.3f),  // Color
-		glm::vec3(-1.0f, +0.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(-1.0f, -1.0f, -1.0f),  // 14
-		glm::vec3(+0.4f, +0.7f, +0.7f),  // Color
-		glm::vec3(-1.0f, +0.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(-1.0f, -1.0f, +1.0f),  // 15
-		glm::vec3(+0.2f, +0.5f, +1.0f),  // Color
-		glm::vec3(-1.0f, +0.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
+		// Top
+		glm::vec3(-1.0f, +1.0f, +1.0f),        // 0
+		glm::vec4(+1.0f, +0.0f, +0.0f, +1.0f), // Color
+		glm::vec3(+0.0f, +1.0f, +0.0f),        // Normal
+		glm::vec2(+0.0f, +1.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
+		glm::vec3(+1.0f, +1.0f, +1.0f),        // 1
+		glm::vec4(+0.0f, +1.0f, +0.0f, +1.0f), // Color
+		glm::vec3(+0.0f, +1.0f, +0.0f),        // Normal
+		glm::vec2(+1.0f, +1.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
+		glm::vec3(+1.0f, +1.0f, -1.0f),        // 2
+		glm::vec4(+0.0f, +0.0f, +1.0f, +1.0f), // Color
+		glm::vec3(+0.0f, +1.0f, +0.0f),        // Normal
+		glm::vec2(+1.0f, +0.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
+		glm::vec3(-1.0f, +1.0f, -1.0f),        // 3
+		glm::vec4(+1.0f, +1.0f, +1.0f, +1.0f), // Color
+		glm::vec3(+0.0f, +1.0f, +0.0f),        // Normal
+		glm::vec2(+0.0f, +0.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
 
-		glm::vec3(+1.0f, +1.0f, +1.0f),  // 16
-		glm::vec3(+0.6f, +1.0f, +0.7f),  // Color
-		glm::vec3(+0.0f, +0.0f, +1.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(-1.0f, +1.0f, +1.0f),  // 17
-		glm::vec3(+0.6f, +0.4f, +0.8f),  // Color
-		glm::vec3(+0.0f, +0.0f, +1.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(-1.0f, -1.0f, +1.0f),  // 18
-		glm::vec3(+0.2f, +0.8f, +0.7f),  // Color
-		glm::vec3(+0.0f, +0.0f, +1.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(+1.0f, -1.0f, +1.0f),  // 19
-		glm::vec3(+0.2f, +0.7f, +1.0f),  // Color
-		glm::vec3(+0.0f, +0.0f, +1.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
+		// Front
+		glm::vec3(-1.0f, +1.0f, -1.0f),        // 4
+		glm::vec4(+1.0f, +0.0f, +1.0f, +1.0f), // Color
+		glm::vec3(+0.0f, +0.0f, -1.0f),        // Normal
+		glm::vec2(+0.0f, +1.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
+		glm::vec3(+1.0f, +1.0f, -1.0f),        // 5
+		glm::vec4(+0.0f, +0.5f, +0.2f, +1.0f), // Color
+		glm::vec3(+0.0f, +0.0f, -1.0f),        // Normal
+		glm::vec2(+1.0f, +1.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
+		glm::vec3(+1.0f, -1.0f, -1.0f),        // 6
+		glm::vec4(+0.8f, +0.6f, +0.4f, +1.0f), // Color
+		glm::vec3(+0.0f, +0.0f, -1.0f),        // Normal
+		glm::vec2(+1.0f, +0.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
+		glm::vec3(-1.0f, -1.0f, -1.0f),        // 7
+		glm::vec4(+0.3f, +1.0f, +0.5f, +1.0f), // Color
+		glm::vec3(+0.0f, +0.0f, -1.0f),        // Normal
+		glm::vec2(+0.0f, +0.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
 
-		glm::vec3(+1.0f, -1.0f, -1.0f),  // 20
-		glm::vec3(+0.8f, +0.3f, +0.7f),  // Color
-		glm::vec3(+0.0f, -1.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(-1.0f, -1.0f, -1.0f),  // 21
-		glm::vec3(+0.8f, +0.9f, +0.5f),  // Color
-		glm::vec3(+0.0f, -1.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(-1.0f, -1.0f, +1.0f),  // 22
-		glm::vec3(+0.5f, +0.8f, +0.5f),  // Color
-		glm::vec3(+0.0f, -1.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f,+0.0f),			//UV0
-		glm::vec3(+1.0f, -1.0f, +1.0f),  // 23
-		glm::vec3(+0.9f, +1.0f, +0.2f),  // Color
-		glm::vec3(+0.0f, -1.0f, +0.0f),  // Normal
-		glm::vec2(+0.0f, +0.0f),			//UV0
+		// Right
+		glm::vec3(+1.0f, +1.0f, -1.0f),        // 8
+		glm::vec4(+0.2f, +0.5f, +0.2f, +1.0f), // Color
+		glm::vec3(+1.0f, +0.0f, +0.0f),        // Normal
+		glm::vec2(+1.0f, +0.0f),               // UV
+		glm::vec3(+0.0f, +0.0f, -1.0f),		  // Tangent
+		glm::vec3(+1.0f, +1.0f, +1.0f),        // 9
+		glm::vec4(+0.9f, +0.3f, +0.7f, +1.0f), // Color
+		glm::vec3(+1.0f, +0.0f, +0.0f),        // Normal
+		glm::vec2(+0.0f, +0.0f),               // UV
+		glm::vec3(+0.0f, +0.0f, -1.0f),		  // Tangent
+		glm::vec3(+1.0f, -1.0f, +1.0f),        // 10
+		glm::vec4(+0.3f, +0.7f, +0.5f, +1.0f), // Color
+		glm::vec3(+1.0f, +0.0f, +0.0f),        // Normal
+		glm::vec2(+0.0f, +1.0f),               // UV
+		glm::vec3(+0.0f, +0.0f, -1.0f),		  // Tangent
+		glm::vec3(+1.0f, -1.0f, -1.0f),        // 11
+		glm::vec4(+0.5f, +0.7f, +0.5f, +1.0f), // Color
+		glm::vec3(+1.0f, +0.0f, +0.0f),        // Normal
+		glm::vec2(+1.0f, +1.0f),               // UV
+		glm::vec3(+0.0f, +0.0f, -1.0f),		  // Tangent
+
+		 // Left
+		glm::vec3(-1.0f, +1.0f, +1.0f),        // 12
+		glm::vec4(+0.7f, +0.8f, +0.2f, +1.0f), // Color
+		glm::vec3(-1.0f, +0.0f, +0.0f),        // Normal
+		glm::vec2(+1.0f, +0.0f),               // UV
+		glm::vec3(+0.0f, +0.0f, +1.0f),		  // Tangent
+		glm::vec3(-1.0f, +1.0f, -1.0f),        // 13
+		glm::vec4(+0.5f, +0.7f, +0.3f, +1.0f), // Color
+		glm::vec3(-1.0f, +0.0f, +0.0f),        // Normal
+		glm::vec2(+0.0f, +0.0f),               // UV
+		glm::vec3(+0.0f, +0.0f, +1.0f),		  // Tangent
+		glm::vec3(-1.0f, -1.0f, -1.0f),        // 14
+		glm::vec4(+0.4f, +0.7f, +0.7f, +1.0f), // Color
+		glm::vec3(-1.0f, +0.0f, +0.0f),        // Normal
+		glm::vec2(+0.0f, +1.0f),               // UV
+		glm::vec3(+0.0f, +0.0f, +1.0f),		  // Tangent
+		glm::vec3(-1.0f, -1.0f, +1.0f),        // 15
+		glm::vec4(+0.2f, +0.5f, +1.0f, +1.0f), // Color
+		glm::vec3(-1.0f, +0.0f, +0.0f),        // Normal
+		glm::vec2(+1.0f, +1.0f),               // UV
+		glm::vec3(+0.0f, +0.0f, +1.0f),		  // Tangent
+
+		// Back
+		glm::vec3(+1.0f, +1.0f, +1.0f),        // 16
+		glm::vec4(+0.6f, +1.0f, +0.7f, +1.0f), // Color
+		glm::vec3(+0.0f, +0.0f, +1.0f),        // Normal
+		glm::vec2(+1.0f, +0.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
+		glm::vec3(-1.0f, +1.0f, +1.0f),        // 17
+		glm::vec4(+0.6f, +0.4f, +0.8f, +1.0f), // Color
+		glm::vec3(+0.0f, +0.0f, +1.0f),        // Normal
+		glm::vec2(+0.0f, +0.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
+		glm::vec3(-1.0f, -1.0f, +1.0f),        // 18
+		glm::vec4(+0.2f, +0.8f, +0.7f, +1.0f), // Color
+		glm::vec3(+0.0f, +0.0f, +1.0f),        // Normal
+		glm::vec2(+0.0f, +1.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
+		glm::vec3(+1.0f, -1.0f, +1.0f),        // 19
+		glm::vec4(+0.2f, +0.7f, +1.0f, +1.0f), // Color
+		glm::vec3(+0.0f, +0.0f, +1.0f),        // Normal
+		glm::vec2(+1.0f, +1.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
+
+		// Bottom
+		glm::vec3(+1.0f, -1.0f, -1.0f),        // 20
+		glm::vec4(+0.8f, +0.3f, +0.7f, +1.0f), // Color
+		glm::vec3(+0.0f, -1.0f, +0.0f),        // Normal
+		glm::vec2(+1.0f, +1.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
+		glm::vec3(-1.0f, -1.0f, -1.0f),        // 21
+		glm::vec4(+0.8f, +0.9f, +0.5f, +1.0f), // Color
+		glm::vec3(+0.0f, -1.0f, +0.0f),        // Normal
+		glm::vec2(+0.0f, +1.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
+		glm::vec3(-1.0f, -1.0f, +1.0f),        // 22
+		glm::vec4(+0.5f, +0.8f, +0.5f, +1.0f), // Color
+		glm::vec3(+0.0f, -1.0f, +0.0f),        // Normal
+		glm::vec2(+0.0f, +0.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
+		glm::vec3(+1.0f, -1.0f, +1.0f),        // 23
+		glm::vec4(+0.9f, +1.0f, +0.2f, +1.0f), // Color
+		glm::vec3(+0.0f, -1.0f, +0.0f),        // Normal
+		glm::vec2(+1.0f, +0.0f),               // UV
+		glm::vec3(+1.0f, +0.0f, +0.0f),		  // Tangent
 	};
 
 	ret.numVertices = NUM_ARRAY_ELEMENTS(stackVerts);
@@ -190,176 +203,216 @@ ShapeData ShapeGenerator::makeArrow()
 	Vertex stackVerts[] =
 	{
 		// Top side of arrow head
+		// Top side of arrow head
 		 glm::vec3(+0.00f, +0.25f, -0.25f),         // 0
-		 glm::vec3(+1.00f, +0.00f, +0.00f),		  // Color
+		 glm::vec4(+1.00f, +0.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, +1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(+0.50f, +0.25f, -0.25f),         // 1
-		 glm::vec3(+1.00f, +0.00f, +0.00f),		  // Color
+		 glm::vec4(+1.00f, +0.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, +1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(+0.00f, +0.25f, -1.00f),         // 2
-		 glm::vec3(+1.00f, +0.00f, +0.00f),		  // Color
+		 glm::vec4(+1.00f, +0.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, +1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(-0.50f, +0.25f, -0.25f),         // 3
-		 glm::vec3(+1.00f, +0.00f, +0.00f),		  // Color
+		 glm::vec4(+1.00f, +0.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, +1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
-		 									  // Bottom side of arrow head
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
+		 // Bottom side of arrow head
 		 glm::vec3(+0.00f, -0.25f, -0.25f),         // 4
-		 glm::vec3(+0.00f, +0.00f, +1.00f),		  // Color
+		 glm::vec4(+0.00f, +0.00f, +1.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, -1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(+0.50f, -0.25f, -0.25f),         // 5
-		 glm::vec3(+0.00f, +0.00f, +1.00f),		  // Color
+		 glm::vec4(+0.00f, +0.00f, +1.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, -1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(+0.00f, -0.25f, -1.00f),         // 6
-		 glm::vec3(+0.00f, +0.00f, +1.00f),		  // Color
+		 glm::vec4(+0.00f, +0.00f, +1.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, -1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(-0.50f, -0.25f, -0.25f),         // 7
-		 glm::vec3(+0.00f, +0.00f, +1.00f),		  // Color
+		 glm::vec4(+0.00f, +0.00f, +1.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, -1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 // Right side of arrow tip
 		 glm::vec3(+0.50f, +0.25f, -0.25f),         // 8
-		 glm::vec3(+0.60f, +1.00f, +0.00f),		  // Color
+		 glm::vec4(+0.60f, +1.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(0.83205032f, 0.00f, -0.55470026f), // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(+0.00f, +0.25f, -1.00f),         // 9
-		 glm::vec3(+0.60f, +1.00f, +0.00f),		  // Color
+		 glm::vec4(+0.60f, +1.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(0.83205032f, 0.00f, -0.55470026f), // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(+0.00f, -0.25f, -1.00f),         // 10
-		 glm::vec3(+0.60f, +1.00f, +0.00f),		  // Color
+		 glm::vec4(+0.60f, +1.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(0.83205032f, 0.00f, -0.55470026f), // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(+0.50f, -0.25f, -0.25f),         // 11
-		 glm::vec3(+0.60f, +1.00f, +0.00f),		  // Color
+		 glm::vec4(+0.60f, +1.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(0.83205032f, 0.00f, -0.55470026f), // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 // Left side of arrow tip
 		 glm::vec3(+0.00f, +0.25f, -1.00f),         // 12
-		 glm::vec3(+0.00f, +1.00f, +0.00f),		  // Color
+		 glm::vec4(+0.00f, +1.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(-0.55708605f, 0.00f, -0.37139067f), // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(-0.50f, +0.25f, -0.25f),         // 13
-		 glm::vec3(+0.00f, +1.00f, +0.00f),		  // Color
+		 glm::vec4(+0.00f, +1.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(-0.55708605f, 0.00f, -0.37139067f), // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(+0.00f, -0.25f, -1.00f),         // 14
-		 glm::vec3(+0.00f, +1.00f, +0.00f),		  // Color
+		 glm::vec4(+0.00f, +1.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(-0.55708605f, 0.00f, -0.37139067f), // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(-0.50f, -0.25f, -0.25f),         // 15
-		 glm::vec3(+0.00f, +1.00f, +0.00f),		  // Color
+		 glm::vec4(+0.00f, +1.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(-0.55708605f, 0.00f, -0.37139067f), // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 // Back side of arrow tip
 		 glm::vec3(-0.50f, +0.25f, -0.25f),         // 16
-		 glm::vec3(+0.50f, +0.50f, +0.50f),		  // Color
+		 glm::vec4(+0.50f, +0.50f, +0.50f, +1.00f), // Color
 		 glm::vec3(+0.00f, +0.00f, +1.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(+0.50f, +0.25f, -0.25f),         // 17
-		 glm::vec3(+0.50f, +0.50f, +0.50f),		  // Color
+		 glm::vec4(+0.50f, +0.50f, +0.50f, +1.00f), // Color
 		 glm::vec3(+0.00f, +0.00f, +1.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(-0.50f, -0.25f, -0.25f),         // 18
-		 glm::vec3(+0.50f, +0.50f, +0.50f),		  // Color
+		 glm::vec4(+0.50f, +0.50f, +0.50f, +1.00f), // Color
 		 glm::vec3(+0.00f, +0.00f, +1.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(+0.50f, -0.25f, -0.25f),         // 19
-		 glm::vec3(+0.50f, +0.50f, +0.50f),		  // Color
+		 glm::vec4(+0.50f, +0.50f, +0.50f, +1.00f), // Color
 		 glm::vec3(+0.00f, +0.00f, +1.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 // Top side of back of arrow
 		 glm::vec3(+0.25f, +0.25f, -0.25f),         // 20
-		 glm::vec3(+1.00f, +0.00f, +0.00f),		  // Color
+		 glm::vec4(+1.00f, +0.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, +1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(+0.25f, +0.25f, +1.00f),         // 21
-		 glm::vec3(+1.00f, +0.00f, +0.00f),		  // Color
+		 glm::vec4(+1.00f, +0.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, +1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(-0.25f, +0.25f, +1.00f),         // 22
-		 glm::vec3(+1.00f, +0.00f, +0.00f),		  // Color
+		 glm::vec4(+1.00f, +0.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, +1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f,+0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(-0.25f, +0.25f, -0.25f),         // 23
-		 glm::vec3(+1.00f, +0.00f, +0.00f),		  // Color
+		 glm::vec4(+1.00f, +0.00f, +0.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, +1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f, +0.0f),					//UV0
-																																																										 // Bottom side of back of arrow
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
+		 // Bottom side of back of arrow
 		 glm::vec3(+0.25f, -0.25f, -0.25f),         // 24
-		 glm::vec3(+0.00f, +0.00f, +1.00f),		  // Color
+		 glm::vec4(+0.00f, +0.00f, +1.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, -1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f, +0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(+0.25f, -0.25f, +1.00f),         // 25
-		 glm::vec3(+0.00f, +0.00f, +1.00f),		  // Color
+		 glm::vec4(+0.00f, +0.00f, +1.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, -1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f, +0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(-0.25f, -0.25f, +1.00f),         // 26
-		 glm::vec3(+0.00f, +0.00f, +1.00f),		  // Color
+		 glm::vec4(+0.00f, +0.00f, +1.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, -1.00f, +0.00f),         // Normal
-		glm::vec2(+0.0f, +0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 		 glm::vec3(-0.25f, -0.25f, -0.25f),         // 27
-		 glm::vec3(+0.00f, +0.00f, +1.00f),		  // Color
+		 glm::vec4(+0.00f, +0.00f, +1.00f, +1.00f), // Color
 		 glm::vec3(+0.00f, -1.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f, +0.0f),					//UV0
-
-		 // Right side of back of arrow
-		 glm::vec3(+0.25f, +0.25f, -0.25f),         // 28
-		 glm::vec3(+0.60f, +1.00f, +0.00f),		  // Color
-		 glm::vec3(+1.00f, +0.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f, +0.0f),					//UV0
-		 glm::vec3(+0.25f, -0.25f, -0.25f),         // 29
-		 glm::vec3(+0.60f, +1.00f, +0.00f),		  // Color
-		 glm::vec3(+1.00f, +0.00f, +0.00f),         // Normal
-		 glm::vec2(+0.0f, +0.0f),					//UV0
-		 glm::vec3(+0.25f, -0.25f, +1.00f),         // 30
-		 glm::vec3(+0.60f, +1.00f, +0.00f),		  // Color
-		 glm::vec3(+1.00f, +0.00f, +0.00f),         // Normal
-			 glm::vec2(+0.0f, +0.0f),					//UV0
-		 glm::vec3(+0.25f, +0.25f, +1.00f),         // 31
-		 glm::vec3(+0.60f, +1.00f, +0.00f),		  // Color
-		 glm::vec3(+1.00f, +0.00f, +0.00f),         // Normal
-			 glm::vec2(+0.0f, +0.0f),					//UV0
-        // Left side of back of arrow
-         glm::vec3(-0.25f, +0.25f, -0.25f),         // 32
-         glm::vec3(+0.00f, +1.00f, +0.00f),		  // Color
-         glm::vec3(-1.00f, +0.00f, +0.00f),         // Normal
-			 glm::vec2(+0.0f, +0.0f),					//UV0
-         glm::vec3(-0.25f, -0.25f, -0.25f),         // 33
-         glm::vec3(+0.00f, +1.00f, +0.00f),		  // Color
-         glm::vec3(-1.00f, +0.00f, +0.00f),         // Normal
-			 glm::vec2(+0.0f, +0.0f),					//UV0
-         glm::vec3(-0.25f, -0.25f, +1.00f),         // 34
-         glm::vec3(+0.00f, +1.00f, +0.00f),		  // Color
-         glm::vec3(-1.00f, +0.00f, +0.00f),         // Normal
-			 glm::vec2(+0.0f, +0.0f),					//UV0
-         glm::vec3(-0.25f, +0.25f, +1.00f),         // 35
-         glm::vec3(+0.00f, +1.00f, +0.00f),		  // Color
-         glm::vec3(-1.00f, +0.00f, +0.00f),         // Normal
-			 glm::vec2(+0.0f, +0.0f),					//UV0
+		 glm::vec2(+0.00f, +0.00f),                 // UV
+		 glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
+	     // Right side of back of arrow
+	     glm::vec3(+0.25f, +0.25f, -0.25f),         // 28
+	     glm::vec4(+0.60f, +1.00f, +0.00f, +1.00f), // Color
+	     glm::vec3(+1.00f, +0.00f, +0.00f),         // Normal
+	     glm::vec2(+0.00f, +0.00f),                 // UV
+	     glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
+	     glm::vec3(+0.25f, -0.25f, -0.25f),         // 29
+	     glm::vec4(+0.60f, +1.00f, +0.00f, +1.00f), // Color
+	     glm::vec3(+1.00f, +0.00f, +0.00f),         // Normal
+	     glm::vec2(+0.00f, +0.00f),                 // UV
+	     glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
+	     glm::vec3(+0.25f, -0.25f, +1.00f),         // 30
+	     glm::vec4(+0.60f, +1.00f, +0.00f, +1.00f), // Color
+	     glm::vec3(+1.00f, +0.00f, +0.00f),         // Normal
+	     glm::vec2(+0.00f, +0.00f),                 // UV
+	     glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
+	     glm::vec3(+0.25f, +0.25f, +1.00f),         // 31
+	     glm::vec4(+0.60f, +1.00f, +0.00f, +1.00f), // Color
+	     glm::vec3(+1.00f, +0.00f, +0.00f),         // Normal
+	     glm::vec2(+0.00f, +0.00f),                 // UV
+	     glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
+	     // Left side of back of arrow
+	     glm::vec3(-0.25f, +0.25f, -0.25f),         // 32
+	     glm::vec4(+0.00f, +1.00f, +0.00f, +1.00f), // Color
+	     glm::vec3(-1.00f, +0.00f, +0.00f),         // Normal
+	     glm::vec2(+0.00f, +0.00f),                 // UV
+	     glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
+	     glm::vec3(-0.25f, -0.25f, -0.25f),         // 33
+	     glm::vec4(+0.00f, +1.00f, +0.00f, +1.00f), // Color
+	     glm::vec3(-1.00f, +0.00f, +0.00f),         // Normal
+	     glm::vec2(+0.00f, +0.00f),                 // UV
+	     glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
+	     glm::vec3(-0.25f, -0.25f, +1.00f),         // 34
+	     glm::vec4(+0.00f, +1.00f, +0.00f, +1.00f), // Color
+	     glm::vec3(-1.00f, +0.00f, +0.00f),         // Normal
+	     glm::vec2(+0.00f, +0.00f),                 // UV
+	     glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
+	     glm::vec3(-0.25f, +0.25f, +1.00f),         // 35
+	     glm::vec4(+0.00f, +1.00f, +0.00f, +1.00f), // Color
+	     glm::vec3(-1.00f, +0.00f, +0.00f),         // Normal
+	     glm::vec2(+0.00f, +0.00f),                 // UV
+	     glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 	     // Back side of back of arrow
 	     glm::vec3(-0.25f, +0.25f, +1.00f),         // 36
-	     glm::vec3(+0.50f, +0.50f, +0.50f),		  // Color
+	     glm::vec4(+0.50f, +0.50f, +0.50f, +1.00f), // Color
 	     glm::vec3(+0.00f, +0.00f, +1.00f),         // Normal
-			 glm::vec2(+0.0f, +0.0f),					//UV0
+	     glm::vec2(+0.00f, +0.00f),                 // UV
+	     glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 	     glm::vec3(+0.25f, +0.25f, +1.00f),         // 37
-	     glm::vec3(+0.50f, +0.50f, +0.50f),		  // Color
+	     glm::vec4(+0.50f, +0.50f, +0.50f, +1.00f), // Color
 	     glm::vec3(+0.00f, +0.00f, +1.00f),         // Normal
-			 glm::vec2(+0.0f, +0.0f),					//UV0
+	     glm::vec2(+0.00f, +0.00f),                 // UV
+	     glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 	     glm::vec3(-0.25f, -0.25f, +1.00f),         // 38
-	     glm::vec3(+0.50f, +0.50f, +0.50f),		  // Color
+	     glm::vec4(+0.50f, +0.50f, +0.50f, +1.00f), // Color
 	     glm::vec3(+0.00f, +0.00f, +1.00f),         // Normal
-			 glm::vec2(+0.0f, +0.0f),					//UV0
+	     glm::vec2(+0.00f, +0.00f),                 // UV
+	     glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 	     glm::vec3(+0.25f, -0.25f, +1.00f),         // 39
-	     glm::vec3(+0.50f, +0.50f, +0.50f),		  // Color
+	     glm::vec4(+0.50f, +0.50f, +0.50f, +1.00f), // Color
 	     glm::vec3(+0.00f, +0.00f, +1.00f),         // Normal
-			 glm::vec2(+0.0f, +0.0f),					//UV0
+	     glm::vec2(+0.00f, +0.00f),                 // UV
+	     glm::vec3(+0.00f, +0.00f, +0.00f),		  // Tangent
 	};
 
 	GLushort stackIndices[] = {
@@ -480,9 +533,10 @@ ShapeData ShapeGenerator::makePlaneVerts(GLuint dimensions)
 			thisVert.position.z = i - half;
 			thisVert.position.y = 0;
 			thisVert.normal = glm::vec3(0.0f, 1.0f, 0.0f);
-			thisVert.color = glm::vec3(1.0f, 1.0f, 1.0f);
+			thisVert.color = glm::vec4(1.0f, 1.0f, 1.0f, +1.0f);
 			thisVert.uv0.x = (float) j / (float)dimensions;
 			thisVert.uv0.y = (float) i / (float)dimensions;
+			thisVert.tangent = glm::vec3(1.0f, 0.0f, 0.0f);
 		}
 	}
 	return ret;
