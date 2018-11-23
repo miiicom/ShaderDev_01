@@ -30,6 +30,7 @@ public:
 	MeCamera * meCamera;
 	GLfloat time;
 	glm::vec2 Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YSegNum);
+	void MoveLightLight(glm::vec3 pointlightOffset);
 
 private:
 	GLfloat rotationValue;

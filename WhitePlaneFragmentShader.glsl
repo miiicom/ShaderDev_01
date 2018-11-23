@@ -1,8 +1,9 @@
 #version 430
 
 out vec4 FragmentColor;
-in vec3 NormalWorld;
-in vec3 VertexPositionWorld;
+
+in vec3 LightDirectionTangentSpace;
+in vec3 ViewDirectionTangentSpace;
 in vec3 fragColor;
 in vec2 fragmentUV0;
 
@@ -26,14 +27,11 @@ void main()
 	vec4 normalTextureInfo = texture(normalTextureTC,fragmentUV0);
 
 	// diffuse
-	vec3 lightVectorWorld = normalize(pointLightPositionWorld - VertexPositionWorld);
-	float diffuseIntensity = dot(lightVectorWorld,normalize(NormalWorld));
+	float diffuseIntensity = dot(LightDirectionTangentSpace,normalTextureInfo.xyz);
 	vec4 diffuseLight = vec4(diffuseIntensity,diffuseIntensity,diffuseIntensity,1.0);
-
 	//specular
-	vec3 reflectedLightVectorWorld = reflect(-lightVectorWorld, NormalWorld);
-	vec3 eyeToWorld = normalize(eyePositionWorld - VertexPositionWorld);
-	float SpecIntensity =  dot(eyeToWorld,reflectedLightVectorWorld);
+	vec3 reflectedLightVectorTangent = reflect(-LightDirectionTangentSpace, normalTextureInfo.xyz);
+	float SpecIntensity =  dot(reflectedLightVectorTangent,ViewDirectionTangentSpace);
 	SpecIntensity = pow(SpecIntensity,20);
 	vec4 specLight = vec4(0.0,SpecIntensity,SpecIntensity,1.0);
 	FragmentColor = clamp(diffuseLight,0,1) + vec4(ambientLightUniform,0.0) +  clamp(specLight,0,1);

@@ -210,6 +210,32 @@ void MeWidget::keyPressEvent(QKeyEvent *event)
 		myGLWindow->meCamera->reset();
 		myGLWindow->repaint();
 	}
+	if (event->key() == Qt::Key_J)
+	{
+		printf("light move X positive");
+		myGLWindow->MoveLightLight(glm::vec3(0.1, 0.0, 0.0));
+		myGLWindow->repaint();
+	}
+
+	if (event->key() == Qt::Key_K)
+	{
+		printf("light move X negative");
+		myGLWindow->MoveLightLight(glm::vec3(-0.1, 0.0, 0.0));
+		myGLWindow->repaint();
+	}
+	if (event->key() == Qt::Key_I)
+	{
+		printf("light move Z positive");
+		myGLWindow->MoveLightLight(glm::vec3(0.0, 0.0, 0.1));
+		myGLWindow->repaint();
+	}
+
+	if (event->key() == Qt::Key_M)
+	{
+		printf("light move Z negative");
+		myGLWindow->MoveLightLight(glm::vec3(0.0, 0.0, -0.1));
+		myGLWindow->repaint();
+	}
 
 }
 
