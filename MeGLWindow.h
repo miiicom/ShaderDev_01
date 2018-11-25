@@ -40,6 +40,7 @@ private:
 	mat4 modelScaleMatrix;
 	mat4 projectionMatrix;
 
+	glm::vec2 spriteOffset;
 	glm::vec3 ambientLight;
 	glm::vec3 pointLightPosition;
 	

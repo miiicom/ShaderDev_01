@@ -76,7 +76,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	shape.cleanup();
 	//Create QImage obj
-	const char * texName = "texture/normalMap";
+	const char * texName = "texture/normalOcean.png";
 	QImage normalMap = loadTexture(texName);
 	// send Image to OpenGL
 	glActiveTexture(GL_TEXTURE0);
@@ -266,6 +266,7 @@ QImage MeGLWindow::loadTexture(const char * texName)
 
 glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YSegNum)
 {
+	printf("time is %f\n", time);
 	GLfloat UnitDistanceX = 1.0f / (float)XSegNum;
 	GLfloat UnitDistanceY = 1.0f / (float)YSegNum;
 	GLfloat SpriteNum = (int)(time) % (XSegNum * YSegNum);
@@ -277,6 +278,7 @@ glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YS
 	GLfloat SpriteUVOffsetX = XCellNum * UnitDistanceX;
 	GLfloat SpriteUVOffsetY = YCellNum * UnitDistanceY;
 	printf(" Sprite offset is %f in X, %f in Y", SpriteUVOffsetX, SpriteUVOffsetY);
+	this->spriteOffset = glm::vec2(SpriteUVOffsetX, SpriteUVOffsetY);
 	return glm::vec2(SpriteUVOffsetX, SpriteUVOffsetY);
 }
 
@@ -374,8 +376,8 @@ void MeGLWindow::paintGL() {
 	GLuint IdealMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "idealMatrix");
 	glUniform3fv(IdealMatrixUniformLocation, 1, &glm::vec3(1.0)[0]);
 	GLuint SpriteOffsetUniformLoc = glGetUniformLocation(whitePlaneProgramID, "SpriteOffset");
-	glm::vec2 SpriteOffset = Calculate2DSpriteLoc(time, 8, 8);
-	glUniform2fv(SpriteOffsetUniformLoc, 1, &SpriteOffset[0]);
+	//glm::vec2 SpriteOffset = Calculate2DSpriteLoc(time, 16, 16);
+	glUniform2fv(SpriteOffsetUniformLoc, 1, &spriteOffset[0]);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 	printf("point light position is %f and %f", this->pointLightPosition.x, this->pointLightPosition.y);
 }
@@ -383,6 +385,7 @@ void MeGLWindow::paintGL() {
 MeGLWindow::MeGLWindow()
 {
 	meCamera = new MeCamera;
+	spriteOffset = glm::vec2(0.0f, 0.0f);
 	ambientLight = glm::vec3(0.1f, 0.1f, 0.1f);
 	pointLightPosition = glm::vec3(0.0f, 0.0f,-5.0f);
 	time = 0.0f;

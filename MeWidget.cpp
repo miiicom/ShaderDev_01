@@ -20,7 +20,7 @@ MeWidget::MeWidget()
 
 	IsPressing = false;
 	myGLWindow->setMouseTracking(true);
-	//startTimer(1000);
+	startTimer(50);
 
 	//---Hard code boundaries---
 }
@@ -154,8 +154,8 @@ void MeWidget::handleBoundaries()
 void MeWidget::timerEvent(QTimerEvent *event) {
 	rotationValue++;
 	//myGLWindow->InitialValueSetter(rotationValue);
-	myGLWindow->time = myGLWindow->time + 1.0;
-	//myGLWindow->Calculate2DSpriteLoc(myGLWindow->time,2,2);
+	myGLWindow->time += 1.0f;
+	myGLWindow->Calculate2DSpriteLoc(myGLWindow->time,16,16);
 	myGLWindow->repaint();
 }
 

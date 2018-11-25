@@ -80,5 +80,8 @@
     <Image Include="texture\fireSprite.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="texture\normalOcean.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

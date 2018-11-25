@@ -20,11 +20,11 @@ void main()
 	//vec2 MovedFragmentUV0 = fragmentUV0 + timeVector;
 
 	//SpriteLoc
-	//vec2 ShrinkFragUV0 = vec2(fragmentUV0.x / 8,fragmentUV0.y/ 8);
-	//vec2 MovedFragmentUV0 = ShrinkFragUV0 + SpriteOffset;
+	vec2 ShrinkFragUV0 = vec2(fragmentUV0.x / 16,fragmentUV0.y/ 16);
+	vec2 MovedFragmentUV0 = ShrinkFragUV0 + SpriteOffset;
 
 	//read Texture
-	vec4 normalTextureInfo = texture(normalTextureTC,fragmentUV0);
+	vec4 normalTextureInfo = texture(normalTextureTC,MovedFragmentUV0);
 
 	// diffuse
 	float diffuseIntensity = dot(LightDirectionTangentSpace,normalTextureInfo.xyz);
@@ -34,6 +34,7 @@ void main()
 	float SpecIntensity =  dot(reflectedLightVectorTangent,ViewDirectionTangentSpace);
 	SpecIntensity = pow(SpecIntensity,20);
 	vec4 specLight = vec4(0.0,SpecIntensity,SpecIntensity,1.0);
-	FragmentColor = clamp(diffuseLight,0,1) + vec4(ambientLightUniform,0.0) +  clamp(specLight,0,1);
+	vec4 lightColor = clamp(diffuseLight,0,1) + vec4(ambientLightUniform,0.0) +  clamp(specLight,0,1);
+	FragmentColor = lightColor;
 	//FragmentColor = normalTextureInfo;
 }
