@@ -78,7 +78,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	//Create QImage obj
 	const char * texName = "texture/normalOcean.png";
 	QImage normalMap = loadTexture(texName);
-	// send Image to OpenGL
+	// send Normal Image to OpenGL
 	glActiveTexture(GL_TEXTURE0);
 	GLuint textureID;
 	glGenTextures(1, &textureID);
@@ -90,7 +90,21 @@ void MeGLWindow::sendDataToOpenGL() {
 		GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 		GL_LINEAR);
-
+	//Create another QImage obj
+	texName = "texture/normalOcean.png";
+	QImage displacementMap = loadTexture(texName);
+	//send Displacement to OpenGL
+	glGenTextures(1, &textureID);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, displacementMap.width(),
+		displacementMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		displacementMap.bits());
+	//Do I need to set them twice?
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
 }
 
 void MeGLWindow::setupVertexArrays()
@@ -371,6 +385,8 @@ void MeGLWindow::paintGL() {
 	glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &modelTransformMatrix[0][0]);
 	GLuint normalTextureUniformLocation = glGetUniformLocation(whitePlaneProgramID, "normalTextureTC");
 	glUniform1i(normalTextureUniformLocation, 0);
+	GLuint displaceTextureUniformLocation = glGetUniformLocation(whitePlaneProgramID, "displaceTextureTC");
+	glUniform1i(displaceTextureUniformLocation, 1);
 	GLuint timeUniformLocation = glGetUniformLocation(whitePlaneProgramID, "time");
 	glUniform1f(timeUniformLocation, this->time);
 	GLuint IdealMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "idealMatrix");

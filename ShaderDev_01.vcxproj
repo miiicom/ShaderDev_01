@@ -156,6 +156,7 @@
   <ItemGroup>
     <Image Include="texture\Checker" />
     <Image Include="texture\ColorChecker.png" />
+    <Image Include="texture\Displacement.png" />
     <Image Include="texture\fireSprite.png" />
     <Image Include="texture\normalOcean.png" />
   </ItemGroup>

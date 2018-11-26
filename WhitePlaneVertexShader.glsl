@@ -14,6 +14,8 @@ uniform mat4 modelToViewTransMatrix;
 uniform mat4 WorldToViewMatrix;
 uniform mat3 idealMatrix;
 uniform float time;
+uniform vec2 SpriteOffset;
+uniform sampler2D displaceTextureTC;
 
 out vec3 LightDirectionTangentSpace;
 out vec3 ViewDirectionTangentSpace;
@@ -21,8 +23,11 @@ out vec3 fragColor;
 out vec2 fragmentUV0;
 
 void main()
-{
-	
+{	//sprite loc
+	vec2 ShrinkFragUV0 = vec2(vertexUV0.x / 16,vertexUV0.y/ 16);
+	vec2 MovedFragmentUV0 = ShrinkFragUV0 + SpriteOffset;
+	vec4 texel = texture(displaceTextureTC, MovedFragmentUV0);
+	//vec4 vertexPositionOffsetted = vec4(vertexPositionModel.x,texel.x + vertexPositionModel.y,clamp(vertexPositionModel.z,0,1),0.0)
 
 	gl_Position = modelToProjectionMatrix *  vertexPositionModel;
 

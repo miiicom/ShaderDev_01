@@ -11,6 +11,7 @@ uniform vec3 ambientLightUniform;
 uniform vec3 pointLightPositionWorld;
 uniform vec3 eyePositionWorld;
 uniform sampler2D normalTextureTC;
+uniform sampler2D displaceTextureTC;
 uniform float time;
 uniform vec2 SpriteOffset;
 
