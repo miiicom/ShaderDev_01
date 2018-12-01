@@ -26,10 +26,11 @@ void main()
 {	//sprite loc
 	vec2 ShrinkFragUV0 = vec2(vertexUV0.x / 16,vertexUV0.y/ 16);
 	vec2 MovedFragmentUV0 = ShrinkFragUV0 + SpriteOffset;
-	vec4 texel = texture(displaceTextureTC, MovedFragmentUV0);
-	//vec4 vertexPositionOffsetted = vec4(vertexPositionModel.x,texel.x + vertexPositionModel.y,clamp(vertexPositionModel.z,0,1),0.0)
+	vec4 texel = texture2D(displaceTextureTC, MovedFragmentUV0);
+	vec4 vertexPositionOffsetted = vec4(vertexPositionModel.x,vertexPositionModel.y + (texel.x / 5),vertexPositionModel.z,vertexPositionModel.w);
 
-	gl_Position = modelToProjectionMatrix *  vertexPositionModel;
+	//gl_Position = modelToProjectionMatrix *  vertexPositionModel;
+	gl_Position = modelToProjectionMatrix *  vertexPositionOffsetted;
 
 	//Transform normal and tangent to eye space
 	vec3 NormalView = normalize(vec3(modelToViewTransMatrix * vec4(normalModel,0.0)));
