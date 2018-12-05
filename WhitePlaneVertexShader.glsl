@@ -48,7 +48,7 @@ void main()
 
 	//Get position in view coordinate
 	vec3 PositionInView = vec3(modelToViewTransMatrix  * vertexPositionModel);
-	vec4 pointLightPositionInView = modelToViewTransMatrix * vec4(pointLightPosition,1.0);
+	vec4 pointLightPositionInView = WorldToViewMatrix * vec4(pointLightPosition,1.0);
 
 	LightDirectionTangentSpace = normalize( ViewToOBJTangentSpce * (pointLightPositionInView.xyz - PositionInView));
 	ViewDirectionTangentSpace = ViewToOBJTangentSpce * normalize(-PositionInView);
