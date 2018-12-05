@@ -27,8 +27,9 @@ void main()
 	gl_Position = modelToProjectionMatrix *  vertexPositionModel;
 
 	//Transform normal and tangent to eye space
-	vec3 NormalView = normalize(vec3(modelToViewTransMatrix * vec4(normalModel,0.0)));
-	vec3 TangentView = normalize(vec3(modelToViewTransMatrix * vec4(tangentModel,0.0)));
+	mat4 normalMatrixMat = transpose(inverse(modelToViewTransMatrix));
+	vec3 NormalView = normalize(mat3(normalMatrixMat) * normalModel);
+	vec3 TangentView =  normalize(mat3(normalMatrixMat) * tangentModel);
 	//Calculate Binormal
 	vec3 binormal = normalize(cross(NormalView,TangentView)) * 1 ; // 1 for handedness
 
@@ -41,7 +42,7 @@ void main()
 
 	//Get position in view coordinate
 	vec3 PositionInView = vec3(modelToViewTransMatrix  * vertexPositionModel);
-	vec4 pointLightPositionInView = normalize(WorldToViewMatrix * vec4(pointLightPosition,1.0));
+	vec4 pointLightPositionInView = modelToViewTransMatrix * vec4(pointLightPosition,1.0);
 
 	LightDirectionTangentSpace = normalize( ViewToOBJTangentSpce * (pointLightPositionInView.xyz - PositionInView));
 	ViewDirectionTangentSpace = ViewToOBJTangentSpce * normalize(-PositionInView);
