@@ -154,9 +154,9 @@ void MeWidget::handleBoundaries()
 void MeWidget::timerEvent(QTimerEvent *event) {
 	rotationValue++;
 	//myGLWindow->InitialValueSetter(rotationValue);
-	myGLWindow->time += 1.0f;
 	myGLWindow->Calculate2DSpriteLoc(myGLWindow->time,16,16);
 	myGLWindow->repaint();
+	myGLWindow->time += 1.0f;
 }
 
 void MeWidget::keyPressEvent(QKeyEvent *event)
@@ -214,27 +214,27 @@ void MeWidget::keyPressEvent(QKeyEvent *event)
 	{
 		printf("light move X positive");
 		myGLWindow->MoveLightLight(glm::vec3(0.1, 0.0, 0.0));
-		myGLWindow->repaint();
+		//myGLWindow->repaint();
 	}
 
 	if (event->key() == Qt::Key_K)
 	{
 		printf("light move X negative");
 		myGLWindow->MoveLightLight(glm::vec3(-0.1, 0.0, 0.0));
-		myGLWindow->repaint();
+		//myGLWindow->repaint();
 	}
 	if (event->key() == Qt::Key_I)
 	{
 		printf("light move Z positive");
 		myGLWindow->MoveLightLight(glm::vec3(0.0, 0.0, 0.1));
-		myGLWindow->repaint();
+		//myGLWindow->repaint();
 	}
 
 	if (event->key() == Qt::Key_M)
 	{
 		printf("light move Z negative");
 		myGLWindow->MoveLightLight(glm::vec3(0.0, 0.0, -0.1));
-		myGLWindow->repaint();
+		//myGLWindow->repaint();
 	}
 
 }

@@ -62,7 +62,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	arrowIndices = shape.numIndices;
 
-	GLuint PlaneDimension = 10;
+	GLuint PlaneDimension = 15;
 
 	shape = ShapeGenerator::makePlane(PlaneDimension);
 	glGenBuffers(1, &PlaneVertexBufferID);
@@ -361,7 +361,7 @@ void MeGLWindow::paintGL() {
 	// in here rebind for cube
 	glBindVertexArray(PlaneVertexArrayObjectID);
 
-	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
+	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 50.0f); // Projection matrix
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -1.0f, -5.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f,1.0f, 1.0f));
@@ -372,12 +372,14 @@ void MeGLWindow::paintGL() {
 	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "modelToProjectionMatrix");
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	WorldToViewMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "WorldToViewMatrix");
-	glUniformMatrix4fv(WorldToViewMatrixUniformLocation, 1, GL_FALSE, &mat4(meCamera->getWorldToViewMatrix())[0][0]);
+	glm::mat4 worldToViewMatrix = meCamera->getWorldToViewMatrix();
+	glUniformMatrix4fv(WorldToViewMatrixUniformLocation, 1, GL_FALSE, &worldToViewMatrix[0][0]);
 	ModelToViewMatrixUniformLoc = glGetUniformLocation(whitePlaneProgramID, "modelToViewTransMatrix");
 	glUniformMatrix4fv(ModelToViewMatrixUniformLoc, 1, GL_FALSE, &ModelToViewMatrix[0][0]);
 	ambientLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "ambientLightUniform");
 	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
 	pointLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "pointLightPositionWorld");
+	printf("point light position is %f and %f", this->pointLightPosition.x, this->pointLightPosition.z);
 	glUniform3fv(pointLightUniformLocation, 1, &pointLightPosition[0]);
 	eyeUniformLocation = glGetUniformLocation(whitePlaneProgramID, "eyePositionWorld");
 	glUniform3fv(eyeUniformLocation, 1, &eyePosition[0]);
@@ -392,18 +394,16 @@ void MeGLWindow::paintGL() {
 	GLuint IdealMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "idealMatrix");
 	glUniform3fv(IdealMatrixUniformLocation, 1, &glm::vec3(1.0)[0]);
 	GLuint SpriteOffsetUniformLoc = glGetUniformLocation(whitePlaneProgramID, "SpriteOffset");
-	//glm::vec2 SpriteOffset = Calculate2DSpriteLoc(time, 16, 16);
 	glUniform2fv(SpriteOffsetUniformLoc, 1, &spriteOffset[0]);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
-	printf("point light position is %f and %f", this->pointLightPosition.x, this->pointLightPosition.y);
 }
 
 MeGLWindow::MeGLWindow()
 {
 	meCamera = new MeCamera;
 	spriteOffset = glm::vec2(0.0f, 0.0f);
-	ambientLight = glm::vec3(0.1f, 0.1f, 0.1f);
-	pointLightPosition = glm::vec3(0.0f, 0.0f,-5.0f);
+	ambientLight = glm::vec3(+0.1f, +0.1f, +0.1f);
+	pointLightPosition = glm::vec3(+0.0f,+0.0f,+25.0f);
 	time = 0.0f;
 }
 
