@@ -50,7 +50,7 @@ void main()
 	vec3 PositionInView = vec3(modelToViewTransMatrix  * vertexPositionModel);
 	vec4 pointLightPositionInView = WorldToViewMatrix * vec4(pointLightPosition,1.0);
 
-	LightDirectionTangentSpace = normalize( ViewToOBJTangentSpce * (pointLightPositionInView.xyz - PositionInView));
+	LightDirectionTangentSpace = normalize( ViewToOBJTangentSpce * (vec3(pointLightPositionInView) - PositionInView));
 	ViewDirectionTangentSpace = ViewToOBJTangentSpce * normalize(-PositionInView);
 
 	fragColor = vertexColorModel.xyz;
