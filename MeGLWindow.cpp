@@ -346,7 +346,7 @@ void MeGLWindow::paintGL() {
 	glBindVertexArray(PlaneVertexArrayObjectID);
 
 	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 10.0f); // Projection matrix
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -1.0f, -5.0f)); // push 4 away from camera
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f,1.0f, 1.0f));
 	ModelToWorldMatrix = modelTransformMatrix* modelRotateMatrix *  modelScaleMatrix;
@@ -362,6 +362,7 @@ void MeGLWindow::paintGL() {
 	ambientLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "ambientLightUniform");
 	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
 	pointLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "pointLightPositionWorld");
+	//glm::vec4 pointLightPositionInEye = meCamera->getWorldToViewMatrix() * glm::vec4(pointLightPosition.x, pointLightPosition.y, pointLightPosition.z, 1.0);
 	glUniform3fv(pointLightUniformLocation, 1, &pointLightPosition[0]);
 	eyeUniformLocation = glGetUniformLocation(whitePlaneProgramID, "eyePositionWorld");
 	glUniform3fv(eyeUniformLocation, 1, &eyePosition[0]);
@@ -384,7 +385,7 @@ MeGLWindow::MeGLWindow()
 {
 	meCamera = new MeCamera;
 	ambientLight = glm::vec3(0.1f, 0.1f, 0.1f);
-	pointLightPosition = glm::vec3(0.0f, 0.0f,-5.0f);
+	pointLightPosition = glm::vec3(0.0f, 1.0f,0.0f);
 	time = 0.0f;
 }
 

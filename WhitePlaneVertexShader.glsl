@@ -15,10 +15,11 @@ uniform mat4 WorldToViewMatrix;
 uniform mat3 idealMatrix;
 uniform float time;
 
-out vec3 LightDirectionTangentSpace;
-out vec3 ViewDirectionTangentSpace;
+out mat3 TBNtangentToModel;
+out vec3 vertexPositionWorld;
 out vec3 fragColor;
 out vec2 fragmentUV0;
+out vec3 normalWorld;
 
 void main()
 {
@@ -26,27 +27,14 @@ void main()
 
 	gl_Position = modelToProjectionMatrix *  vertexPositionModel;
 
-	//Transform normal and tangent to eye space
-	mat4 normalMatrixMat = transpose(inverse(modelToViewTransMatrix));
-	vec3 NormalView = normalize(mat3(normalMatrixMat) * normalModel);
-	vec3 TangentView =  normalize(mat3(normalMatrixMat) * tangentModel);
-	//Calculate Binormal
-	vec3 binormal = normalize(cross(NormalView,TangentView)) * 1 ; // 1 for handedness
+	//Transform normal and tangent to world space and then calculate bitangent
+	vec3 biTangentModel = normalize(cross(normalModel,tangentModel)) * 1 ;		//1 for handedness ion OpenGL 
+		
+	//Construct TBN Matrix
+	TBNtangentToModel =  mat3(tangentModel,biTangentModel,normalModel);
 
-	//Matrix for transformation to tangent space
-	mat3 ViewToOBJTangentSpce  = mat3(
-		TangentView.x, binormal.x, NormalView.x,
-		TangentView.y, binormal.y, NormalView.y,
-		TangentView.z, binormal.z, NormalView.z
-	);
-
-	//Get position in view coordinate
-	vec3 PositionInView = vec3(modelToViewTransMatrix  * vertexPositionModel);
-	vec4 pointLightPositionInView = modelToViewTransMatrix * vec4(pointLightPosition,1.0);
-
-	LightDirectionTangentSpace = normalize( ViewToOBJTangentSpce * (pointLightPositionInView.xyz - PositionInView));
-	ViewDirectionTangentSpace = ViewToOBJTangentSpce * normalize(-PositionInView);
-
+	normalWorld = vec3(modelToWorldTransMatrix * vec4(normalModel, 0));
+	vertexPositionWorld = vec3(modelToWorldTransMatrix * vertexPositionModel);
 	fragColor = vertexColorModel.xyz;
 	fragmentUV0 = vertexUV0;
 }
