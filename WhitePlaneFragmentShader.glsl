@@ -47,7 +47,7 @@ void main()
 	specularIntensity = pow(specularIntensity,50);
 	vec4 speculatLight = vec4(0,0,specularIntensity,0);
 
-	FragmentColor = vec4(ambientLightUniform,0.0) + clamp(diffuseLight,0,1);
+	FragmentColor = vec4(ambientLightUniform,0.0) + clamp(diffuseLight,0,1) + speculatLight;
 	//FragmentColor = vec4(normalTextureInfoInWorld.xyz,0.0);
 	//FragmentColor = vec4( 1.0,1.0,1.0,0.0);
 	//FragmentColor = normalTextureInfo;
