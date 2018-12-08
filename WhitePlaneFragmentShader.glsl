@@ -27,7 +27,7 @@ void main()
 
 	//read Texture and apply TBN matrix to sampled normal vector
 	//vec2 newfragmentUV0 = vec2(fragmentUV0.x, -fragmentUV0.y);
-	vec4 normalTextureInfo = texture(normalTextureTC,fragmentUV0)* 1.5 - 1;
+	vec4 normalTextureInfo = texture(normalTextureTC,fragmentUV0)* 1.5 - 1.05;
 	vec4 testNormalTangent = vec4(0.0,0.0,1.0,0.0);
 	vec3 normalTextureInfoInObj = TBNtangentToModel * normalTextureInfo.xyz;
 	vec3 normalTextureInfoInWorld = vec3(modelToWorldTransMatrix * vec4(normalTextureInfoInObj,1.0));
@@ -45,7 +45,7 @@ void main()
 	specularIntensity = pow(specularIntensity,50);
 	vec4 speculatLight = vec4(0,0,specularIntensity,0);
 
-	FragmentColor = vec4(ambientLightUniform,0.0) + clamp(diffuseLight,0,1) + speculatLight;
+	FragmentColor = vec4(ambientLightUniform,0.0) + clamp(diffuseLight,0,1) + clamp(speculatLight,0,1);
 	//FragmentColor = vec4(normalTextureInfoInWorld.xyz,0.0);
 	//FragmentColor = vec4( 1.0,1.0,1.0,0.0);
 	//FragmentColor = normalTextureInfo;
