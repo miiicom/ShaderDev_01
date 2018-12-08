@@ -13,14 +13,15 @@ uniform mat4 modelToWorldTransMatrix;
 uniform mat4 modelToViewTransMatrix;
 uniform mat4 WorldToViewMatrix;
 uniform mat3 idealMatrix;
-uniform float time;
 uniform vec2 SpriteOffset;
 uniform sampler2D displaceTextureTC;
+uniform float time;
 
-out vec3 LightDirectionTangentSpace;
-out vec3 ViewDirectionTangentSpace;
+out mat3 TBNtangentToModel;
+out vec3 vertexPositionWorld;
 out vec3 fragColor;
 out vec2 fragmentUV0;
+out vec3 normalWorld;
 
 void main()
 {	//sprite loc
@@ -30,29 +31,17 @@ void main()
 	vec4 vertexPositionOffsetted = vec4(vertexPositionModel.x,vertexPositionModel.y + (texel.x /2.5),vertexPositionModel.z,vertexPositionModel.w);
 
 	//gl_Position = modelToProjectionMatrix *  vertexPositionModel;
+
 	gl_Position = modelToProjectionMatrix *  vertexPositionOffsetted;
 
-	//Transform normal and tangent to eye space
-	mat4 NormalMatrixMat4 = transpose(inverse(modelToViewTransMatrix));
-	vec3 NormalView = normalize(mat3(NormalMatrixMat4) * normalModel);
-	vec3 TangentView = normalize(mat3(NormalMatrixMat4) * tangentModel);
-	//Calculate Binormal
-	vec3 binormal = normalize(cross(NormalView,TangentView)) * 1 ; // 1 for handedness
+	//Transform normal and tangent to world space and then calculate bitangent
+	vec3 biTangentModel = normalize(cross(normalModel,tangentModel)) * 1 ;		//1 for handedness ion OpenGL 
+		
+	//Construct TBN Matrix
+	TBNtangentToModel =  mat3(tangentModel,biTangentModel,normalModel);
 
-	//Matrix for transformation to tangent space
-	mat3 ViewToOBJTangentSpce  = mat3(
-		TangentView.x, binormal.x, NormalView.x,
-		TangentView.y, binormal.y, NormalView.y,
-		TangentView.z, binormal.z, NormalView.z
-	);
-
-	//Get position in view coordinate
-	vec3 PositionInView = vec3(modelToViewTransMatrix  * vertexPositionModel);
-	vec4 pointLightPositionInView = WorldToViewMatrix * vec4(pointLightPosition,1.0);
-
-	LightDirectionTangentSpace = normalize( ViewToOBJTangentSpce * (vec3(pointLightPositionInView) - PositionInView));
-	ViewDirectionTangentSpace = ViewToOBJTangentSpce * normalize(-PositionInView);
-
+	normalWorld = vec3(modelToWorldTransMatrix * vec4(normalModel, 0));
+	vertexPositionWorld = vec3(modelToWorldTransMatrix * vertexPositionModel);
 	fragColor = vertexColorModel.xyz;
 	fragmentUV0 = MovedFragmentUV0;
 }
