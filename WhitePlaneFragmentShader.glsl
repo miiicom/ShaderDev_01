@@ -2,6 +2,7 @@
 
 out vec4 FragmentColor;
 
+
 in mat3 TBNtangentToModel;
 in vec3 vertexPositionWorld;
 in vec3 fragColor;
@@ -36,18 +37,18 @@ void main()
 
 	// diffuse
 	vec3 lightVectorWorld = normalize(pointLightPositionWorld - vertexPositionWorld);
-	float DiffuseIntensity = dot(lightVectorWorld, normalize(normalTextureInfoInWorld));
-	vec4 diffuseLight = vec4(DiffuseIntensity, DiffuseIntensity,DiffuseIntensity,1.0);
+	float brightness = dot(lightVectorWorld, normalize(normalTextureInfoInWorld));
+	vec4 diffuseLight = vec4(brightness, brightness, brightness, 1.0);
 
 
 	//specular
-	vec3 reflectedLightVectorWorld = reflect( -pointLightPositionWorld,normalTextureInfoInWorld);
-	vec3 eyeVectorWorld =  normalize(eyePositionWorld - vertexPositionWorld);
-	float specularIntensity = clamp(dot(reflectedLightVectorWorld, eyeVectorWorld),0,1);
-	specularIntensity = pow(specularIntensity,50);
-	vec4 speculatLight = vec4(0,0,specularIntensity,0);
+	vec3 reflectedLightVectorWorld = reflect(-lightVectorWorld, normalTextureInfoInWorld);
+	vec3 eyeVectorWorld = normalize(eyePositionWorld - vertexPositionWorld);
+	float s = clamp(dot(reflectedLightVectorWorld, eyeVectorWorld), 0, 1);
+	s = pow(s, 50);
+	vec4 specularLight = vec4(s, 0, 0, 1);
 
-	FragmentColor = vec4(ambientLightUniform,0.0) + clamp(diffuseLight,0,1) + speculatLight;
+	FragmentColor = vec4(ambientLightUniform,1.0) + clamp(diffuseLight, 0, 1) + specularLight;
 	//FragmentColor = vec4(normalTextureInfoInWorld.xyz,0.0);
 	//FragmentColor = vec4( 1.0,1.0,1.0,0.0);
 	//FragmentColor = normalTextureInfo;
