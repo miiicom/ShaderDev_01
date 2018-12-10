@@ -28,7 +28,8 @@ void main()
 	vec2 ShrinkFragUV0 = vec2(vertexUV0.x / 16,vertexUV0.y/ 16);
 	vec2 MovedFragmentUV0 = ShrinkFragUV0 + SpriteOffset;
 	vec4 texel = texture2D(displaceTextureTC, MovedFragmentUV0);
-	vec4 vertexPositionOffsetted = vec4(vertexPositionModel.x,vertexPositionModel.y + (texel.x /2.5),vertexPositionModel.z,vertexPositionModel.w);
+	float displacementAmount = 0.30 * texel.x + 0.59*texel.y + 0.11 * texel.z;
+	vec4 vertexPositionOffsetted = vec4(vertexPositionModel.x,vertexPositionModel.y +displacementAmount,vertexPositionModel.z,vertexPositionModel.w);
 
 	//gl_Position = modelToProjectionMatrix *  vertexPositionModel;
 
