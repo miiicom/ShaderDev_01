@@ -27,25 +27,26 @@ void main()
 
 	//read Texture and apply TBN matrix to sampled normal vector
 	//vec2 newfragmentUV0 = vec2(fragmentUV0.x, -fragmentUV0.y);
-	vec4 normalTextureInfo = texture(normalTextureTC,fragmentUV0)* 1.5 - 1.05;
+	vec4 normalTextureInfo = normalize(texture(normalTextureTC,fragmentUV0)* 1.5 - 1.05);
 	vec4 testNormalTangent = vec4(0.0,0.0,1.0,0.0);
 	vec3 normalTextureInfoInObj = TBNtangentToModel * normalTextureInfo.xyz;
 	vec3 normalTextureInfoInWorld = vec3(modelToWorldTransMatrix * vec4(normalTextureInfoInObj,1.0));
 
 	// diffuse
 	vec3 lightVectorWorld = normalize(pointLightPositionWorld - vertexPositionWorld);
-	float DiffuseIntensity = dot(lightVectorWorld, normalize(normalTextureInfoInWorld));
-	vec4 diffuseLight = vec4(DiffuseIntensity, DiffuseIntensity,DiffuseIntensity,1.0);
+	float brightness = dot(lightVectorWorld, normalize(normalTextureInfoInWorld));
+	vec4 diffuseLight = vec4(brightness, brightness, brightness, 1.0);
 
 
 	//specular
-	vec3 reflectedLightVectorWorld = reflect( -pointLightPositionWorld,normalTextureInfoInWorld);
-	vec3 eyeVectorWorld =  normalize(eyePositionWorld - vertexPositionWorld);
-	float specularIntensity = clamp(dot(reflectedLightVectorWorld, eyeVectorWorld),0,1);
-	specularIntensity = pow(specularIntensity,50);
-	vec4 speculatLight = vec4(0,0,specularIntensity,0);
+	vec3 reflectedLightVectorWorld = reflect(-lightVectorWorld, normalTextureInfoInWorld);
+	vec3 eyeVectorWorld = normalize(eyePositionWorld - vertexPositionWorld);
+	float s = clamp(dot(reflectedLightVectorWorld, eyeVectorWorld), 0, 1);
+	s = pow(s, 10);
+	vec4 specularLight = vec4(s, s, s, 1);
 
-	FragmentColor = vec4(ambientLightUniform,0.0) + clamp(diffuseLight,0,1) + clamp(speculatLight,0,1);
+	FragmentColor = diffuseLight + vec4(ambientLightUniform,1.0) ;
+	//FragmentColor = vec4(ambientLightUniform,1.0) + clamp(diffuseLight, 0, 1) + specularLight;
 	//FragmentColor = vec4(normalTextureInfoInWorld.xyz,0.0);
 	//FragmentColor = vec4( 1.0,1.0,1.0,0.0);
 	//FragmentColor = normalTextureInfo;
