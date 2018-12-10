@@ -39,14 +39,14 @@ void main()
 
 
 	//specular
-	vec3 reflectedLightVectorWorld = reflect(-lightVectorWorld, normalTextureInfoInWorld);
-	vec3 eyeVectorWorld = normalize(eyePositionWorld - vertexPositionWorld);
+	vec3 reflectedLightVectorWorld =reflect(-lightVectorWorld, normalTextureInfoInWorld);
+	vec3 eyeVectorWorld = 3 * normalize(eyePositionWorld - vertexPositionWorld);
 	float s = clamp(dot(reflectedLightVectorWorld, eyeVectorWorld), 0, 1);
-	s = pow(s, 10);
-	vec4 specularLight = vec4(s, s, s, 1);
+	s = pow(s,10);
+	vec4 specularLight = vec4(0, 0.5*s, s, 1);
 
-	FragmentColor = diffuseLight + vec4(ambientLightUniform,1.0) ;
-	//FragmentColor = vec4(ambientLightUniform,1.0) + clamp(diffuseLight, 0, 1) + specularLight;
+	//FragmentColor = specularLight + vec4(ambientLightUniform,1.0) ;
+	FragmentColor = vec4(ambientLightUniform,1.0) + clamp(diffuseLight, 0, 1) + specularLight;
 	//FragmentColor = vec4(normalTextureInfoInWorld.xyz,0.0);
 	//FragmentColor = vec4( 1.0,1.0,1.0,0.0);
 	//FragmentColor = normalTextureInfo;
