@@ -91,7 +91,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 		GL_LINEAR);
 	//Create another QImage obj
-	texName = "texture/normalOcean.png";
+	texName = "texture/displacement_origin.png";
 	QImage displacementMap = loadTexture(texName);
 	//send Displacement to OpenGL
 	glGenTextures(1, &textureID);
