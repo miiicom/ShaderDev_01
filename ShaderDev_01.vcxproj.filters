@@ -65,6 +65,8 @@
     <None Include="texture\normalMap">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="PBR_vertexShader.glsl" />
+    <None Include="PBR_fragmentShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="box.obj" />
