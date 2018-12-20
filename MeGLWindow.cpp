@@ -74,7 +74,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	planeIndices = shape.numIndices;
 
-	//shape.cleanup();
+	shape.cleanup();
 	//Create QImage obj
 	const char * texName = "texture/normalOcean.png";
 	QImage normalMap = loadTexture(texName);
