@@ -64,7 +64,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	GLuint PlaneDimension = 15;
 
-	shape = ShapeGenerator::makePlane(PlaneDimension);
+	shape = ShapeGenerator::makeSphere(PlaneDimension);
 	glGenBuffers(1, &PlaneVertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, PlaneVertexBufferID);
 	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
@@ -74,7 +74,9 @@ void MeGLWindow::sendDataToOpenGL() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	planeIndices = shape.numIndices;
 
-	shape.cleanup();
+	//shape = ShapeGenerator::makeSphere(PlaneDimension);
+
+	//shape.cleanup();
 	//Create QImage obj
 	const char * texName = "texture/normalOcean.png";
 	QImage normalMap = loadTexture(texName);

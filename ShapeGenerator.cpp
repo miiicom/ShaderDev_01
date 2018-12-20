@@ -575,6 +575,36 @@ ShapeData ShapeGenerator::makePlane(GLuint dimensions)
 	return ret;
 }
 
+ShapeData ShapeGenerator::makeSphere(GLuint tesselation)
+{
+	ShapeData ret = makePlaneVerts(tesselation);
+	ShapeData ret2 = makePlaneIndices(tesselation);
+	ret.indices = ret2.indices;
+	ret.numIndices = ret2.numIndices;
+
+	//GLuint dimensions = tesselation + 1;
+	const float RADIUS = 1.0f;
+
+	const double CIRCLE = 3.141592653 * 2;
+	const double SLICE_ANGLE = CIRCLE / (tesselation - 1);
+	for (size_t col = 0; col < tesselation; col++)
+	{
+		double phi = -SLICE_ANGLE * col;
+		for (size_t row = 0; row < tesselation; row++)
+		{
+			double theta = -(SLICE_ANGLE / 2.0) * row;
+			size_t vertIndex = col * tesselation + row;
+			Vertex& v = ret.vertices[vertIndex];
+			v.position.x = RADIUS * cos(phi) * sin(theta);
+			v.position.y = RADIUS * sin(phi) * sin(theta);
+			v.position.z = RADIUS * cos(theta);
+			v.normal = glm::normalize(v.position);
+		}
+	}
+
+	return ret;
+}
+
 ShapeGenerator::ShapeGenerator()
 {
 }
