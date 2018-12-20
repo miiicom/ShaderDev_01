@@ -28,43 +28,15 @@ GLuint  vertexShaderID;
 GLuint  fragmentShaderID;
 GLuint  WhitePlanefragmentShaderID;
 
-GLuint cubeVertexBufferID;
-GLuint cubeIndexBufferID;
-GLuint ArrowVertexBufferID;
-GLuint ArrowIndexBufferID;
 GLuint PlaneVertexBufferID;
 GLuint PlaneIndexBufferID;
 
-GLuint cubeVertexArrayObjectID;
-GLuint arrowVertexArrayObjectID;
 GLuint PlaneVertexArrayObjectID;
 
 void MeGLWindow::sendDataToOpenGL() {
-	ShapeData shape = ShapeGenerator::makeCube();
+	GLuint PlaneDimension = 30;
 
-	glGenBuffers(1, &cubeVertexBufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferID);
-	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
-	
-	glGenBuffers(1, &cubeIndexBufferID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIndexBufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
-	cubeIndices = shape.numIndices;
-
-	shape = ShapeGenerator::makeArrow();
-
-	glGenBuffers(1, &ArrowVertexBufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, ArrowVertexBufferID);
-	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
-
-	glGenBuffers(1, &ArrowIndexBufferID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ArrowIndexBufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
-	arrowIndices = shape.numIndices;
-
-	GLuint PlaneDimension = 15;
-
-	shape = ShapeGenerator::makeSphere(PlaneDimension);
+	ShapeData shape = ShapeGenerator::makeSphere(PlaneDimension);
 	glGenBuffers(1, &PlaneVertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, PlaneVertexBufferID);
 	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
@@ -109,36 +81,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 void MeGLWindow::setupVertexArrays()
 {
-	glGenVertexArrays(1, &cubeVertexArrayObjectID);
-	glGenVertexArrays(1, &arrowVertexArrayObjectID);
-
-	glBindVertexArray(cubeVertexArrayObjectID);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferID);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, 0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (char*)(sizeof(float) * 3));
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 7));
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 10));
-	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 12));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIndexBufferID);
-
-	glBindVertexArray(arrowVertexArrayObjectID);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
-	glBindBuffer(GL_ARRAY_BUFFER, ArrowVertexBufferID);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, 0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (char*)(sizeof(float) * 3));
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 7));
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 10));
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 12));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ArrowIndexBufferID);
+	glGenVertexArrays(1, &PlaneVertexArrayObjectID);
 
 	glBindVertexArray(PlaneVertexArrayObjectID);
 	glEnableVertexAttribArray(0);
@@ -308,55 +251,6 @@ void MeGLWindow::paintGL() {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
 
-	glUseProgram(programID);
-	//Draw cube in old fashion way
-	// in here rebind for cube
-	glBindVertexArray(cubeVertexArrayObjectID);
-
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 1.3f, -7.0f));
-	modelRotateMatrix = glm::rotate(mat4(), 45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
-	mat4 ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
-	mat4 ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
-	mat4 Cube1FullTransformMatrix = projectionMatrix * ModelToViewMatrix;
-
-	//In here find all Uniforms and assign them
-	GLint CubefullTransformMatrixUniformLocation = glGetUniformLocation(programID, "modelToProjectionMatrix");
-	glUniformMatrix4fv(CubefullTransformMatrixUniformLocation, 1, GL_FALSE, &Cube1FullTransformMatrix[0][0]);
-	GLint ambientLightUniformLocation = glGetUniformLocation(programID, "ambientLightUniform");
-	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
-	GLuint pointLightUniformLocation = glGetUniformLocation(programID, "pointLightPositionWorld");
-	glUniform3fv(pointLightUniformLocation, 1, &pointLightPosition[0]);
-	GLuint eyeUniformLocation = glGetUniformLocation(programID, "eyePositionWorld");
-	glm::vec3 eyePosition = meCamera->getPosition();
-	glUniform3fv(eyeUniformLocation, 1,&eyePosition[0]);
-	GLuint modelTransformMatrixUniformLocation = glGetUniformLocation(programID, "modelToWorldTransMatrix");
-	glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-	GLuint WorldToViewMatrixUniformLocation = glGetUniformLocation(programID, "WorldToViewMatrix");
-	glUniformMatrix4fv(WorldToViewMatrixUniformLocation, 1, GL_FALSE, &mat4(meCamera->getWorldToViewMatrix())[0][0]);
-	GLuint ModelToViewMatrixUniformLoc = glGetUniformLocation(programID, "modelToViewTransMatrix");
-	glUniformMatrix4fv(ModelToViewMatrixUniformLoc, 1, GL_FALSE, &ModelToViewMatrix[0][0]);
-	
-
-	//glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
-	//Draw arrow 
-	glBindVertexArray(arrowVertexArrayObjectID);
-
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f,0.0f, -6.0f));
-	modelRotateMatrix = glm::rotate(mat4(), 45.0f, glm::vec3(0.0f, 0.5f, 0.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(3.0f, 0.5f, 1.0f));
-	ModelToWorldMatrix = modelTransformMatrix* modelRotateMatrix *  modelScaleMatrix;
-	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
-	mat4 Cube2FullTransformMatrix = projectionMatrix * ModelToViewMatrix;
-	
-	glUniformMatrix4fv(CubefullTransformMatrixUniformLocation, 1, GL_FALSE, &Cube2FullTransformMatrix[0][0]);
-	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
-	glUniform3fv(pointLightUniformLocation, 1, &pointLightPosition[0]);
-	glUniform3fv(eyeUniformLocation, 1, &eyePosition[0]);
-	glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-	//glDrawElements(GL_TRIANGLES,arrowIndices, GL_UNSIGNED_SHORT, 0);
-
-	// Draw white plane using different shader
 	glUseProgram(whitePlaneProgramID);
 	// in here rebind for cube
 	glBindVertexArray(PlaneVertexArrayObjectID);
@@ -365,25 +259,26 @@ void MeGLWindow::paintGL() {
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f,1.0f, 1.0f));
-	ModelToWorldMatrix = modelTransformMatrix* modelRotateMatrix *  modelScaleMatrix;
-	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	mat4 ModelToWorldMatrix = modelTransformMatrix* modelRotateMatrix *  modelScaleMatrix;
+	mat4 ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 	mat4 fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
 		
 	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "modelToProjectionMatrix");
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	WorldToViewMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "WorldToViewMatrix");
+	GLint WorldToViewMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "WorldToViewMatrix");
 	glm::mat4 worldToViewMatrix = meCamera->getWorldToViewMatrix();
 	glUniformMatrix4fv(WorldToViewMatrixUniformLocation, 1, GL_FALSE, &worldToViewMatrix[0][0]);
-	ModelToViewMatrixUniformLoc = glGetUniformLocation(whitePlaneProgramID, "modelToViewTransMatrix");
+	GLint ModelToViewMatrixUniformLoc = glGetUniformLocation(whitePlaneProgramID, "modelToViewTransMatrix");
 	glUniformMatrix4fv(ModelToViewMatrixUniformLoc, 1, GL_FALSE, &ModelToViewMatrix[0][0]);
-	ambientLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "ambientLightUniform");
+	GLint ambientLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "ambientLightUniform");
 	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
-	pointLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "pointLightPositionWorld");
+	GLint pointLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "pointLightPositionWorld");
 	//printf("point light position is %f and %f", this->pointLightPosition.x, this->pointLightPosition.z);
 	glUniform3fv(pointLightUniformLocation, 1, &pointLightPosition[0]);
-	eyeUniformLocation = glGetUniformLocation(whitePlaneProgramID, "eyePositionWorld");
+	glm::vec3 eyePosition = meCamera->getPosition();
+	GLint eyeUniformLocation = glGetUniformLocation(whitePlaneProgramID, "eyePositionWorld");
 	glUniform3fv(eyeUniformLocation, 1, &eyePosition[0]);
-	modelTransformMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "modelToWorldTransMatrix");
+	GLint modelTransformMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "modelToWorldTransMatrix");
 	glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &modelTransformMatrix[0][0]);
 	GLuint normalTextureUniformLocation = glGetUniformLocation(whitePlaneProgramID, "normalTextureTC");
 	glUniform1i(normalTextureUniformLocation, 0);
@@ -410,8 +305,7 @@ MeGLWindow::MeGLWindow()
 
 MeGLWindow::~MeGLWindow()
 {
-	glDeleteBuffers(1, &cubeVertexBufferID);
-	glDeleteBuffers(1, &ArrowIndexBufferID);
+	glDeleteBuffers(1, &PlaneVertexBufferID);
 	glUseProgram(0);
 	glDeleteProgram(programID);
 }
