@@ -245,9 +245,6 @@ void MeGLWindow::paintGL() {
 		projectionMatrix * meCamera->getWorldToViewMatrix() * glm::translate(mat4(),glm::vec3(0.0f,0.0f,-7.0f)) * glm::rotate(mat4(),90.0f,glm::vec3(1.0f, 0.5f, -0.3f)),
 		projectionMatrix * meCamera->getWorldToViewMatrix() * glm::translate(mat4(),glm::vec3(0.0f,-0.3f,-6.0f)) * glm::rotate(mat4(),-90.0f,glm::vec3(1.0f, 0.5f, -0.3f)),
 	};
-
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(fullTransform) * 2, fullTransform, GL_DYNAMIC_DRAW);
-	//Clean buffer before draw
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
 
@@ -265,31 +262,9 @@ void MeGLWindow::paintGL() {
 		
 	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "modelToProjectionMatrix");
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	GLint WorldToViewMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "WorldToViewMatrix");
-	glm::mat4 worldToViewMatrix = meCamera->getWorldToViewMatrix();
-	glUniformMatrix4fv(WorldToViewMatrixUniformLocation, 1, GL_FALSE, &worldToViewMatrix[0][0]);
-	GLint ModelToViewMatrixUniformLoc = glGetUniformLocation(whitePlaneProgramID, "modelToViewTransMatrix");
-	glUniformMatrix4fv(ModelToViewMatrixUniformLoc, 1, GL_FALSE, &ModelToViewMatrix[0][0]);
-	GLint ambientLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "ambientLightUniform");
-	glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
-	GLint pointLightUniformLocation = glGetUniformLocation(whitePlaneProgramID, "pointLightPositionWorld");
-	//printf("point light position is %f and %f", this->pointLightPosition.x, this->pointLightPosition.z);
-	glUniform3fv(pointLightUniformLocation, 1, &pointLightPosition[0]);
-	glm::vec3 eyePosition = meCamera->getPosition();
-	GLint eyeUniformLocation = glGetUniformLocation(whitePlaneProgramID, "eyePositionWorld");
-	glUniform3fv(eyeUniformLocation, 1, &eyePosition[0]);
-	GLint modelTransformMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "modelToWorldTransMatrix");
-	glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &modelTransformMatrix[0][0]);
-	GLuint normalTextureUniformLocation = glGetUniformLocation(whitePlaneProgramID, "normalTextureTC");
-	glUniform1i(normalTextureUniformLocation, 0);
-	GLuint displaceTextureUniformLocation = glGetUniformLocation(whitePlaneProgramID, "displaceTextureTC");
-	glUniform1i(displaceTextureUniformLocation, 1);
-	GLuint timeUniformLocation = glGetUniformLocation(whitePlaneProgramID, "time");
-	glUniform1f(timeUniformLocation, this->time);
-	GLuint IdealMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "idealMatrix");
-	glUniform3fv(IdealMatrixUniformLocation, 1, &glm::vec3(1.0)[0]);
-	GLuint SpriteOffsetUniformLoc = glGetUniformLocation(whitePlaneProgramID, "SpriteOffset");
-	glUniform2fv(SpriteOffsetUniformLoc, 1, &spriteOffset[0]);
+	GLint modelToWorldMatrixUniformLoc = glGetUniformLocation(whitePlaneProgramID, "modelToWorldMatrix");
+	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE,&ModelToWorldMatrix[0][0]);
+	
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 }
 
