@@ -266,7 +266,7 @@ void MeGLWindow::paintGL() {
 	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE,&ModelToWorldMatrix[0][0]);
 	glm::vec3 viewDirection = meCamera->getViewDirection();
 	GLint viewDirectionUniformLoc = glGetUniformLocation(whitePlaneProgramID, "viewDirectionWorld");
-	
+	glUniform3fv(viewDirectionUniformLoc, 1, &viewDirection[0]);
 	
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 }
