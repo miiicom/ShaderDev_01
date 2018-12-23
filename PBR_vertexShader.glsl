@@ -15,8 +15,9 @@ out vec3 normalWorld;
 
 void main()
 {
+	normalWorld = vec3(modelToWorldMatrix * vec4(normalModel, 0));
 	vertexPositionWorld = vec3(modelToWorldMatrix * vertexPositionModel);
-	normalWorld = vec3(modelToWorldMatrix * vec4(normalModel,0.0));
+
 	gl_Position = modelToProjectionMatrix * vertexPositionModel;
 	fragColor = vertexColorModel.xyz;
 }

@@ -264,7 +264,7 @@ void MeGLWindow::paintGL() {
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	GLint modelToWorldMatrixUniformLoc = glGetUniformLocation(whitePlaneProgramID, "modelToWorldMatrix");
 	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE,&ModelToWorldMatrix[0][0]);
-	glm::vec3 cameraDirection = meCamera->getViewDirection();
+	glm::vec3 cameraDirection = meCamera->getPosition();
 	GLint cameraDirectionUniformLoc = glGetUniformLocation(whitePlaneProgramID, "CameraDirectionWorld");
 	glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
 	GLint lightpositionUniformLoc = glGetUniformLocation(whitePlaneProgramID,"lightPositionWorld");
