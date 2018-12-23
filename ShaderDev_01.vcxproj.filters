@@ -69,10 +69,6 @@
     <None Include="PBR_fragmentShader.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <Object Include="box.obj" />
-    <Object Include="pighead.obj" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="texture\Checker">
       <Filter>Resource Files</Filter>
     </Image>

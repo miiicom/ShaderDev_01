@@ -264,9 +264,11 @@ void MeGLWindow::paintGL() {
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	GLint modelToWorldMatrixUniformLoc = glGetUniformLocation(whitePlaneProgramID, "modelToWorldMatrix");
 	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE,&ModelToWorldMatrix[0][0]);
-	glm::vec3 viewDirection = meCamera->getViewDirection();
-	GLint viewDirectionUniformLoc = glGetUniformLocation(whitePlaneProgramID, "viewDirectionWorld");
-	glUniform3fv(viewDirectionUniformLoc, 1, &viewDirection[0]);
+	glm::vec3 cameraDirection = meCamera->getViewDirection();
+	GLint cameraDirectionUniformLoc = glGetUniformLocation(whitePlaneProgramID, "CameraDirectionWorld");
+	glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
+	GLint lightpositionUniformLoc = glGetUniformLocation(whitePlaneProgramID,"lightPositionWorld");
+	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
 	
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 }
@@ -276,7 +278,7 @@ MeGLWindow::MeGLWindow()
 	meCamera = new MeCamera;
 	spriteOffset = glm::vec2(0.0f, 0.0f);
 	ambientLight = glm::vec3(+0.1f, +0.2f, +0.25f);
-	pointLightPosition = glm::vec3(+0.0f,+1.0f,+0.0f);
+	pointLightPosition = glm::vec3(+0.0f,+3.0f,+0.0f);
 	time = 0.0f;
 }
 
