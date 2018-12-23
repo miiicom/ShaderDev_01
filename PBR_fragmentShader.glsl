@@ -23,11 +23,10 @@ void main()
 	vec3 ViewDirectionWorld = normalize(CameraDirectionWorld - vertexPositionWorld);
 	vec3 lightDirection = normalize(lightPositionWorld - vertexPositionWorld);
 	vec3 halfwayVector = normalize(ViewDirectionWorld + lightDirection);
+
 	vec3 FrenelValue = fresnelSchlick(max(dot(halfwayVector,ViewDirectionWorld),0.0),F0);
-
-	float unlitFresnel = 1 - max(dot(normal,ViewDirectionWorld),0.0);
-
-	FragmentColor = vec4(unlitFresnel,unlitFresnel,unlitFresnel,0.0);
+	
+	FragmentColor = vec4(FrenelValue,0.0);
 	//FragmentColor = vec4(fragColor,0.0);
 }
 
