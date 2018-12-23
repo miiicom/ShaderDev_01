@@ -269,7 +269,10 @@ void MeGLWindow::paintGL() {
 	glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
 	GLint lightpositionUniformLoc = glGetUniformLocation(whitePlaneProgramID,"lightPositionWorld");
 	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
-	
+	GLint metallicUniformLoc = glGetUniformLocation(whitePlaneProgramID, "parameter.metallic");
+	glUniform1f(metallicUniformLoc, 0.8f);
+	GLint roughnesslicUniformLoc = glGetUniformLocation(whitePlaneProgramID, "parameter.roughness");
+	glUniform1f(roughnesslicUniformLoc, 0.1f);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 }
 
