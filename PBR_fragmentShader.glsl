@@ -77,20 +77,46 @@ void main()
 	float ao = texture(aoMap,uv0).r;
 
 	vec3 F0 = vec3(0.04);
+	F0 = mix(F0, albedo, metallic);
+
+	vec3 Lo = vec3(0.0);
 
 	vec3 normal = normalWorld;
 	vec3 ViewDirectionWorld = normalize(CameraDirectionWorld - vertexPositionWorld);
 	vec3 lightDirection = normalize(lightPositionWorld - vertexPositionWorld);
 	vec3 halfwayVector = normalize(ViewDirectionWorld + lightDirection);
 
-	vec3 FrenelValue = fresnelSchlick(max(dot(halfwayVector,ViewDirectionWorld),0.0),F0);
+	// radiance
+	float lightdistance = length(lightPositionWorld - vertexPositionWorld);
+	float attenuation = 1.0 / (lightdistance * lightdistance);
+	vec3 radiance = vec3(0.8,0.8,0.8) * attenuation;
 
-	float NormalDistribution = DistributionGGX(normal, halfwayVector, parameter.roughness);
-	
-	float RemappedRoughtness = RemapRoughness(parameter.roughness,false);
+	// BRDF
+	vec3 FrenelValue = fresnelSchlick(max(dot(halfwayVector,ViewDirectionWorld),0.0),F0);
+	float NormalDistribution = DistributionGGX(normal, halfwayVector, roughness);
+	float RemappedRoughtness = RemapRoughness(roughness,false);
 	float GeometryFunction = GeometrySmith(normal, ViewDirectionWorld, lightDirection,RemappedRoughtness);
 	
-	FragmentColor = vec4(roughness,0.0,0.0,0.0);
+	vec3 kS = FrenelValue;
+	vec3 kD = vec3(1.0) - kS;
+	kD *= 1.0 - metallic;
+
+	vec3 numerator = NormalDistribution * GeometryFunction * FrenelValue;
+	float denominator = 4.0 * max(dot(normal,ViewDirectionWorld), 0.0) * max(dot(normal, lightDirection),0.0);
+	vec3 specular = numerator / max(denominator, 0.001);
+
+	float NormalLightDot = max(dot(normal, lightDirection), 0.0);
+	Lo += (kD * albedo / PI + specular) *  radiance * NormalLightDot;
+
+	vec3 ambinent = vec3(0.03) * albedo * ao;
+	vec3 color = ambinent + Lo;
+
+	color = color / (color + vec3(1.0));
+    color = pow(color, vec3(1.0/2.2));
+
+	FragmentColor = vec4(color,1.0);
+
+	//FragmentColor = vec4(ao,0.0,0.0,0.0);
 	//FragmentColor = vec4(GeometryFunction,GeometryFunction,GeometryFunction,0.0);
 	//FragmentColor = vec4(NormalDistribution,NormalDistribution,NormalDistribution,0.0);
 	//FragmentColor = vec4(FrenelValue,0.0);
