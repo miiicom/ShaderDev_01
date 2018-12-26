@@ -272,7 +272,7 @@ void MeGLWindow::paintGL() {
 	GLint metallicUniformLoc = glGetUniformLocation(whitePlaneProgramID, "parameter.metallic");
 	glUniform1f(metallicUniformLoc, 0.8f);
 	GLint roughnesslicUniformLoc = glGetUniformLocation(whitePlaneProgramID, "parameter.roughness");
-	glUniform1f(roughnesslicUniformLoc, 0.1f);
+	glUniform1f(roughnesslicUniformLoc, 1.0f);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 }
 

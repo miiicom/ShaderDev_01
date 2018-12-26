@@ -19,6 +19,30 @@ uniform vec3 lightPositionWorld;
 
 float PI = 3.141592653;
 
+float RemapRoughness(float Roughness, bool isIBL){
+	if(isIBL){
+		return Roughness * Roughness / 2.0;
+	}else{
+		return (Roughness + 1) * (Roughness + 1) / 8;
+	}
+}
+
+float  GeometrySchlickGGX(float DotProduct, float remappedRoughness){
+	float nom = DotProduct;
+	float denom = DotProduct * (1.0 - remappedRoughness) + remappedRoughness;
+
+	return nom / denom;
+}
+
+float GeometrySmith(vec3 Normal, vec3 ViewDirection, vec3 LightDirection, float remappedRoughness){
+	float NdotV = max(dot(Normal, ViewDirection), 0.0);
+    float NdotL = max(dot(Normal, LightDirection), 0.0);
+    float ggx1 = GeometrySchlickGGX(NdotV, remappedRoughness);
+    float ggx2 = GeometrySchlickGGX(NdotL, remappedRoughness);
+
+	return ggx1 * ggx2;
+}
+
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
 	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
@@ -50,7 +74,11 @@ void main()
 
 	float NormalDistribution = DistributionGGX(normal, halfwayVector, parameter.roughness);
 	
-	FragmentColor = vec4(NormalDistribution,NormalDistribution,NormalDistribution,0.0);
+	float RemappedRoughtness = RemapRoughness(parameter.roughness,false);
+	float GeometryFunction = GeometrySmith(normal, ViewDirectionWorld, lightDirection,RemappedRoughtness);
+	
+	FragmentColor = vec4(GeometryFunction,GeometryFunction,GeometryFunction,0.0);
+	//FragmentColor = vec4(NormalDistribution,NormalDistribution,NormalDistribution,0.0);
 	//FragmentColor = vec4(FrenelValue,0.0);
 	//FragmentColor = vec4(fragColor,0.0);
 }
