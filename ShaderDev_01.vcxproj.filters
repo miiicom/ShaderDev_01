@@ -87,5 +87,20 @@
     <Image Include="texture\displacement_origin.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="texture\rustediron2_ao.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\rustediron2_basecolor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\rustediron2_metallic.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\rustediron2_normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\rustediron2_roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

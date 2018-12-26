@@ -19,14 +19,10 @@ const uint NUM_FLOATS_PER_VERTICE = 3+4+3+2+3;
 const uint VERTEX_BYTE_SIZE = NUM_FLOATS_PER_VERTICE * sizeof(float);
 
 GLuint programID;
-GLuint whitePlaneProgramID;
+GLuint PBRProgramID;
 GLuint cubeIndices;
 GLuint arrowIndices;
 GLuint planeIndices;
-
-GLuint  vertexShaderID;
-GLuint  fragmentShaderID;
-GLuint  WhitePlanefragmentShaderID;
 
 GLuint PlaneVertexBufferID;
 GLuint PlaneIndexBufferID;
@@ -48,7 +44,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	shape.cleanup();
 	//Create QImage obj
-	const char * texName = "texture/normalOcean.png";
+	const char * texName = "texture/rustediron2_basecolor.png";
 	QImage normalMap = loadTexture(texName);
 	// send Normal Image to OpenGL
 	glActiveTexture(GL_TEXTURE0);
@@ -63,20 +59,64 @@ void MeGLWindow::sendDataToOpenGL() {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 		GL_LINEAR);
 	//Create another QImage obj
-	texName = "texture/displacement_origin.png";
-	QImage displacementMap = loadTexture(texName);
-	//send Displacement to OpenGL
+	texName = "texture/rustediron2_normal.png";
+	QImage AlbedoMap = loadTexture(texName);
+	//send Albedo color to OpenGL
 	glGenTextures(1, &textureID);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, displacementMap.width(),
-		displacementMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-		displacementMap.bits());
-	//Do I need to set them twice?
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, AlbedoMap.width(),
+		AlbedoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		AlbedoMap.bits());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-		GL_NEAREST);
+		GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-		GL_NEAREST);
+		GL_LINEAR);
+
+	//Create another QImage obj
+	texName = "texture/rustediron2_roughness.png";
+	QImage RoughnessMap = loadTexture(texName);
+	//send Albedo color to OpenGL
+	glGenTextures(1, &textureID);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, RoughnessMap.width(),
+		RoughnessMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		RoughnessMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+
+	//Create another QImage obj
+	texName = "texture/rustediron2_metallic.png";
+	QImage metallicMap = loadTexture(texName);
+	//send metallic color to OpenGL
+	glGenTextures(1, &textureID);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, metallicMap.width(),
+		metallicMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		metallicMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+
+	//Create another QImage obj
+	texName = "texture/rustediron2_ao.png";
+	QImage aoMap = loadTexture(texName);
+	//send metallic color to OpenGL
+	glGenTextures(1, &textureID);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, aoMap.width(),
+		aoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		aoMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
 }
 
 void MeGLWindow::setupVertexArrays()
@@ -147,9 +187,9 @@ string  MeGLWindow::readShaderCode(const char* filename) {
 void MeGLWindow::installShaders() {
 	
 	GLuint  vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	GLuint  WhitePlanevertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint  PBRvertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint  fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	GLuint  WhitePlanefragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint  PBRfragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	string temp = readShaderCode("VertexShaderCode.glsl");
 	const GLchar* adapter[1];
@@ -159,7 +199,7 @@ void MeGLWindow::installShaders() {
 
 	temp = readShaderCode("PBR_vertexShader.glsl");
 	adapter[0] = temp.c_str();
-	glShaderSource(WhitePlanevertexShaderID, 1, adapter, 0);
+	glShaderSource(PBRvertexShaderID, 1, adapter, 0);
 
 	temp = readShaderCode("FragmentShaderCode.glsl");
 	adapter[0] = temp.c_str();
@@ -167,17 +207,17 @@ void MeGLWindow::installShaders() {
 
 	temp = readShaderCode("PBR_fragmentShader.glsl");
 	adapter[0] = temp.c_str();
-	glShaderSource(WhitePlanefragmentShaderID, 1, adapter, 0);
+	glShaderSource(PBRfragmentShaderID, 1, adapter, 0);
 
 	glCompileShader(vertexShaderID);
 	glCompileShader(fragmentShaderID);
-	glCompileShader(WhitePlanefragmentShaderID);
-	glCompileShader(WhitePlanevertexShaderID);
+	glCompileShader(PBRfragmentShaderID);
+	glCompileShader(PBRvertexShaderID);
 
 	if (!checkShaderStatus(vertexShaderID) 
 		||!checkShaderStatus(fragmentShaderID) 
-		|| !checkShaderStatus(WhitePlanefragmentShaderID)
-		|| !checkShaderStatus(WhitePlanevertexShaderID)) {
+		|| !checkShaderStatus(PBRfragmentShaderID)
+		|| !checkShaderStatus(PBRvertexShaderID)) {
 		return;
 	}
 
@@ -186,12 +226,12 @@ void MeGLWindow::installShaders() {
 	glAttachShader(programID, fragmentShaderID);
 	glLinkProgram(programID);
 	
-	whitePlaneProgramID = glCreateProgram();
-	glAttachShader(whitePlaneProgramID, WhitePlanevertexShaderID);
-	glAttachShader(whitePlaneProgramID, WhitePlanefragmentShaderID);
-	glLinkProgram(whitePlaneProgramID);
+	PBRProgramID = glCreateProgram();
+	glAttachShader(PBRProgramID, PBRvertexShaderID);
+	glAttachShader(PBRProgramID, PBRfragmentShaderID);
+	glLinkProgram(PBRProgramID);
 
-	if (!checkProgramStatus(programID) || !checkProgramStatus(whitePlaneProgramID)) {
+	if (!checkProgramStatus(programID) || !checkProgramStatus(PBRProgramID)) {
 		return;
 	}
 }
@@ -248,7 +288,7 @@ void MeGLWindow::paintGL() {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
 
-	glUseProgram(whitePlaneProgramID);
+	glUseProgram(PBRProgramID);
 	// in here rebind for cube
 	glBindVertexArray(PlaneVertexArrayObjectID);
 
@@ -259,19 +299,33 @@ void MeGLWindow::paintGL() {
 	mat4 ModelToWorldMatrix = modelTransformMatrix* modelRotateMatrix *  modelScaleMatrix;
 	mat4 ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 	mat4 fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+
+	// bind texture
+	GLint AlbedoUniformLoc = glGetUniformLocation(PBRProgramID, "albedoMap");
+	glUniform1i(AlbedoUniformLoc, 0);
+	GLint NormalUniformLoc = glGetUniformLocation(PBRProgramID, "normalMap");
+	glUniform1i(NormalUniformLoc, 1);
+	GLint RoughnessUniformLoc = glGetUniformLocation(PBRProgramID, "roughnessMap");
+	glUniform1i(RoughnessUniformLoc, 2);
+	GLint MetallicUniformLoc = glGetUniformLocation(PBRProgramID, "metallicMap");
+	glUniform1i(MetallicUniformLoc, 3);
+	GLint AoUniformLoc = glGetUniformLocation(PBRProgramID, "aoMap");
+	glUniform1i(AoUniformLoc, 4);
+
+
 		
-	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(whitePlaneProgramID, "modelToProjectionMatrix");
+	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(PBRProgramID, "modelToProjectionMatrix");
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	GLint modelToWorldMatrixUniformLoc = glGetUniformLocation(whitePlaneProgramID, "modelToWorldMatrix");
+	GLint modelToWorldMatrixUniformLoc = glGetUniformLocation(PBRProgramID, "modelToWorldMatrix");
 	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE,&ModelToWorldMatrix[0][0]);
 	glm::vec3 cameraDirection = meCamera->getPosition();
-	GLint cameraDirectionUniformLoc = glGetUniformLocation(whitePlaneProgramID, "CameraDirectionWorld");
+	GLint cameraDirectionUniformLoc = glGetUniformLocation(PBRProgramID, "CameraDirectionWorld");
 	glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
-	GLint lightpositionUniformLoc = glGetUniformLocation(whitePlaneProgramID,"lightPositionWorld");
+	GLint lightpositionUniformLoc = glGetUniformLocation(PBRProgramID,"lightPositionWorld");
 	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
-	GLint metallicUniformLoc = glGetUniformLocation(whitePlaneProgramID, "parameter.metallic");
+	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
 	glUniform1f(metallicUniformLoc, 0.8f);
-	GLint roughnesslicUniformLoc = glGetUniformLocation(whitePlaneProgramID, "parameter.roughness");
+	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
 	glUniform1f(roughnesslicUniformLoc, 1.0f);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 }

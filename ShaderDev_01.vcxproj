@@ -154,6 +154,11 @@
     <Image Include="texture\displacement_origin.png" />
     <Image Include="texture\fireSprite.png" />
     <Image Include="texture\normalOcean.png" />
+    <Image Include="texture\rustediron2_ao.png" />
+    <Image Include="texture\rustediron2_basecolor.png" />
+    <Image Include="texture\rustediron2_metallic.png" />
+    <Image Include="texture\rustediron2_normal.png" />
+    <Image Include="texture\rustediron2_roughness.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

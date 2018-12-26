@@ -12,6 +12,7 @@ uniform mat4 modelToWorldMatrix;
 out vec3 fragColor;
 out vec3 vertexPositionWorld;
 out vec3 normalWorld;
+out vec2 uv0;
 
 void main()
 {
@@ -20,4 +21,5 @@ void main()
 
 	gl_Position = modelToProjectionMatrix * vertexPositionModel;
 	fragColor = vertexColorModel.xyz;
+	uv0 = vertexUV0;
 }

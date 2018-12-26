@@ -4,6 +4,7 @@ out vec4 FragmentColor;
 in vec3 vertexPositionWorld;
 in vec3 normalWorld;
 in vec3 fragColor;
+in vec2 uv0;
 
 struct PBR_parameters {
 	vec3 albedo;
@@ -16,6 +17,12 @@ uniform mat4 modelToProjectionMatrix; // MVP
 uniform mat4 modelToWorldMatrix;
 uniform vec3 CameraDirectionWorld;
 uniform vec3 lightPositionWorld;
+
+uniform sampler2D albedoMap;
+uniform sampler2D normalMap;
+uniform sampler2D roughnessMap;
+uniform sampler2D metallicMap;
+uniform sampler2D aoMap;
 
 float PI = 3.141592653;
 
@@ -63,6 +70,12 @@ float DistributionGGX(vec3 normal, vec3 halfway, float Roughness)
 
 void main()
 {	
+	vec3 albedo = texture(albedoMap, uv0).xyz;
+	vec3 normalmap = texture(normalMap, uv0).xyz;
+	float roughness = texture(roughnessMap,uv0).r;
+	float metallic = texture(metallicMap,uv0).r;
+	float ao = texture(aoMap,uv0).r;
+
 	vec3 F0 = vec3(0.04);
 
 	vec3 normal = normalWorld;
@@ -77,7 +90,8 @@ void main()
 	float RemappedRoughtness = RemapRoughness(parameter.roughness,false);
 	float GeometryFunction = GeometrySmith(normal, ViewDirectionWorld, lightDirection,RemappedRoughtness);
 	
-	FragmentColor = vec4(GeometryFunction,GeometryFunction,GeometryFunction,0.0);
+	FragmentColor = vec4(roughness,0.0,0.0,0.0);
+	//FragmentColor = vec4(GeometryFunction,GeometryFunction,GeometryFunction,0.0);
 	//FragmentColor = vec4(NormalDistribution,NormalDistribution,NormalDistribution,0.0);
 	//FragmentColor = vec4(FrenelValue,0.0);
 	//FragmentColor = vec4(fragColor,0.0);
