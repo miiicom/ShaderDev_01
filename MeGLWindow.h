@@ -13,6 +13,7 @@ protected:
 	void paintGL();
 	void sendDataToOpenGL();
 	void setupVertexArrays();
+	void setupFrameBuffer();
 	bool checkStatus(GLuint objectID, PFNGLGETSHADERIVPROC objectPropertyGetterFunc, PFNGLGETSHADERINFOLOGPROC getInfoLogFunc, GLenum statusType);
 	bool checkShaderStatus(GLuint shaderID);
 	bool checkProgramStatus(GLuint programID);
