@@ -194,11 +194,6 @@ void MeGLWindow::setupFrameBuffer()
 	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferObject);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1024, 1024);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferObject);
-	
-	GLenum drawBufs[] = { GL_COLOR_ATTACHMENT0 };
-	glDrawBuffers(1, drawBufs);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0); //bind back to default
-
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
