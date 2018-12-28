@@ -41,6 +41,47 @@ ShapeData ShapeGenerator::makeTriangle() {
 	return ret;
 }
 
+ShapeData ShapeGenerator::makefillerQuard()
+{
+	ShapeData ret;
+	Vertex verts[] =
+	{	//Main sahpe
+		glm::vec3(+1.0f, +1.0f, +0.0f),			// position
+		glm::vec4(+1.0f, +0.0f, +0.0f, +0.0f),	// color
+		glm::vec3(+0.0f, +0.0f, +1.0f),			// normal
+		glm::vec2(+1.0f, +1.0f),					// uv
+		glm::vec3(+1.0f, +0.0f, 0.0f),			// tangent
+
+		glm::vec3(+1.0f, -1.0f, +0.0f),			// position
+		glm::vec4(+0.0f, +1.0f, +0.0f, +0.0f),	// color
+		glm::vec3(+0.0f, +0.0f, +1.0f),			// normal
+		glm::vec2(+1.0f, +0.0f),					// uv
+		glm::vec3(+1.0f, +0.0f, 0.0f),			// tangent
+
+		glm::vec3(-1.0f, +1.0f, +0.0f),			// position
+		glm::vec4(+0.0f, +0.0f, +1.0f, +0.0f),	// color
+		glm::vec3(+0.0f, +0.0f, +1.0f),			// normal
+		glm::vec2(+0.0f, +1.0f),					// uv
+		glm::vec3(+1.0f, +0.0f, 0.0f),			// tangent
+
+		glm::vec3(-1.0f, -1.0f, +0.0f),			// position
+		glm::vec4(+0.0f, +0.0f, +1.0f, +0.0f),	// color
+		glm::vec3(+0.0f, +0.0f, +1.0f),			// normal
+		glm::vec2(+0.0f, +0.0f),					// uv
+		glm::vec3(+1.0f, +0.0f, 0.0f),			// tangent
+	};
+	ret.numVertices = NUM_ARRAY_ELEMENTS(verts);
+	ret.vertices = new Vertex[ret.numVertices];
+	memcpy(ret.vertices, verts, sizeof(verts));
+
+	GLushort indices[] = { 0,2,1,2,3,1 };
+	ret.numIndices = NUM_ARRAY_ELEMENTS(indices);
+	ret.indices = new GLushort[ret.numIndices];
+	memcpy(ret.indices, indices, sizeof(indices));
+
+	return ret;
+}
+
 ShapeData ShapeGenerator::makeCube() {
 	ShapeData ret;
 	Vertex stackVerts[] =

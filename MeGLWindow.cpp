@@ -23,16 +23,29 @@ GLuint PBRProgramID;
 GLuint cubeIndices;
 GLuint arrowIndices;
 GLuint planeIndices;
-
+GLuint framebuffer;
+GLuint SphereVertexBufferID;
+GLuint SphereIndexBufferID;
 GLuint PlaneVertexBufferID;
 GLuint PlaneIndexBufferID;
 
+GLuint SphereVertexArrayObjectID;
 GLuint PlaneVertexArrayObjectID;
 
 void MeGLWindow::sendDataToOpenGL() {
 	GLuint PlaneDimension = 30;
 
 	ShapeData shape = ShapeGenerator::makeSphere(PlaneDimension);
+	glGenBuffers(1, &SphereVertexBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, SphereVertexBufferID);
+	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &SphereIndexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SphereIndexBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
+	planeIndices = shape.numIndices;
+
+	shape = ShapeGenerator::makefillerQuard();
 	glGenBuffers(1, &PlaneVertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, PlaneVertexBufferID);
 	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
@@ -40,7 +53,6 @@ void MeGLWindow::sendDataToOpenGL() {
 	glGenBuffers(1, &PlaneIndexBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, PlaneIndexBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
-	planeIndices = shape.numIndices;
 
 	shape.cleanup();
 	//Create QImage obj
@@ -121,6 +133,22 @@ void MeGLWindow::sendDataToOpenGL() {
 
 void MeGLWindow::setupVertexArrays()
 {
+	glGenVertexArrays(1, &SphereVertexArrayObjectID);
+
+	glBindVertexArray(SphereVertexArrayObjectID);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
+	glBindBuffer(GL_ARRAY_BUFFER, SphereVertexBufferID);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, 0);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (char*)(sizeof(float) * 3));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 7));
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 10));
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 12));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SphereIndexBufferID);
+
 	glGenVertexArrays(1, &PlaneVertexArrayObjectID);
 
 	glBindVertexArray(PlaneVertexArrayObjectID);
@@ -140,7 +168,6 @@ void MeGLWindow::setupVertexArrays()
 
 void MeGLWindow::setupFrameBuffer()
 {
-	GLuint framebuffer;
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
@@ -313,12 +340,16 @@ glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YS
 
 void MeGLWindow::paintGL() {
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
+	// render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
+	//glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	//glEnable(GL_DEPTH_TEST);
+
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
 
 	glUseProgram(PBRProgramID);
 	// in here rebind for cube
-	glBindVertexArray(PlaneVertexArrayObjectID);
+	glBindVertexArray(SphereVertexArrayObjectID);
 
 	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 50.0f); // Projection matrix
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
@@ -356,6 +387,10 @@ void MeGLWindow::paintGL() {
 	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
 	glUniform1f(roughnesslicUniformLoc, 1.0f);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
+
+	// bind back to default framebuffer
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
 MeGLWindow::MeGLWindow()
@@ -370,7 +405,7 @@ MeGLWindow::MeGLWindow()
 
 MeGLWindow::~MeGLWindow()
 {
-	glDeleteBuffers(1, &PlaneVertexBufferID);
+	glDeleteBuffers(1, &SphereVertexBufferID);
 	glUseProgram(0);
 	glDeleteProgram(programID);
 }

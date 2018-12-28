@@ -5,6 +5,7 @@ class ShapeGenerator
 {
 public:
 	static ShapeData makeTriangle();
+	static ShapeData makefillerQuard();
 	static ShapeData makeCube();
 	static ShapeData makeArrow();
 	static ShapeData makePlaneVerts(GLuint dimensions);
