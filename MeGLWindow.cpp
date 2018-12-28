@@ -33,6 +33,8 @@ GLuint PlaneIndexBufferID;
 GLuint SphereVertexArrayObjectID;
 GLuint PlaneVertexArrayObjectID;
 
+GLuint framebufferTexture;
+
 void MeGLWindow::sendDataToOpenGL() {
 	GLuint PlaneDimension = 30;
 
@@ -176,9 +178,9 @@ void MeGLWindow::setupFrameBuffer()
 
 	//To make framebuffer render to a texture I need to generate a texture object first
 
-	GLuint framebufferTexture;
+	
 	glGenTextures(1, &framebufferTexture);
-	glActiveTexture(GL_TEXTURE5); // Use texture unit 0
+	//glActiveTexture(GL_TEXTURE5); // Use texture unit 5
 	glBindTexture(GL_TEXTURE_2D, framebufferTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 1024, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -191,9 +193,12 @@ void MeGLWindow::setupFrameBuffer()
 	glGenRenderbuffers(1, &renderBufferObject);
 	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferObject);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1024, 1024);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferObject);
+	
+	GLenum drawBufs[] = { GL_COLOR_ATTACHMENT0 };
+	glDrawBuffers(1, drawBufs);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0); //bind back to default
 
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferObject);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
@@ -345,16 +350,15 @@ glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YS
 void MeGLWindow::paintGL() {
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
 	//render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
-	//glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	//glEnable(GL_DEPTH_TEST);
-
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width(), height());
 
 	glUseProgram(PBRProgramID);
 	// in here rebind for cube
 	glBindVertexArray(SphereVertexArrayObjectID);
-
 	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 50.0f); // Projection matrix
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -390,6 +394,8 @@ void MeGLWindow::paintGL() {
 	glUniform1f(metallicUniformLoc, 0.8f);
 	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
 	glUniform1f(roughnesslicUniformLoc, 1.0f);
+
+	
 	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
 	// bind back to default framebuffer
@@ -397,8 +403,15 @@ void MeGLWindow::paintGL() {
 	glDisable(GL_DEPTH_TEST);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+
+
 	glUseProgram(programID);
 	glBindVertexArray(PlaneVertexArrayObjectID);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, framebufferTexture);
+	GLuint framebufferTextureUniformLoc = glGetUniformLocation(programID, "frameBufferTexture");
+	glUniform1i(framebufferTextureUniformLoc, 5);
+
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 }
 
