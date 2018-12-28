@@ -22,6 +22,7 @@ GLuint programID;
 GLuint PBRProgramID;
 GLuint cubeIndices;
 GLuint arrowIndices;
+GLuint SphereIndices;
 GLuint planeIndices;
 GLuint framebuffer;
 GLuint SphereVertexBufferID;
@@ -43,7 +44,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	glGenBuffers(1, &SphereIndexBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SphereIndexBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
-	planeIndices = shape.numIndices;
+	SphereIndices = shape.numIndices;
 
 	shape = ShapeGenerator::makefillerQuard();
 	glGenBuffers(1, &PlaneVertexBufferID);
@@ -53,6 +54,8 @@ void MeGLWindow::sendDataToOpenGL() {
 	glGenBuffers(1, &PlaneIndexBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, PlaneIndexBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
+	planeIndices = shape.numIndices;
+
 
 	shape.cleanup();
 	//Create QImage obj
@@ -175,6 +178,7 @@ void MeGLWindow::setupFrameBuffer()
 
 	GLuint framebufferTexture;
 	glGenTextures(1, &framebufferTexture);
+	glActiveTexture(GL_TEXTURE5); // Use texture unit 0
 	glBindTexture(GL_TEXTURE_2D, framebufferTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 1024, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -340,7 +344,7 @@ glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YS
 
 void MeGLWindow::paintGL() {
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
-	// render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
+	//render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
 	//glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	//glEnable(GL_DEPTH_TEST);
 
@@ -386,11 +390,16 @@ void MeGLWindow::paintGL() {
 	glUniform1f(metallicUniformLoc, 0.8f);
 	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
 	glUniform1f(roughnesslicUniformLoc, 1.0f);
-	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
 	// bind back to default framebuffer
-	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDisable(GL_DEPTH_TEST);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glUseProgram(programID);
+	glBindVertexArray(PlaneVertexArrayObjectID);
+	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 }
 
 MeGLWindow::MeGLWindow()
