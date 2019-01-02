@@ -139,6 +139,8 @@
     <ClInclude Include="vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="EquTanToCubeFragmentShader.glsl" />
+    <None Include="EquTanToCubeVertexShader.glsl" />
     <None Include="FragmentShaderCode.glsl" />
     <None Include="PBR_fragmentShader.glsl" />
     <None Include="PBR_vertexShader.glsl" />

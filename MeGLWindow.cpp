@@ -22,6 +22,7 @@ const uint VERTEX_BYTE_SIZE = NUM_FLOATS_PER_VERTICE * sizeof(float);
 
 GLuint programID;
 GLuint PBRProgramID;
+GLuint EqtangToCubeProgramID;
 GLuint cubeIndices;
 GLuint arrowIndices;
 GLuint SphereIndices;
@@ -276,6 +277,8 @@ void MeGLWindow::installShaders() {
 	GLuint  PBRvertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint  fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 	GLuint  PBRfragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint  EqToCubevertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint  EqToCubefragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
 	string temp = readShaderCode("VertexShaderCode.glsl");
 	const GLchar* adapter[1];
@@ -295,15 +298,28 @@ void MeGLWindow::installShaders() {
 	adapter[0] = temp.c_str();
 	glShaderSource(PBRfragmentShaderID, 1, adapter, 0);
 
+	temp = readShaderCode("EquTanToCubeVertexShader.glsl");
+	adapter[0] = temp.c_str();
+	glShaderSource(EqToCubevertexShaderID, 1, adapter, 0);
+
+	temp = readShaderCode("EquTanToCubeFragmentShader.glsl");
+	adapter[0] = temp.c_str();
+	glShaderSource(EqToCubefragmentShader, 1, adapter, 0);
+
 	glCompileShader(vertexShaderID);
 	glCompileShader(fragmentShaderID);
 	glCompileShader(PBRfragmentShaderID);
 	glCompileShader(PBRvertexShaderID);
+	glCompileShader(EqToCubevertexShaderID);
+	glCompileShader(EqToCubefragmentShader);
 
 	if (!checkShaderStatus(vertexShaderID) 
 		||!checkShaderStatus(fragmentShaderID) 
 		|| !checkShaderStatus(PBRfragmentShaderID)
-		|| !checkShaderStatus(PBRvertexShaderID)) {
+		|| !checkShaderStatus(PBRvertexShaderID)
+		|| !checkShaderStatus(EqToCubevertexShaderID)
+		|| !checkShaderStatus(EqToCubefragmentShader)
+		) {
 		return;
 	}
 
@@ -317,7 +333,11 @@ void MeGLWindow::installShaders() {
 	glAttachShader(PBRProgramID, PBRfragmentShaderID);
 	glLinkProgram(PBRProgramID);
 
-	if (!checkProgramStatus(programID) || !checkProgramStatus(PBRProgramID)) {
+	EqtangToCubeProgramID = glCreateProgram();
+	glAttachShader(EqtangToCubeProgramID, EqToCubevertexShaderID);
+	glAttachShader(EqtangToCubeProgramID, EqToCubefragmentShader);
+
+	if (!checkProgramStatus(programID) || !checkProgramStatus(PBRProgramID) || !checkProgramStatus(EqtangToCubeProgramID)) {
 		return;
 	}
 }

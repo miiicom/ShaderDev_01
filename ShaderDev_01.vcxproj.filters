@@ -67,6 +67,8 @@
     </None>
     <None Include="PBR_vertexShader.glsl" />
     <None Include="PBR_fragmentShader.glsl" />
+    <None Include="EquTanToCubeVertexShader.glsl" />
+    <None Include="EquTanToCubeFragmentShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="texture\Checker">
