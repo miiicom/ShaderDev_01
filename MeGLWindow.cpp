@@ -9,6 +9,8 @@
 #include <vertex.h>
 #include <MeCamera.h>
 #include <QtGui\qmouseevent>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 using namespace std;
 
 //extern const char* vertexShaderCode;
@@ -36,7 +38,7 @@ GLuint PlaneVertexArrayObjectID;
 GLuint framebufferTexture;
 
 void MeGLWindow::sendDataToOpenGL() {
-	GLuint PlaneDimension = 30;
+	GLuint PlaneDimension = 60;
 
 	ShapeData shape = ShapeGenerator::makeSphere(PlaneDimension);
 	glGenBuffers(1, &SphereVertexBufferID);
@@ -134,6 +136,28 @@ void MeGLWindow::sendDataToOpenGL() {
 		GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 		GL_LINEAR);
+
+	stbi_set_flip_vertically_on_load(true);
+	int width, height, nrComponents;
+	float *data  = stbi_loadf("Mans_Outside_Env.hdr", &width, &height, &nrComponents, 0);
+	GLuint hdrTexture;
+
+	if (data) {
+		glGenTextures(1, &hdrTexture);
+		glActiveTexture(GL_TEXTURE6);
+		glBindTexture(GL_TEXTURE_2D, hdrTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		stbi_image_free(data);
+	}
+	else {
+		printf("fail to load hdr");
+	}
 }
 
 void MeGLWindow::setupVertexArrays()
@@ -345,8 +369,8 @@ glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YS
 void MeGLWindow::paintGL() {
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
 	//render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	/*glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);*/
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width(), height());
@@ -385,16 +409,40 @@ void MeGLWindow::paintGL() {
 	glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
 	GLint lightpositionUniformLoc = glGetUniformLocation(PBRProgramID,"lightPositionWorld");
 	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
-	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
-	glUniform1f(metallicUniformLoc, 0.8f);
-	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
-	glUniform1f(roughnesslicUniformLoc, 1.0f);
 
-	
+
+	glm::vec3 albedoColor = glm::vec3(-1.0f, -1.0f, -1.0f);
+	GLint albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
+	glUniform3fv(albedoUniformLoc, 1,&albedoColor[0]);
+	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
+	glUniform1f(metallicUniformLoc,-1.0f);
+	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
+	glUniform1f(roughnesslicUniformLoc, -1.0f);
+	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
+	glUniform1f(aoUniformLoc, -1.0f);
+
+	// Draw first metallic ball with texture
+	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	albedoColor = glm::vec3(1.0f, 0.0f, 0.0f);
+	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
+	glUniform1f(metallicUniformLoc, 1.0f);
+	glUniform1f(roughnesslicUniformLoc, 0.01f);
+	glUniform1f(aoUniformLoc, 1.0f);
+
 	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
 	// bind back to default framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	/*glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glDisable(GL_DEPTH_TEST);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -407,7 +455,7 @@ void MeGLWindow::paintGL() {
 	GLuint framebufferTextureUniformLoc = glGetUniformLocation(programID, "frameBufferTexture");
 	glUniform1i(framebufferTextureUniformLoc, 5);
 
-	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);*/
 }
 
 MeGLWindow::MeGLWindow()
