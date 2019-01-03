@@ -6,10 +6,12 @@ in layout(location=2) vec3 normalModel;
 in layout(location=3) vec2 vertexUV0;
 in layout(location=4) vec3 tangentWorld;
 
+uniform mat4 modelToProjectionMatrix; // MVP
+
 out vec3 FragmentPositionModel;
 
 void main()
 {
-	gl_Position =vertexPositionModel;
+	gl_Position =modelToProjectionMatrix * vertexPositionModel;
 	FragmentPositionModel = vertexPositionModel.xyz;
 }

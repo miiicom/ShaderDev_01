@@ -69,6 +69,7 @@
     <None Include="PBR_fragmentShader.glsl" />
     <None Include="EquTanToCubeVertexShader.glsl" />
     <None Include="EquTanToCubeFragmentShader.glsl" />
+    <None Include="texture\Mans_Outside_Env.hdr" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="texture\Checker">

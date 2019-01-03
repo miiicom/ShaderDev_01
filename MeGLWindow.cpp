@@ -32,9 +32,12 @@ GLuint SphereVertexBufferID;
 GLuint SphereIndexBufferID;
 GLuint PlaneVertexBufferID;
 GLuint PlaneIndexBufferID;
+GLuint CubeVertexBufferID;
+GLuint CubeIndexBufferID;
 
 GLuint SphereVertexArrayObjectID;
 GLuint PlaneVertexArrayObjectID;
+GLuint CubeVertexArrayObjectID;
 
 GLuint framebufferTexture;
 
@@ -61,6 +64,15 @@ void MeGLWindow::sendDataToOpenGL() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	planeIndices = shape.numIndices;
 
+	shape = ShapeGenerator::makeCube();
+	glGenBuffers(1, &CubeVertexBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, CubeVertexBufferID);
+	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &CubeIndexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, CubeIndexBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
+	cubeIndices = shape.numIndices;
 
 	shape.cleanup();
 	//Create QImage obj
@@ -138,27 +150,27 @@ void MeGLWindow::sendDataToOpenGL() {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 		GL_LINEAR);
 
-	stbi_set_flip_vertically_on_load(true);
-	int width, height, nrComponents;
-	float *data  = stbi_loadf("Mans_Outside_Env.hdr", &width, &height, &nrComponents, 0);
-	GLuint hdrTexture;
-
-	if (data) {
-		glGenTextures(1, &hdrTexture);
-		glActiveTexture(GL_TEXTURE6);
-		glBindTexture(GL_TEXTURE_2D, hdrTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		stbi_image_free(data);
-	}
-	else {
-		printf("fail to load hdr");
-	}
+		stbi_set_flip_vertically_on_load(true);
+		int width, height, nrComponents;
+		float *data  = stbi_loadf("texture/Mans_Outside_Env.hdr", &width, &height, &nrComponents, 0);
+		GLuint hdrTexture;
+	
+		if (data) {
+			glGenTextures(1, &hdrTexture);
+			glActiveTexture(GL_TEXTURE6);
+			glBindTexture(GL_TEXTURE_2D, hdrTexture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+	
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+			stbi_image_free(data);
+		}
+		else {
+			printf("fail to load hdr");
+		}
 }
 
 void MeGLWindow::setupVertexArrays()
@@ -194,6 +206,20 @@ void MeGLWindow::setupVertexArrays()
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 10));
 	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 12));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, PlaneIndexBufferID);
+
+	glBindVertexArray(CubeVertexArrayObjectID);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
+	glBindBuffer(GL_ARRAY_BUFFER, CubeVertexBufferID);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, 0);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (char*)(sizeof(float) * 3));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 7));
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 10));
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 12));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, CubeIndexBufferID);
 }
 
 void MeGLWindow::setupFrameBuffer()
@@ -336,7 +362,7 @@ void MeGLWindow::installShaders() {
 	EqtangToCubeProgramID = glCreateProgram();
 	glAttachShader(EqtangToCubeProgramID, EqToCubevertexShaderID);
 	glAttachShader(EqtangToCubeProgramID, EqToCubefragmentShader);
-
+	glLinkProgram(EqtangToCubeProgramID);
 	if (!checkProgramStatus(programID) || !checkProgramStatus(PBRProgramID) || !checkProgramStatus(EqtangToCubeProgramID)) {
 		return;
 	}
@@ -460,6 +486,22 @@ void MeGLWindow::paintGL() {
 	glUniform1f(aoUniformLoc, 1.0f);
 
 	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+	//test cube
+	glUseProgram(EqtangToCubeProgramID);
+	glBindVertexArray(CubeVertexArrayObjectID);
+
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(-3.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+
+	fullTransformMatrixUniformLocation = glGetUniformLocation(EqtangToCubeProgramID, "modelToProjectionMatrix");
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	GLuint EqToCubeUniformLocation = glGetUniformLocation(EqtangToCubeProgramID, "equirectangularMap");
+	glUniform1i(EqToCubeUniformLocation, 6);
+	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
 
 	// bind back to default framebuffer
 	/*glBindFramebuffer(GL_FRAMEBUFFER, 0);

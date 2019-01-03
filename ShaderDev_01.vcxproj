@@ -144,6 +144,7 @@
     <None Include="FragmentShaderCode.glsl" />
     <None Include="PBR_fragmentShader.glsl" />
     <None Include="PBR_vertexShader.glsl" />
+    <None Include="texture\Mans_Outside_Env.hdr" />
     <None Include="texture\normalMap" />
     <None Include="vertexShaderCode.glsl" />
     <None Include="WhitePlaneFragmentShader.glsl" />
