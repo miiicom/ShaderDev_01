@@ -70,6 +70,7 @@
     <None Include="EquTanToCubeVertexShader.glsl" />
     <None Include="EquTanToCubeFragmentShader.glsl" />
     <None Include="texture\Mans_Outside_Env.hdr" />
+    <None Include="texture\Newport_Loft_Ref.hdr" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="texture\Checker">

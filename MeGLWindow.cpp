@@ -152,7 +152,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 		stbi_set_flip_vertically_on_load(true);
 		int width, height, nrComponents;
-		float *data  = stbi_loadf("texture/Mans_Outside_Env.hdr", &width, &height, &nrComponents, 0);
+		float *data  = stbi_loadf("texture/Newport_Loft_Ref.hdr", &width, &height, &nrComponents, 0);
 		GLuint hdrTexture;
 	
 		if (data) {
