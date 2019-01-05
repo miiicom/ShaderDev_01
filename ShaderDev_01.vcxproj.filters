@@ -69,8 +69,12 @@
     <None Include="PBR_fragmentShader.glsl" />
     <None Include="EquTanToCubeVertexShader.glsl" />
     <None Include="EquTanToCubeFragmentShader.glsl" />
-    <None Include="texture\Mans_Outside_Env.hdr" />
-    <None Include="texture\Newport_Loft_Ref.hdr" />
+    <None Include="texture\Mans_Outside_Env.hdr">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="texture\Newport_Loft_Ref.hdr">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="texture\Checker">

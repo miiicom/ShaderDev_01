@@ -6,12 +6,15 @@ in layout(location=2) vec3 normalModel;
 in layout(location=3) vec2 vertexUV0;
 in layout(location=4) vec3 tangentWorld;
 
-uniform mat4 modelToProjectionMatrix; // MVP
+uniform mat4 viewToProjectionMatrix;
+uniform mat4 worldToViewMatrix;
 
-out vec3 FragmentPositionModel;
+out vec3 FragmentPositionWorld;
+
+//Assume the object lies on world center, we can assume the model position is the world position
 
 void main()
 {
-	gl_Position =modelToProjectionMatrix * vertexPositionModel;
-	FragmentPositionModel = vertexPositionModel.xyz;
+	gl_Position =viewToProjectionMatrix * worldToViewMatrix * vertexPositionModel;
+	FragmentPositionWorld = vertexPositionModel.xyz;
 }

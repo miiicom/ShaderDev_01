@@ -39,7 +39,7 @@ GLuint SphereVertexArrayObjectID;
 GLuint PlaneVertexArrayObjectID;
 GLuint CubeVertexArrayObjectID;
 
-GLuint framebufferTexture;
+GLuint environemntRenderTexture;
 
 void MeGLWindow::sendDataToOpenGL() {
 	GLuint PlaneDimension = 60;
@@ -150,27 +150,27 @@ void MeGLWindow::sendDataToOpenGL() {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 		GL_LINEAR);
 
-		stbi_set_flip_vertically_on_load(true);
-		int width, height, nrComponents;
-		float *data  = stbi_loadf("texture/Newport_Loft_Ref.hdr", &width, &height, &nrComponents, 0);
-		GLuint hdrTexture;
+	stbi_set_flip_vertically_on_load(true);
+	int width, height, nrComponents;
+	float *data  = stbi_loadf("texture/Newport_Loft_Ref.hdr", &width, &height, &nrComponents, 0);
+	GLuint hdrTexture;
 	
-		if (data) {
-			glGenTextures(1, &hdrTexture);
-			glActiveTexture(GL_TEXTURE6);
-			glBindTexture(GL_TEXTURE_2D, hdrTexture);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+	if (data) {
+		glGenTextures(1, &hdrTexture);
+		glActiveTexture(GL_TEXTURE6);
+		glBindTexture(GL_TEXTURE_2D, hdrTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
 	
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	
-			stbi_image_free(data);
-		}
-		else {
-			printf("fail to load hdr");
-		}
+		stbi_image_free(data);
+	}
+	else {
+		printf("fail to load hdr");
+	}
 }
 
 void MeGLWindow::setupVertexArrays()
@@ -226,25 +226,34 @@ void MeGLWindow::setupFrameBuffer()
 {
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-	//To make framebuffer render to a texture I need to generate a texture object first
-
-	
-	glGenTextures(1, &framebufferTexture);
-	//glActiveTexture(GL_TEXTURE5); // Use texture unit 5
-	glBindTexture(GL_TEXTURE_2D, framebufferTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 1024, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0); //bind back to default
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebufferTexture, 0);
-	// use render Buffer object for depth test
 	unsigned int renderBufferObject;
 	glGenRenderbuffers(1, &renderBufferObject);
 	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferObject);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1024, 1024);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferObject);
+
+	//To make framebuffer render to a texture I need to generate a texture object first
+
+	glGenTextures(1, &environemntRenderTexture);
+	glActiveTexture(GL_TEXTURE5); // Use texture unit 5
+	glBindTexture(GL_TEXTURE_CUBE_MAP, environemntRenderTexture);
+	for (int i = 0; i < 6; ++i)
+	{
+		// note that we store each face with 16 bit floating point values
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F,
+			1024, 1024, 0, GL_RGB, GL_FLOAT, NULL);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0); //bind back to default
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, environemntRenderTexture, 0);
+	// use render Buffer object for depth test
+	
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
@@ -413,13 +422,46 @@ glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YS
 }
 
 void MeGLWindow::paintGL() {
+	// render environment texture first
+	
+	glm::mat4 renderProjectionMatrix = glm::perspective(glm::radians(90.0f), ((float)width()) / height(), 0.01f, 50.0f);
+	glm::mat4 renderVires[] =
+	{
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+	};
+
+	glUseProgram(EqtangToCubeProgramID);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+	GLuint EqTangToCubeTextureUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "equirectangularMap");
+	glUniform1i(EqTangToCubeTextureUniformLoc, 6);
+	GLuint EqTangToCubeProjectionUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "viewToProjectionMatrix");
+	glUniformMatrix4fv(EqTangToCubeProjectionUniformLoc, 1, GL_FALSE, &renderProjectionMatrix[0][0]);
+	GLuint EqTangToCubeViewUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "worldToViewMatrix");
+	glViewport(0, 0, width(), height());
+	for ( int i = 0; i < 6; ++i)
+	{
+		glUniformMatrix4fv(EqTangToCubeViewUniformLoc, 1, GL_FALSE, &renderVires[i][0][0]);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, environemntRenderTexture, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
 	//render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
 	/*glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);*/
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-    glViewport(0, 0, width(), height());
 
 	glUseProgram(PBRProgramID);
 	// in here rebind for cube
@@ -487,10 +529,10 @@ void MeGLWindow::paintGL() {
 
 	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 	//test cube
-	glUseProgram(EqtangToCubeProgramID);
+	/*glUseProgram(EqtangToCubeProgramID);
 	glBindVertexArray(CubeVertexArrayObjectID);
 
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(-3.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(-3.0f, 0.0f, 0.0f));
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
@@ -501,7 +543,7 @@ void MeGLWindow::paintGL() {
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	GLuint EqToCubeUniformLocation = glGetUniformLocation(EqtangToCubeProgramID, "equirectangularMap");
 	glUniform1i(EqToCubeUniformLocation, 6);
-	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);*/
 
 	// bind back to default framebuffer
 	/*glBindFramebuffer(GL_FRAMEBUFFER, 0);
