@@ -424,7 +424,7 @@ glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YS
 void MeGLWindow::paintGL() {
 	// render environment texture first
 	
-	glm::mat4 renderProjectionMatrix = glm::perspective(glm::radians(90.0f), ((float)width()) / height(), 0.01f, 50.0f);
+	glm::mat4 renderProjectionMatrix = glm::perspective(90.0f, 1.0f, 0.1f, 50.0f);
 	glm::mat4 renderVires[] =
 	{
 		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
@@ -436,8 +436,8 @@ void MeGLWindow::paintGL() {
 	};
 
 	glUseProgram(EqtangToCubeProgramID);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
+	//glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glBindVertexArray(CubeVertexArrayObjectID);
 	GLuint EqTangToCubeTextureUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "equirectangularMap");
 	glUniform1i(EqTangToCubeTextureUniformLoc, 6);
 	GLuint EqTangToCubeProjectionUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "viewToProjectionMatrix");
@@ -447,8 +447,8 @@ void MeGLWindow::paintGL() {
 	for ( int i = 0; i < 6; ++i)
 	{
 		glUniformMatrix4fv(EqTangToCubeViewUniformLoc, 1, GL_FALSE, &renderVires[i][0][0]);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, environemntRenderTexture, 0);
+		//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		//	GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, environemntRenderTexture, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
@@ -456,78 +456,78 @@ void MeGLWindow::paintGL() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
-	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
-	//render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
-	/*glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);*/
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
+	//mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
+	////render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
+	///*glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);*/
+	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	//glEnable(GL_DEPTH_TEST);
 
-	glUseProgram(PBRProgramID);
-	// in here rebind for cube
-	glBindVertexArray(SphereVertexArrayObjectID);
-	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 50.0f); // Projection matrix
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
-	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f,1.0f, 1.0f));
-	mat4 ModelToWorldMatrix = modelTransformMatrix* modelRotateMatrix *  modelScaleMatrix;
-	mat4 ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
-	mat4 fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+	//glUseProgram(PBRProgramID);
+	//// in here rebind for cube
+	//glBindVertexArray(SphereVertexArrayObjectID);
+	//projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 50.0f); // Projection matrix
+	//modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
+	//modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	//modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f,1.0f, 1.0f));
+	//mat4 ModelToWorldMatrix = modelTransformMatrix* modelRotateMatrix *  modelScaleMatrix;
+	//mat4 ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	//mat4 fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
 
-	// bind texture
-	GLint AlbedoUniformLoc = glGetUniformLocation(PBRProgramID, "albedoMap");
-	glUniform1i(AlbedoUniformLoc, 0);
-	GLint NormalUniformLoc = glGetUniformLocation(PBRProgramID, "normalMap");
-	glUniform1i(NormalUniformLoc, 1);
-	GLint RoughnessUniformLoc = glGetUniformLocation(PBRProgramID, "roughnessMap");
-	glUniform1i(RoughnessUniformLoc, 2);
-	GLint MetallicUniformLoc = glGetUniformLocation(PBRProgramID, "metallicMap");
-	glUniform1i(MetallicUniformLoc, 3);
-	GLint AoUniformLoc = glGetUniformLocation(PBRProgramID, "aoMap");
-	glUniform1i(AoUniformLoc, 4);
-
-
-		
-	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(PBRProgramID, "modelToProjectionMatrix");
-	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	GLint modelToWorldMatrixUniformLoc = glGetUniformLocation(PBRProgramID, "modelToWorldMatrix");
-	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE,&ModelToWorldMatrix[0][0]);
-	glm::vec3 cameraDirection = meCamera->getPosition();
-	GLint cameraDirectionUniformLoc = glGetUniformLocation(PBRProgramID, "CameraDirectionWorld");
-	glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
-	GLint lightpositionUniformLoc = glGetUniformLocation(PBRProgramID,"lightPositionWorld");
-	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
+	//// bind texture
+	//GLint AlbedoUniformLoc = glGetUniformLocation(PBRProgramID, "albedoMap");
+	//glUniform1i(AlbedoUniformLoc, 0);
+	//GLint NormalUniformLoc = glGetUniformLocation(PBRProgramID, "normalMap");
+	//glUniform1i(NormalUniformLoc, 1);
+	//GLint RoughnessUniformLoc = glGetUniformLocation(PBRProgramID, "roughnessMap");
+	//glUniform1i(RoughnessUniformLoc, 2);
+	//GLint MetallicUniformLoc = glGetUniformLocation(PBRProgramID, "metallicMap");
+	//glUniform1i(MetallicUniformLoc, 3);
+	//GLint AoUniformLoc = glGetUniformLocation(PBRProgramID, "aoMap");
+	//glUniform1i(AoUniformLoc, 4);
 
 
-	glm::vec3 albedoColor = glm::vec3(-1.0f, -1.0f, -1.0f);
-	GLint albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
-	glUniform3fv(albedoUniformLoc, 1,&albedoColor[0]);
-	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
-	glUniform1f(metallicUniformLoc,-1.0f);
-	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
-	glUniform1f(roughnesslicUniformLoc, -1.0f);
-	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
-	glUniform1f(aoUniformLoc, -1.0f);
+	//	
+	//GLint fullTransformMatrixUniformLocation = glGetUniformLocation(PBRProgramID, "modelToProjectionMatrix");
+	//glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	//GLint modelToWorldMatrixUniformLoc = glGetUniformLocation(PBRProgramID, "modelToWorldMatrix");
+	//glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE,&ModelToWorldMatrix[0][0]);
+	//glm::vec3 cameraDirection = meCamera->getPosition();
+	//GLint cameraDirectionUniformLoc = glGetUniformLocation(PBRProgramID, "CameraDirectionWorld");
+	//glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
+	//GLint lightpositionUniformLoc = glGetUniformLocation(PBRProgramID,"lightPositionWorld");
+	//glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
 
-	// Draw first metallic ball with texture
-	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
-	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
-	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
-	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
-	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+	//glm::vec3 albedoColor = glm::vec3(-1.0f, -1.0f, -1.0f);
+	//GLint albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
+	//glUniform3fv(albedoUniformLoc, 1,&albedoColor[0]);
+	//GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
+	//glUniform1f(metallicUniformLoc,-1.0f);
+	//GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
+	//glUniform1f(roughnesslicUniformLoc, -1.0f);
+	//GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
+	//glUniform1f(aoUniformLoc, -1.0f);
 
-	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-	albedoColor = glm::vec3(1.0f, 0.0f, 0.0f);
-	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
-	glUniform1f(metallicUniformLoc, 0.01f);
-	glUniform1f(roughnesslicUniformLoc, 1.0f);
-	glUniform1f(aoUniformLoc, 1.0f);
+	//// Draw first metallic ball with texture
+	//glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
-	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+	//modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
+	//modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	//modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	//ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	//ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	//fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+
+	//glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	//glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	//albedoColor = glm::vec3(1.0f, 0.0f, 0.0f);
+	//glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
+	//glUniform1f(metallicUniformLoc, 0.01f);
+	//glUniform1f(roughnesslicUniformLoc, 1.0f);
+	//glUniform1f(aoUniformLoc, 1.0f);
+
+	//glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 	//test cube
 	/*glUseProgram(EqtangToCubeProgramID);
 	glBindVertexArray(CubeVertexArrayObjectID);
