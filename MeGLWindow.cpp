@@ -23,6 +23,7 @@ const uint VERTEX_BYTE_SIZE = NUM_FLOATS_PER_VERTICE * sizeof(float);
 GLuint programID;
 GLuint PBRProgramID;
 GLuint EqtangToCubeProgramID;
+GLuint SkyboxProgramID;
 GLuint cubeIndices;
 GLuint arrowIndices;
 GLuint SphereIndices;
@@ -152,7 +153,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	stbi_set_flip_vertically_on_load(true);
 	int width, height, nrComponents;
-	float *data  = stbi_loadf("texture/Newport_Loft_Ref.hdr", &width, &height, &nrComponents, 0);
+	float *data  = stbi_loadf("texture/03-Ueno-Shrine_3k.hdr", &width, &height, &nrComponents, 0);
 	GLuint hdrTexture;
 	
 	if (data) {
@@ -224,13 +225,13 @@ void MeGLWindow::setupVertexArrays()
 
 void MeGLWindow::setupFrameBuffer()
 {
+	GLuint renderBufferObject;
 	glGenFramebuffers(1, &framebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	unsigned int renderBufferObject;
 	glGenRenderbuffers(1, &renderBufferObject);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferObject);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1024, 1024);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferObject);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 1024, 1024);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderBufferObject);
 
 	//To make framebuffer render to a texture I need to generate a texture object first
 
@@ -241,7 +242,7 @@ void MeGLWindow::setupFrameBuffer()
 	{
 		// note that we store each face with 16 bit floating point values
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F,
-			1024, 1024, 0, GL_RGB, GL_FLOAT, NULL);
+			1024, 1024, 0, GL_RGB, GL_FLOAT, nullptr);
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -249,15 +250,14 @@ void MeGLWindow::setupFrameBuffer()
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glBindTexture(GL_TEXTURE_2D, 0); //bind back to default
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, environemntRenderTexture, 0);
+	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, environemntRenderTexture, 0);
 	// use render Buffer object for depth test
 	
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0); //bind back to default
 }
 
 
@@ -313,7 +313,9 @@ void MeGLWindow::installShaders() {
 	GLuint  fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 	GLuint  PBRfragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 	GLuint  EqToCubevertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	GLuint  EqToCubefragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint  EqToCubefragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint  SkyboxvertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint  SkyboxfragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	string temp = readShaderCode("VertexShaderCode.glsl");
 	const GLchar* adapter[1];
@@ -339,21 +341,33 @@ void MeGLWindow::installShaders() {
 
 	temp = readShaderCode("EquTanToCubeFragmentShader.glsl");
 	adapter[0] = temp.c_str();
-	glShaderSource(EqToCubefragmentShader, 1, adapter, 0);
+	glShaderSource(EqToCubefragmentShaderID, 1, adapter, 0);
+
+	temp = readShaderCode("shaders/skyboxVertexShader.glsl");
+	adapter[0] = temp.c_str();
+	glShaderSource(SkyboxvertexShaderID, 1, adapter, 0);
+
+	temp = readShaderCode("shaders/skyboxFragmentShader.glsl");
+	adapter[0] = temp.c_str();
+	glShaderSource(SkyboxfragmentShaderID, 1, adapter, 0);
 
 	glCompileShader(vertexShaderID);
 	glCompileShader(fragmentShaderID);
 	glCompileShader(PBRfragmentShaderID);
 	glCompileShader(PBRvertexShaderID);
 	glCompileShader(EqToCubevertexShaderID);
-	glCompileShader(EqToCubefragmentShader);
+	glCompileShader(EqToCubefragmentShaderID);
+	glCompileShader(SkyboxvertexShaderID);
+	glCompileShader(SkyboxfragmentShaderID);
 
 	if (!checkShaderStatus(vertexShaderID) 
 		||!checkShaderStatus(fragmentShaderID) 
 		|| !checkShaderStatus(PBRfragmentShaderID)
 		|| !checkShaderStatus(PBRvertexShaderID)
 		|| !checkShaderStatus(EqToCubevertexShaderID)
-		|| !checkShaderStatus(EqToCubefragmentShader)
+		|| !checkShaderStatus(EqToCubefragmentShaderID)
+		|| !checkShaderStatus(SkyboxvertexShaderID)
+		|| !checkShaderStatus(SkyboxfragmentShaderID)
 		) {
 		return;
 	}
@@ -370,9 +384,15 @@ void MeGLWindow::installShaders() {
 
 	EqtangToCubeProgramID = glCreateProgram();
 	glAttachShader(EqtangToCubeProgramID, EqToCubevertexShaderID);
-	glAttachShader(EqtangToCubeProgramID, EqToCubefragmentShader);
+	glAttachShader(EqtangToCubeProgramID, EqToCubefragmentShaderID);
 	glLinkProgram(EqtangToCubeProgramID);
-	if (!checkProgramStatus(programID) || !checkProgramStatus(PBRProgramID) || !checkProgramStatus(EqtangToCubeProgramID)) {
+
+	SkyboxProgramID = glCreateProgram();
+	glAttachShader(SkyboxProgramID, SkyboxvertexShaderID);
+	glAttachShader(SkyboxProgramID, SkyboxfragmentShaderID);
+	glLinkProgram(SkyboxProgramID);
+
+	if (!checkProgramStatus(programID) || !checkProgramStatus(PBRProgramID) || !checkProgramStatus(EqtangToCubeProgramID) || !checkProgramStatus(SkyboxProgramID)) {
 		return;
 	}
 }
@@ -423,7 +443,7 @@ glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YS
 
 void MeGLWindow::paintGL() {
 	// render environment texture first
-	
+
 	glm::mat4 renderProjectionMatrix = glm::perspective(90.0f, 1.0f, 0.1f, 50.0f);
 	glm::mat4 renderVires[] =
 	{
@@ -436,7 +456,6 @@ void MeGLWindow::paintGL() {
 	};
 
 	glUseProgram(EqtangToCubeProgramID);
-	//glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glBindVertexArray(CubeVertexArrayObjectID);
 	GLuint EqTangToCubeTextureUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "equirectangularMap");
 	glUniform1i(EqTangToCubeTextureUniformLoc, 6);
@@ -444,90 +463,107 @@ void MeGLWindow::paintGL() {
 	glUniformMatrix4fv(EqTangToCubeProjectionUniformLoc, 1, GL_FALSE, &renderProjectionMatrix[0][0]);
 	GLuint EqTangToCubeViewUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "worldToViewMatrix");
 	glViewport(0, 0, width(), height());
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	for ( int i = 0; i < 6; ++i)
 	{
 		glUniformMatrix4fv(EqTangToCubeViewUniformLoc, 1, GL_FALSE, &renderVires[i][0][0]);
-		//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-		//	GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, environemntRenderTexture, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, environemntRenderTexture, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
 	}
+
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
-	//mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
-	////render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
-	///*glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);*/
-	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	//glEnable(GL_DEPTH_TEST);
+	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
+	//render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
+	/*glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);*/
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glUseProgram(PBRProgramID);
+	// in here rebind for cube
+	glBindVertexArray(SphereVertexArrayObjectID);
+	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 50.0f); // Projection matrix
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f,1.0f, 1.0f));
+	mat4 ModelToWorldMatrix = modelTransformMatrix* modelRotateMatrix *  modelScaleMatrix;
+	mat4 ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	mat4 fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
 
-	//glUseProgram(PBRProgramID);
-	//// in here rebind for cube
-	//glBindVertexArray(SphereVertexArrayObjectID);
-	//projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 50.0f); // Projection matrix
-	//modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
-	//modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	//modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f,1.0f, 1.0f));
-	//mat4 ModelToWorldMatrix = modelTransformMatrix* modelRotateMatrix *  modelScaleMatrix;
-	//mat4 ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
-	//mat4 fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
-
-	//// bind texture
-	//GLint AlbedoUniformLoc = glGetUniformLocation(PBRProgramID, "albedoMap");
-	//glUniform1i(AlbedoUniformLoc, 0);
-	//GLint NormalUniformLoc = glGetUniformLocation(PBRProgramID, "normalMap");
-	//glUniform1i(NormalUniformLoc, 1);
-	//GLint RoughnessUniformLoc = glGetUniformLocation(PBRProgramID, "roughnessMap");
-	//glUniform1i(RoughnessUniformLoc, 2);
-	//GLint MetallicUniformLoc = glGetUniformLocation(PBRProgramID, "metallicMap");
-	//glUniform1i(MetallicUniformLoc, 3);
-	//GLint AoUniformLoc = glGetUniformLocation(PBRProgramID, "aoMap");
-	//glUniform1i(AoUniformLoc, 4);
-
-
-	//	
-	//GLint fullTransformMatrixUniformLocation = glGetUniformLocation(PBRProgramID, "modelToProjectionMatrix");
-	//glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	//GLint modelToWorldMatrixUniformLoc = glGetUniformLocation(PBRProgramID, "modelToWorldMatrix");
-	//glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE,&ModelToWorldMatrix[0][0]);
-	//glm::vec3 cameraDirection = meCamera->getPosition();
-	//GLint cameraDirectionUniformLoc = glGetUniformLocation(PBRProgramID, "CameraDirectionWorld");
-	//glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
-	//GLint lightpositionUniformLoc = glGetUniformLocation(PBRProgramID,"lightPositionWorld");
-	//glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
+	// bind texture
+	GLint AlbedoUniformLoc = glGetUniformLocation(PBRProgramID, "albedoMap");
+	glUniform1i(AlbedoUniformLoc, 0);
+	GLint NormalUniformLoc = glGetUniformLocation(PBRProgramID, "normalMap");
+	glUniform1i(NormalUniformLoc, 1);
+	GLint RoughnessUniformLoc = glGetUniformLocation(PBRProgramID, "roughnessMap");
+	glUniform1i(RoughnessUniformLoc, 2);
+	GLint MetallicUniformLoc = glGetUniformLocation(PBRProgramID, "metallicMap");
+	glUniform1i(MetallicUniformLoc, 3);
+	GLint AoUniformLoc = glGetUniformLocation(PBRProgramID, "aoMap");
+	glUniform1i(AoUniformLoc, 4);
 
 
-	//glm::vec3 albedoColor = glm::vec3(-1.0f, -1.0f, -1.0f);
-	//GLint albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
-	//glUniform3fv(albedoUniformLoc, 1,&albedoColor[0]);
-	//GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
-	//glUniform1f(metallicUniformLoc,-1.0f);
-	//GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
-	//glUniform1f(roughnesslicUniformLoc, -1.0f);
-	//GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
-	//glUniform1f(aoUniformLoc, -1.0f);
+		
+	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(PBRProgramID, "modelToProjectionMatrix");
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	GLint modelToWorldMatrixUniformLoc = glGetUniformLocation(PBRProgramID, "modelToWorldMatrix");
+	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE,&ModelToWorldMatrix[0][0]);
+	glm::vec3 cameraDirection = meCamera->getPosition();
+	GLint cameraDirectionUniformLoc = glGetUniformLocation(PBRProgramID, "CameraDirectionWorld");
+	glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
+	GLint lightpositionUniformLoc = glGetUniformLocation(PBRProgramID,"lightPositionWorld");
+	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
 
-	//// Draw first metallic ball with texture
-	//glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
-	//modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
-	//modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	//modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
-	//ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
-	//ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
-	//fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+	glm::vec3 albedoColor = glm::vec3(-1.0f, -1.0f, -1.0f);
+	GLint albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
+	glUniform3fv(albedoUniformLoc, 1,&albedoColor[0]);
+	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
+	glUniform1f(metallicUniformLoc,-1.0f);
+	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
+	glUniform1f(roughnesslicUniformLoc, -1.0f);
+	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
+	glUniform1f(aoUniformLoc, -1.0f);
 
-	//glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	//glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-	//albedoColor = glm::vec3(1.0f, 0.0f, 0.0f);
-	//glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
-	//glUniform1f(metallicUniformLoc, 0.01f);
-	//glUniform1f(roughnesslicUniformLoc, 1.0f);
-	//glUniform1f(aoUniformLoc, 1.0f);
+	// Draw first metallic ball with texture
+	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
-	//glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	albedoColor = glm::vec3(1.0f, 0.0f, 0.0f);
+	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
+	glUniform1f(metallicUniformLoc, 0.01f);
+	glUniform1f(roughnesslicUniformLoc, 1.0f);
+	glUniform1f(aoUniformLoc, 1.0f);
+
+	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+
+	//Draw skybox
+	glUseProgram(SkyboxProgramID);
+	glBindVertexArray(CubeVertexArrayObjectID);
+
+	glm::mat4 worldToViewMatrix = meCamera->getWorldToViewMatrix();
+	GLuint SkyboxTextureUniformLocation = glGetUniformLocation(SkyboxProgramID, "environmentMap");
+	glUniform1i(SkyboxTextureUniformLocation,5);
+	GLuint SkyboxWorldToViewUniformLocation = glGetUniformLocation(SkyboxProgramID, "worldToViewMatrix");
+	glUniformMatrix4fv(SkyboxWorldToViewUniformLocation, 1, GL_FALSE, &worldToViewMatrix[0][0]);
+	GLuint SkyboxProjectionUniformLocation = glGetUniformLocation(SkyboxProgramID, "viewToProjectionMatrix");
+	glUniformMatrix4fv(SkyboxProjectionUniformLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
+	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0); 
+
 	//test cube
 	/*glUseProgram(EqtangToCubeProgramID);
 	glBindVertexArray(CubeVertexArrayObjectID);
@@ -546,20 +582,20 @@ void MeGLWindow::paintGL() {
 	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);*/
 
 	// bind back to default framebuffer
-	/*glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDisable(GL_DEPTH_TEST);
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-
-	glUseProgram(programID);
-	glBindVertexArray(PlaneVertexArrayObjectID);
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, framebufferTexture);
-	GLuint framebufferTextureUniformLoc = glGetUniformLocation(programID, "frameBufferTexture");
-	glUniform1i(framebufferTextureUniformLoc, 5);
-
-	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);*/
+	
+//	glDisable(GL_DEPTH_TEST);
+//	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+//	glClear(GL_COLOR_BUFFER_BIT);
+//
+//
+//	glUseProgram(programID);
+//	glBindVertexArray(PlaneVertexArrayObjectID);
+//	glActiveTexture(GL_TEXTURE5);
+//	glBindTexture(GL_TEXTURE_2D, environemntRenderTexture);
+//	GLuint framebufferTextureUniformLoc = glGetUniformLocation(programID, "frameBufferTexture");
+//	glUniform1i(framebufferTextureUniformLoc, 5);
+//
+//	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 }
 
 MeGLWindow::MeGLWindow()

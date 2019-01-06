@@ -16,6 +16,9 @@
     <Filter Include="Header Files\Primitives">
       <UniqueIdentifier>{18e9eaea-6e76-4cc1-abc0-762c358b1596}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{e2ed8630-33f0-464b-a957-b288b301309f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Mainer.cpp">
@@ -58,21 +61,46 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vertexShaderCode.glsl" />
-    <None Include="FragmentShaderCode.glsl" />
-    <None Include="WhitePlaneFragmentShader.glsl" />
-    <None Include="WhitePlaneVertexShader.glsl" />
     <None Include="texture\normalMap">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="PBR_vertexShader.glsl" />
-    <None Include="PBR_fragmentShader.glsl" />
-    <None Include="EquTanToCubeVertexShader.glsl" />
-    <None Include="EquTanToCubeFragmentShader.glsl" />
     <None Include="texture\Mans_Outside_Env.hdr">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="texture\Newport_Loft_Ref.hdr">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="EquTanToCubeFragmentShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="EquTanToCubeVertexShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="FragmentShaderCode.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="PBR_fragmentShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="WhitePlaneVertexShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="WhitePlaneFragmentShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="vertexShaderCode.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="PBR_vertexShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\skyboxVertexShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\skyboxFragmentShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="texture\03-Ueno-Shrine_3k.hdr">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

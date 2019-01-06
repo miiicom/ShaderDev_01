@@ -144,6 +144,9 @@
     <None Include="FragmentShaderCode.glsl" />
     <None Include="PBR_fragmentShader.glsl" />
     <None Include="PBR_vertexShader.glsl" />
+    <None Include="shaders\skyboxFragmentShader.glsl" />
+    <None Include="shaders\skyboxVertexShader.glsl" />
+    <None Include="texture\03-Ueno-Shrine_3k.hdr" />
     <None Include="texture\Mans_Outside_Env.hdr" />
     <None Include="texture\Newport_Loft_Ref.hdr" />
     <None Include="texture\normalMap" />
