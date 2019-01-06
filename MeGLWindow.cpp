@@ -153,7 +153,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	stbi_set_flip_vertically_on_load(true);
 	int width, height, nrComponents;
-	float *data  = stbi_loadf("texture/03-Ueno-Shrine_3k.hdr", &width, &height, &nrComponents, 0);
+	float *data  = stbi_loadf("texture/Newport_Loft_Ref.hdr", &width, &height, &nrComponents, 0);
 	GLuint hdrTexture;
 	
 	if (data) {
@@ -443,8 +443,9 @@ glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YS
 
 void MeGLWindow::paintGL() {
 	// render environment texture first
-
-	glm::mat4 renderProjectionMatrix = glm::perspective(90.0f, 1.0f, 0.1f, 50.0f);
+	//glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	glClearColor(1.01f, 0.1f, 0.1f, 1.0f); 
+	glm::mat4 renderProjectionMatrix = glm::perspective(90.0f, 1.0f, 0.01f, 10.0f);
 	glm::mat4 renderVires[] =
 	{
 		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),

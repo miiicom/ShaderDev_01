@@ -17,7 +17,7 @@ void main()
 	fragmentPositionWorld = vertexPositionModel.xyz;
 
 	mat4 rotView = mat4(mat3(worldToViewMatrix)); // truncate the translation information
-	vec4 clippedPosition = viewToProjectionMatrix * rotView * vertexPositionModel;
+	vec4 clippedPosition = viewToProjectionMatrix * rotView * vec4(fragmentPositionWorld,1.0);
 
 	gl_Position = clippedPosition.xyww;
 }
