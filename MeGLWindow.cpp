@@ -482,7 +482,7 @@ void MeGLWindow::paintGL() {
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
 	//render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
 	/*glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);*/
-	glViewport(0, 0,1024, 1024);
+	glViewport(0, 0, width(),height());
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f); 
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
