@@ -445,7 +445,7 @@ void MeGLWindow::paintGL() {
 	// render environment texture first
 	//glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	glClearColor(1.01f, 0.1f, 0.1f, 1.0f); 
-	glm::mat4 renderProjectionMatrix = glm::perspective(90.0f, 1.0f, 0.01f, 10.0f);
+	glm::mat4 renderProjectionMatrix = glm::perspective(90.0f,1.0f,0.01f, 10.0f);
 	glm::mat4 renderVires[] =
 	{
 		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
@@ -463,7 +463,7 @@ void MeGLWindow::paintGL() {
 	GLuint EqTangToCubeProjectionUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "viewToProjectionMatrix");
 	glUniformMatrix4fv(EqTangToCubeProjectionUniformLoc, 1, GL_FALSE, &renderProjectionMatrix[0][0]);
 	GLuint EqTangToCubeViewUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "worldToViewMatrix");
-	glViewport(0, 0, width(), height());
+	glViewport(0, 0, 1024, 1024);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	for ( int i = 0; i < 6; ++i)
 	{
@@ -481,8 +481,9 @@ void MeGLWindow::paintGL() {
 
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
 	//render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
-	/*glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);*/
+	/*glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);*/
+	glViewport(0, 0,1024, 1024);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f); 
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
