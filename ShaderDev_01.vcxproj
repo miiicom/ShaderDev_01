@@ -142,6 +142,7 @@
     <None Include="EquTanToCubeFragmentShader.glsl" />
     <None Include="EquTanToCubeVertexShader.glsl" />
     <None Include="FragmentShaderCode.glsl" />
+    <None Include="irradiance_convolution_FragmentShader.glsl" />
     <None Include="PBR_fragmentShader.glsl" />
     <None Include="PBR_vertexShader.glsl" />
     <None Include="shaders\skyboxFragmentShader.glsl" />

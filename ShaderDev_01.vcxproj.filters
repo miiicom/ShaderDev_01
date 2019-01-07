@@ -103,6 +103,9 @@
     <None Include="texture\03-Ueno-Shrine_3k.hdr">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="irradiance_convolution_FragmentShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="texture\Checker">

@@ -24,6 +24,7 @@ GLuint programID;
 GLuint PBRProgramID;
 GLuint EqtangToCubeProgramID;
 GLuint SkyboxProgramID;
+GLuint DiffuseIrradianceProgramID;
 GLuint cubeIndices;
 GLuint arrowIndices;
 GLuint SphereIndices;
@@ -153,7 +154,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	stbi_set_flip_vertically_on_load(true);
 	int width, height, nrComponents;
-	float *data  = stbi_loadf("texture/Newport_Loft_Ref.hdr", &width, &height, &nrComponents, 0);
+	float *data  = stbi_loadf("texture/03-Ueno-Shrine_3k.hdr", &width, &height, &nrComponents, 0);
 	GLuint hdrTexture;
 	
 	if (data) {
@@ -308,14 +309,15 @@ string  MeGLWindow::readShaderCode(const char* filename) {
 
 void MeGLWindow::installShaders() {
 	
-	GLuint  vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	GLuint  PBRvertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	GLuint  fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	GLuint  PBRfragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	GLuint  EqToCubevertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	GLuint  EqToCubefragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	GLuint  SkyboxvertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	GLuint  SkyboxfragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint PBRvertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint PBRfragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint EqToCubevertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint EqToCubefragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint DiffuseIrradiancefragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint SkyboxvertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint SkyboxfragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	string temp = readShaderCode("VertexShaderCode.glsl");
 	const GLchar* adapter[1];
@@ -343,6 +345,10 @@ void MeGLWindow::installShaders() {
 	adapter[0] = temp.c_str();
 	glShaderSource(EqToCubefragmentShaderID, 1, adapter, 0);
 
+	temp = readShaderCode("irradiance_convolution_FragmentShader.glsl");
+	adapter[0] = temp.c_str();
+	glShaderSource(DiffuseIrradiancefragmentShaderID, 1, adapter, 0);
+
 	temp = readShaderCode("shaders/skyboxVertexShader.glsl");
 	adapter[0] = temp.c_str();
 	glShaderSource(SkyboxvertexShaderID, 1, adapter, 0);
@@ -357,6 +363,7 @@ void MeGLWindow::installShaders() {
 	glCompileShader(PBRvertexShaderID);
 	glCompileShader(EqToCubevertexShaderID);
 	glCompileShader(EqToCubefragmentShaderID);
+	glCompileShader(DiffuseIrradiancefragmentShaderID);
 	glCompileShader(SkyboxvertexShaderID);
 	glCompileShader(SkyboxfragmentShaderID);
 
@@ -366,6 +373,7 @@ void MeGLWindow::installShaders() {
 		|| !checkShaderStatus(PBRvertexShaderID)
 		|| !checkShaderStatus(EqToCubevertexShaderID)
 		|| !checkShaderStatus(EqToCubefragmentShaderID)
+		|| !checkShaderStatus(DiffuseIrradiancefragmentShaderID)
 		|| !checkShaderStatus(SkyboxvertexShaderID)
 		|| !checkShaderStatus(SkyboxfragmentShaderID)
 		) {
@@ -387,12 +395,17 @@ void MeGLWindow::installShaders() {
 	glAttachShader(EqtangToCubeProgramID, EqToCubefragmentShaderID);
 	glLinkProgram(EqtangToCubeProgramID);
 
+	DiffuseIrradianceProgramID = glCreateProgram();
+	glAttachShader(DiffuseIrradianceProgramID, EqToCubevertexShaderID);			   // For EqToCube shader and Diffuse irradiance shader,
+	glAttachShader(DiffuseIrradianceProgramID, DiffuseIrradiancefragmentShaderID); // They can share the same vertex shader,
+	glLinkProgram(DiffuseIrradianceProgramID);									   // as they all working on a sphere and pass model space vertex info as world space vertex info
+
 	SkyboxProgramID = glCreateProgram();
 	glAttachShader(SkyboxProgramID, SkyboxvertexShaderID);
 	glAttachShader(SkyboxProgramID, SkyboxfragmentShaderID);
 	glLinkProgram(SkyboxProgramID);
 
-	if (!checkProgramStatus(programID) || !checkProgramStatus(PBRProgramID) || !checkProgramStatus(EqtangToCubeProgramID) || !checkProgramStatus(SkyboxProgramID)) {
+	if (!checkProgramStatus(programID) || !checkProgramStatus(PBRProgramID) || !checkProgramStatus(EqtangToCubeProgramID) || !checkProgramStatus(SkyboxProgramID) || !checkProgramStatus(DiffuseIrradianceProgramID)) {
 		return;
 	}
 }
@@ -463,7 +476,7 @@ void MeGLWindow::paintGL() {
 	GLuint EqTangToCubeProjectionUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "viewToProjectionMatrix");
 	glUniformMatrix4fv(EqTangToCubeProjectionUniformLoc, 1, GL_FALSE, &renderProjectionMatrix[0][0]);
 	GLuint EqTangToCubeViewUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "worldToViewMatrix");
-	glViewport(0, 0, 1024, 1024);
+	glViewport(0, 0, 1024, 1024);    // Potential solution is to fix it, some how width() and height() from Qt messed up
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	for ( int i = 0; i < 6; ++i)
 	{
@@ -474,7 +487,7 @@ void MeGLWindow::paintGL() {
 
 		glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
 	}
-
+	// Now we already done storing the skybox in to Texture "environemntRenderTexture", we can use the framebuffer for storing convolution shader information I guess?
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
