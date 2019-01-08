@@ -3,7 +3,7 @@
 out vec4 FragmentColor;
 in vec3 FragmentPositionWorld;
 
-uniform samplerCube  equirectangularMap;
+uniform samplerCube Cubemap;
 
 const float PI = 3.141592653;
 
@@ -31,7 +31,7 @@ void main()
             // tangent space to world
             vec3 sampleVec = tangentSample.x * Tangent + tangentSample.y * Binormal + tangentSample.z * Normal; // could be buggy
 
-			irradiance += texture(equirectangularMap, sampleVec).rgb * cos(theta) * sin(theta);
+			irradiance += texture(Cubemap, sampleVec).rgb * cos(theta) * sin(theta);
 		}
 	}
 	irradiance = PI * irradiance * (1.0 / float(numSamples));

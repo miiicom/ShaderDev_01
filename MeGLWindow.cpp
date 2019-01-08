@@ -478,25 +478,40 @@ void MeGLWindow::RenderToFrameBuffer()
 
 
 	// Now use the cubemap we got to calculate diffuse irradiance color
-	//GLuint irradianceMapTexture;
-	//glGenTextures(1, &irradianceMapTexture);
-	//glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMapTexture);
-	//glActiveTexture(GL_TEXTURE7);
-	//for (int i = 0; i < 6; i++) {
-	//	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 64, 64, 0, GL_RGB, GL_FLOAT, NULL); // I want to use 64 * 64 irradiance map because I can
-	//}
-	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GLuint irradianceMapTexture;
+	glGenTextures(1, &irradianceMapTexture);
+	glActiveTexture(GL_TEXTURE7);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMapTexture);
+	
+	for (int i = 0; i < 6; i++) {
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 64, 64, 0, GL_RGB, GL_FLOAT, NULL); // I want to use 64 * 64 irradiance map because I can
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	//glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	//glBindRenderbuffer(GL_RENDERBUFFER, renderBufferObject); // Do I need to bind that again? I never bind it back
-	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 64, 64);
+	glViewport(0, 0, 64, 64);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferObject); // Do I need to bind that again? I never bind it back
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 64, 64);
 
-	//glUseProgram(DiffuseIrradianceProgramID);
-	//GLuint DiffuseIrradianceProjectionUniformLoc = glGetUniformLocation(DiffuseIrradianceProgramID, "");
+	glUseProgram(DiffuseIrradianceProgramID);
+	GLuint DiffuseIrradianceCubeMapUniformLoc = glGetUniformLocation(DiffuseIrradianceProgramID, "Cubemap");
+	glUniform1i(DiffuseIrradianceCubeMapUniformLoc,5); // we rendered the cubemap into texture slot 5
+	GLuint DiffuseIrradianceProjectionUniformLoc = glGetUniformLocation(DiffuseIrradianceProgramID, "viewToProjectionMatrix");
+	glUniformMatrix4fv(DiffuseIrradianceProjectionUniformLoc, 1, GL_FALSE, &renderProjectionMatrix[0][0]);
+	GLuint DiffuseIrradianceViewUniformLoc = glGetUniformLocation(DiffuseIrradianceProgramID, "worldToViewMatrix");
+
+	for (int i = 0; i < 6; i++) {
+		glUniformMatrix4fv(DiffuseIrradianceViewUniformLoc, 1, GL_FALSE, &renderVires[i][0][0]);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMapTexture, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
@@ -600,7 +615,7 @@ void MeGLWindow::paintGL() {
 
 	glm::mat4 worldToViewMatrix = meCamera->getWorldToViewMatrix();
 	GLuint SkyboxTextureUniformLocation = glGetUniformLocation(SkyboxProgramID, "environmentMap");
-	glUniform1i(SkyboxTextureUniformLocation,5);
+	glUniform1i(SkyboxTextureUniformLocation,7);
 	GLuint SkyboxWorldToViewUniformLocation = glGetUniformLocation(SkyboxProgramID, "worldToViewMatrix");
 	glUniformMatrix4fv(SkyboxWorldToViewUniformLocation, 1, GL_FALSE, &worldToViewMatrix[0][0]);
 	GLuint SkyboxProjectionUniformLocation = glGetUniformLocation(SkyboxProgramID, "viewToProjectionMatrix");
