@@ -606,7 +606,7 @@ void MeGLWindow::paintGL() {
 	albedoColor = glm::vec3(0.99f, 0.01f, 0.01f);
 	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
 	glUniform1f(metallicUniformLoc, 0.99f);
-	glUniform1f(roughnesslicUniformLoc,0.99f);
+	glUniform1f(roughnesslicUniformLoc,0.01f);
 	glUniform1f(aoUniformLoc, 1.0f);
 
 	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
