@@ -158,7 +158,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	stbi_set_flip_vertically_on_load(true);
 	int width, height, nrComponents;
-	float *data  = stbi_loadf("texture/03-Ueno-Shrine_3k.hdr", &width, &height, &nrComponents, 0);
+	float *data  = stbi_loadf("texture/Newport_Loft_Ref.hdr", &width, &height, &nrComponents, 0);
 	GLuint hdrTexture;
 	
 	if (data) {
@@ -565,6 +565,8 @@ void MeGLWindow::paintGL() {
 	glUniform1i(MetallicUniformLoc, 3);
 	GLint AoUniformLoc = glGetUniformLocation(PBRProgramID, "aoMap");
 	glUniform1i(AoUniformLoc, 4);
+	GLint IrradianceMapUniformLoc = glGetUniformLocation(PBRProgramID, "irradianceMap");
+	glUniform1i(IrradianceMapUniformLoc, 7);
 
 
 		
@@ -601,10 +603,10 @@ void MeGLWindow::paintGL() {
 
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-	albedoColor = glm::vec3(1.0f, 0.0f, 0.0f);
+	albedoColor = glm::vec3(0.99f, 0.01f, 0.01f);
 	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
-	glUniform1f(metallicUniformLoc, 0.01f);
-	glUniform1f(roughnesslicUniformLoc, 1.0f);
+	glUniform1f(metallicUniformLoc, 0.99f);
+	glUniform1f(roughnesslicUniformLoc,0.01f);
 	glUniform1f(aoUniformLoc, 1.0f);
 
 	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
@@ -615,7 +617,7 @@ void MeGLWindow::paintGL() {
 
 	glm::mat4 worldToViewMatrix = meCamera->getWorldToViewMatrix();
 	GLuint SkyboxTextureUniformLocation = glGetUniformLocation(SkyboxProgramID, "environmentMap");
-	glUniform1i(SkyboxTextureUniformLocation,7);
+	glUniform1i(SkyboxTextureUniformLocation,5);
 	GLuint SkyboxWorldToViewUniformLocation = glGetUniformLocation(SkyboxProgramID, "worldToViewMatrix");
 	glUniformMatrix4fv(SkyboxWorldToViewUniformLocation, 1, GL_FALSE, &worldToViewMatrix[0][0]);
 	GLuint SkyboxProjectionUniformLocation = glGetUniformLocation(SkyboxProgramID, "viewToProjectionMatrix");

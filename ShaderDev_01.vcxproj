@@ -151,6 +151,7 @@
     <None Include="texture\Mans_Outside_Env.hdr" />
     <None Include="texture\Newport_Loft_Ref.hdr" />
     <None Include="texture\normalMap" />
+    <None Include="texture\Road_to_MonumentValley_Ref.hdr" />
     <None Include="vertexShaderCode.glsl" />
     <None Include="WhitePlaneFragmentShader.glsl" />
     <None Include="WhitePlaneVertexShader.glsl" />

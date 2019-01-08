@@ -18,6 +18,7 @@ uniform mat4 modelToWorldMatrix;
 uniform vec3 CameraDirectionWorld;
 uniform vec3 lightPositionWorld;
 
+uniform samplerCube irradianceMap;
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
 uniform sampler2D roughnessMap;
@@ -104,6 +105,7 @@ void main()
 			ao = parameter.AO;
 		}
 
+	vec3 normalizedNormalWorld = normalize(normalWorld);
 	vec3 F0 = vec3(0.04);
 	F0 = mix(F0, albedo, metallic);
 
@@ -136,8 +138,16 @@ void main()
 	float NormalLightDot = max(dot(normal, lightDirection), 0.0);
 	Lo += (kD * albedo / PI + specular) *  radiance * NormalLightDot;
 
-	vec3 ambinent = vec3(0.03) * albedo * ao;
-	vec3 color = ambinent + Lo;
+	//calculate amibent based on IBL
+	kS = fresnelSchlick(max(dot(normal,ViewDirectionWorld),0.0),F0);
+	kD = 1.0 - kS;
+	kD *= 1.0 - metallic;
+	vec3 irradiance = texture(irradianceMap,normalizedNormalWorld).xyz;
+	vec3 diffuse = irradiance * albedo;
+	vec3 ambient = (kD * diffuse) * ao;
+
+
+	vec3 color = ambient + Lo;
 
 	color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2));
