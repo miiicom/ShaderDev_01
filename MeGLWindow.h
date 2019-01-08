@@ -22,6 +22,7 @@ protected:
 	void initializeGL();
 	void mouseMoveEvent(QMouseEvent *event) ;
 	QImage loadTexture(const char * texName);
+	void RenderToFrameBuffer();
 
 	
 public:

@@ -420,6 +420,7 @@ void MeGLWindow::initializeGL() {
 	sendDataToOpenGL();
 	setupVertexArrays();
 	installShaders();
+	RenderToFrameBuffer();
 }
 
 void MeGLWindow::mouseMoveEvent(QMouseEvent * event)
@@ -436,6 +437,66 @@ void MeGLWindow::MoveLightLight(glm::vec3 pointlightOffset)
 QImage MeGLWindow::loadTexture(const char * texName)
 {
 	return QGLWidget::convertToGLFormat(QImage(texName, "PNG"));
+}
+
+void MeGLWindow::RenderToFrameBuffer()
+{
+	// render environment texture first
+
+	glClearColor(1.01f, 0.1f, 0.1f, 1.0f);
+	glm::mat4 renderProjectionMatrix = glm::perspective(90.0f, 1.0f, 0.01f, 10.0f);
+	glm::mat4 renderVires[] =
+	{
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+	};
+
+	glUseProgram(EqtangToCubeProgramID);
+	glBindVertexArray(CubeVertexArrayObjectID);
+	GLuint EqTangToCubeTextureUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "equirectangularMap");
+	glUniform1i(EqTangToCubeTextureUniformLoc, 6);
+	GLuint EqTangToCubeProjectionUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "viewToProjectionMatrix");
+	glUniformMatrix4fv(EqTangToCubeProjectionUniformLoc, 1, GL_FALSE, &renderProjectionMatrix[0][0]);
+	GLuint EqTangToCubeViewUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "worldToViewMatrix");
+	glViewport(0, 0, 1024, 1024);    // Potential solution is to fix it, some how width() and height() from Qt messed up
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	for (int i = 0; i < 6; ++i)
+	{
+		glUniformMatrix4fv(EqTangToCubeViewUniformLoc, 1, GL_FALSE, &renderVires[i][0][0]);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, environemntRenderTexture, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+	}
+	// Now we already done storing the skybox in to Texture "environemntRenderTexture", we can use the framebuffer and render buffer for storing convolution shader information I guess?
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+	// Now use the cubemap we got to calculate diffuse irradiance color
+	//GLuint irradianceMapTexture;
+	//glGenTextures(1, &irradianceMapTexture);
+	//glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMapTexture);
+	//glActiveTexture(GL_TEXTURE7);
+	//for (int i = 0; i < 6; i++) {
+	//	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 64, 64, 0, GL_RGB, GL_FLOAT, NULL); // I want to use 64 * 64 irradiance map because I can
+	//}
+	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	//glBindRenderbuffer(GL_RENDERBUFFER, renderBufferObject); // Do I need to bind that again? I never bind it back
+	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 64, 64);
+
+	//glUseProgram(DiffuseIrradianceProgramID);
+	//GLuint DiffuseIrradianceProjectionUniformLoc = glGetUniformLocation(DiffuseIrradianceProgramID, "");
 }
 
 
@@ -458,43 +519,7 @@ glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YS
 }
 
 void MeGLWindow::paintGL() {
-	// render environment texture first
-
-	glClearColor(1.01f, 0.1f, 0.1f, 1.0f); 
-	glm::mat4 renderProjectionMatrix = glm::perspective(90.0f,1.0f,0.01f, 10.0f);
-	glm::mat4 renderVires[] =
-	{
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
-	};
-
-	glUseProgram(EqtangToCubeProgramID);
-	glBindVertexArray(CubeVertexArrayObjectID);
-	GLuint EqTangToCubeTextureUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "equirectangularMap");
-	glUniform1i(EqTangToCubeTextureUniformLoc, 6);
-	GLuint EqTangToCubeProjectionUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "viewToProjectionMatrix");
-	glUniformMatrix4fv(EqTangToCubeProjectionUniformLoc, 1, GL_FALSE, &renderProjectionMatrix[0][0]);
-	GLuint EqTangToCubeViewUniformLoc = glGetUniformLocation(EqtangToCubeProgramID, "worldToViewMatrix");
-	glViewport(0, 0, 1024, 1024);    // Potential solution is to fix it, some how width() and height() from Qt messed up
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	for ( int i = 0; i < 6; ++i)
-	{
-		glUniformMatrix4fv(EqTangToCubeViewUniformLoc, 1, GL_FALSE, &renderVires[i][0][0]);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, environemntRenderTexture, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
-	}
-	// Now we already done storing the skybox in to Texture "environemntRenderTexture", we can use the framebuffer for storing convolution shader information I guess?
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// Now use the cubemap we got to calculate diffuse irradiance color
-
+	//Set up matrix for real render things
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
 	//render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
 	/*glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);*/
