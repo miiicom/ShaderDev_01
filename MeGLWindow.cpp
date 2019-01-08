@@ -25,11 +25,15 @@ GLuint PBRProgramID;
 GLuint EqtangToCubeProgramID;
 GLuint SkyboxProgramID;
 GLuint DiffuseIrradianceProgramID;
+
 GLuint cubeIndices;
 GLuint arrowIndices;
 GLuint SphereIndices;
 GLuint planeIndices;
+
 GLuint framebuffer;
+GLuint renderBufferObject;
+
 GLuint SphereVertexBufferID;
 GLuint SphereIndexBufferID;
 GLuint PlaneVertexBufferID;
@@ -226,7 +230,6 @@ void MeGLWindow::setupVertexArrays()
 
 void MeGLWindow::setupFrameBuffer()
 {
-	GLuint renderBufferObject;
 	glGenFramebuffers(1, &framebuffer);
 	glGenRenderbuffers(1, &renderBufferObject);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -456,7 +459,7 @@ glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YS
 
 void MeGLWindow::paintGL() {
 	// render environment texture first
-	//glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
 	glClearColor(1.01f, 0.1f, 0.1f, 1.0f); 
 	glm::mat4 renderProjectionMatrix = glm::perspective(90.0f,1.0f,0.01f, 10.0f);
 	glm::mat4 renderVires[] =
@@ -488,9 +491,9 @@ void MeGLWindow::paintGL() {
 		glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
 	}
 	// Now we already done storing the skybox in to Texture "environemntRenderTexture", we can use the framebuffer for storing convolution shader information I guess?
-
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	// Now use the cubemap we got to calculate diffuse irradiance color
 
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
 	//render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
