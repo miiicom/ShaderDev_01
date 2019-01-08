@@ -32,11 +32,12 @@ void main()
             vec3 sampleVec = tangentSample.x * Tangent + tangentSample.y * Binormal + tangentSample.z * Normal; // could be buggy
 
 			irradiance += texture(Cubemap, sampleVec).rgb * cos(theta) * sin(theta);
+			numSamples++;
 		}
 	}
 	irradiance = PI * irradiance * (1.0 / float(numSamples));
 
-	FragmentColor = vec4(0.0,1.0,0.0, 1.0);
+	FragmentColor = vec4(irradiance, 1.0);
 }
 
 
