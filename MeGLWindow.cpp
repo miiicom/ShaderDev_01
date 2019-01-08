@@ -443,7 +443,7 @@ void MeGLWindow::RenderToFrameBuffer()
 {
 	// render environment texture first
 
-	glClearColor(1.01f, 0.1f, 0.1f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glm::mat4 renderProjectionMatrix = glm::perspective(90.0f, 1.0f, 0.01f, 10.0f);
 	glm::mat4 renderVires[] =
 	{

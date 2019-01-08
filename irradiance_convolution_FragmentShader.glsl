@@ -36,7 +36,7 @@ void main()
 	}
 	irradiance = PI * irradiance * (1.0 / float(numSamples));
 
-	FragmentColor = vec4(irradiance, 1.0);
+	FragmentColor = vec4(0.0,1.0,0.0, 1.0);
 }
 
 
