@@ -109,6 +109,12 @@
     <None Include="texture\Road_to_MonumentValley_Ref.hdr">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="preFilterConvolutionFragmentShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="preFilterConvolutionVertexShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="texture\Checker">

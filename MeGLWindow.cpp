@@ -25,6 +25,7 @@ GLuint PBRProgramID;
 GLuint EqtangToCubeProgramID;
 GLuint SkyboxProgramID;
 GLuint DiffuseIrradianceProgramID;
+GLuint SpecularPreFilterConvolutionProgramID;
 
 GLuint cubeIndices;
 GLuint arrowIndices;
@@ -321,6 +322,8 @@ void MeGLWindow::installShaders() {
 	GLuint DiffuseIrradiancefragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 	GLuint SkyboxvertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint SkyboxfragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint SpecularPreFilterConvolutionvertexShaedrID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint SpecularPreFilterConvolutionfragmentShaedrID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	string temp = readShaderCode("VertexShaderCode.glsl");
 	const GLchar* adapter[1];
@@ -360,6 +363,14 @@ void MeGLWindow::installShaders() {
 	adapter[0] = temp.c_str();
 	glShaderSource(SkyboxfragmentShaderID, 1, adapter, 0);
 
+	temp = readShaderCode("preFilterConvolutionVertexShader.glsl");
+	adapter[0] = temp.c_str();
+	glShaderSource(SpecularPreFilterConvolutionvertexShaedrID, 1, adapter, 0);
+
+	temp = readShaderCode("preFilterConvolutionFragmentShader.glsl");
+	adapter[0] = temp.c_str();
+	glShaderSource(SpecularPreFilterConvolutionfragmentShaedrID, 1, adapter, 0);
+
 	glCompileShader(vertexShaderID);
 	glCompileShader(fragmentShaderID);
 	glCompileShader(PBRfragmentShaderID);
@@ -369,6 +380,8 @@ void MeGLWindow::installShaders() {
 	glCompileShader(DiffuseIrradiancefragmentShaderID);
 	glCompileShader(SkyboxvertexShaderID);
 	glCompileShader(SkyboxfragmentShaderID);
+	glCompileShader(SpecularPreFilterConvolutionvertexShaedrID);
+	glCompileShader(SpecularPreFilterConvolutionfragmentShaedrID);
 
 	if (!checkShaderStatus(vertexShaderID) 
 		||!checkShaderStatus(fragmentShaderID) 
@@ -379,6 +392,8 @@ void MeGLWindow::installShaders() {
 		|| !checkShaderStatus(DiffuseIrradiancefragmentShaderID)
 		|| !checkShaderStatus(SkyboxvertexShaderID)
 		|| !checkShaderStatus(SkyboxfragmentShaderID)
+		|| !checkShaderStatus(SpecularPreFilterConvolutionvertexShaedrID)
+		|| !checkShaderStatus(SpecularPreFilterConvolutionfragmentShaedrID)
 		) {
 		return;
 	}
@@ -408,7 +423,13 @@ void MeGLWindow::installShaders() {
 	glAttachShader(SkyboxProgramID, SkyboxfragmentShaderID);
 	glLinkProgram(SkyboxProgramID);
 
-	if (!checkProgramStatus(programID) || !checkProgramStatus(PBRProgramID) || !checkProgramStatus(EqtangToCubeProgramID) || !checkProgramStatus(SkyboxProgramID) || !checkProgramStatus(DiffuseIrradianceProgramID)) {
+	SpecularPreFilterConvolutionProgramID = glCreateProgram();
+	glAttachShader(SpecularPreFilterConvolutionProgramID, SpecularPreFilterConvolutionvertexShaedrID);
+	glAttachShader(SpecularPreFilterConvolutionProgramID, SpecularPreFilterConvolutionfragmentShaedrID);
+	glLinkProgram(SpecularPreFilterConvolutionProgramID);
+
+	if (!checkProgramStatus(programID) || !checkProgramStatus(PBRProgramID) || !checkProgramStatus(EqtangToCubeProgramID) 
+		|| !checkProgramStatus(SkyboxProgramID) || !checkProgramStatus(DiffuseIrradianceProgramID) || !checkProgramStatus(SpecularPreFilterConvolutionProgramID)) {
 		return;
 	}
 }
@@ -605,8 +626,8 @@ void MeGLWindow::paintGL() {
 	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
 	albedoColor = glm::vec3(0.99f, 0.01f, 0.01f);
 	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
-	glUniform1f(metallicUniformLoc, 0.99f);
-	glUniform1f(roughnesslicUniformLoc,0.01f);
+	glUniform1f(metallicUniformLoc, 0.01f);
+	glUniform1f(roughnesslicUniformLoc,0.99f);
 	glUniform1f(aoUniformLoc, 1.0f);
 
 	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
