@@ -533,6 +533,17 @@ void MeGLWindow::RenderToFrameBuffer()
 		glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//Now we capture the pre-filter mipmap levels
+
+	glUseProgram(SpecularPreFilterConvolutionProgramID);
+	GLuint preFilterCubeMapUniformLoc = glGetUniformLocation(SpecularPreFilterConvolutionProgramID, "Cubemap");
+	glUniform1i(preFilterCubeMapUniformLoc, 5);
+	GLuint preFilterRoughnessMapUniformLoc = glGetUniformLocation(SpecularPreFilterConvolutionProgramID, "roughnessMap");
+	glUniform1i(preFilterRoughnessMapUniformLoc,2);
+	GLuint preFilterProjectionUniformLoc = glGetUniformLocation(SpecularPreFilterConvolutionProgramID, "viewToProjectionMatrix");
+	glUniformMatrix4fv(preFilterProjectionUniformLoc, 1, GL_FALSE, &renderProjectionMatrix[0][0]);
+	GLuint preFilterViewUniformLoc = glGetUniformLocation(SpecularPreFilterConvolutionProgramID, "worldToViewMatrix");
+	//test
 }
 
 
