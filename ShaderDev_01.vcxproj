@@ -145,6 +145,7 @@
     <None Include="irradiance_convolution_FragmentShader.glsl" />
     <None Include="PBR_fragmentShader.glsl" />
     <None Include="PBR_vertexShader.glsl" />
+    <None Include="preComputeBRDFfragmentShader.glsl" />
     <None Include="preFilterConvolutionFragmentShader.glsl" />
     <None Include="preFilterConvolutionVertexShader.glsl" />
     <None Include="shaders\skyboxFragmentShader.glsl" />

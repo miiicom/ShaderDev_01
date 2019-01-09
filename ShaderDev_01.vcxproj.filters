@@ -115,6 +115,9 @@
     <None Include="preFilterConvolutionVertexShader.glsl">
       <Filter>shaders</Filter>
     </None>
+    <None Include="preComputeBRDFfragmentShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="texture\Checker">

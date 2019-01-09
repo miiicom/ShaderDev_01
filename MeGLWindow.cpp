@@ -26,6 +26,7 @@ GLuint EqtangToCubeProgramID;
 GLuint SkyboxProgramID;
 GLuint DiffuseIrradianceProgramID;
 GLuint SpecularPreFilterConvolutionProgramID;
+GLuint SpecularPreComputeBRDFProgramID;
 
 GLuint cubeIndices;
 GLuint arrowIndices;
@@ -324,6 +325,7 @@ void MeGLWindow::installShaders() {
 	GLuint SkyboxfragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 	GLuint SpecularPreFilterConvolutionvertexShaedrID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint SpecularPreFilterConvolutionfragmentShaedrID = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint SpecularPreComputefragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	string temp = readShaderCode("VertexShaderCode.glsl");
 	const GLchar* adapter[1];
@@ -371,6 +373,10 @@ void MeGLWindow::installShaders() {
 	adapter[0] = temp.c_str();
 	glShaderSource(SpecularPreFilterConvolutionfragmentShaedrID, 1, adapter, 0);
 
+	temp = readShaderCode("preComputeBRDFfragmentShader.glsl");
+	adapter[0] = temp.c_str();
+	glShaderSource(SpecularPreComputefragmentShaderID, 1, adapter, 0);
+
 	glCompileShader(vertexShaderID);
 	glCompileShader(fragmentShaderID);
 	glCompileShader(PBRfragmentShaderID);
@@ -382,6 +388,7 @@ void MeGLWindow::installShaders() {
 	glCompileShader(SkyboxfragmentShaderID);
 	glCompileShader(SpecularPreFilterConvolutionvertexShaedrID);
 	glCompileShader(SpecularPreFilterConvolutionfragmentShaedrID);
+	glCompileShader(SpecularPreComputefragmentShaderID);
 
 	if (!checkShaderStatus(vertexShaderID) 
 		||!checkShaderStatus(fragmentShaderID) 
@@ -394,6 +401,7 @@ void MeGLWindow::installShaders() {
 		|| !checkShaderStatus(SkyboxfragmentShaderID)
 		|| !checkShaderStatus(SpecularPreFilterConvolutionvertexShaedrID)
 		|| !checkShaderStatus(SpecularPreFilterConvolutionfragmentShaedrID)
+		|| !checkShaderStatus(SpecularPreComputefragmentShaderID)
 		) {
 		return;
 	}
@@ -428,8 +436,14 @@ void MeGLWindow::installShaders() {
 	glAttachShader(SpecularPreFilterConvolutionProgramID, SpecularPreFilterConvolutionfragmentShaedrID);
 	glLinkProgram(SpecularPreFilterConvolutionProgramID);
 
+	SpecularPreComputeBRDFProgramID = glCreateProgram();
+	glAttachShader(SpecularPreComputeBRDFProgramID, SpecularPreFilterConvolutionvertexShaedrID);
+	glAttachShader(SpecularPreComputeBRDFProgramID, SpecularPreComputefragmentShaderID); // same, can reuse that vertex shader
+	glLinkProgram(SpecularPreComputeBRDFProgramID);
+
 	if (!checkProgramStatus(programID) || !checkProgramStatus(PBRProgramID) || !checkProgramStatus(EqtangToCubeProgramID) 
-		|| !checkProgramStatus(SkyboxProgramID) || !checkProgramStatus(DiffuseIrradianceProgramID) || !checkProgramStatus(SpecularPreFilterConvolutionProgramID)) {
+		|| !checkProgramStatus(SkyboxProgramID) || !checkProgramStatus(DiffuseIrradianceProgramID) 
+		|| !checkProgramStatus(SpecularPreFilterConvolutionProgramID) || !checkProgramStatus(SpecularPreComputeBRDFProgramID)) {
 		return;
 	}
 }
