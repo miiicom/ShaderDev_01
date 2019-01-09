@@ -534,6 +534,7 @@ void MeGLWindow::RenderToFrameBuffer()
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//Now we capture the pre-filter mipmap levels
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	GLuint prefilterMap;
 	glGenTextures(1, &prefilterMap);
 	glActiveTexture(GL_TEXTURE8);
