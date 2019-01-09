@@ -534,6 +534,19 @@ void MeGLWindow::RenderToFrameBuffer()
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//Now we capture the pre-filter mipmap levels
+	GLuint prefilterMap;
+	glGenTextures(1, &prefilterMap);
+	glActiveTexture(GL_TEXTURE8);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+	for (int i = 0; i < 6; ++i) {
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, NULL);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
 	glUseProgram(SpecularPreFilterConvolutionProgramID);
 	GLuint preFilterCubeMapUniformLoc = glGetUniformLocation(SpecularPreFilterConvolutionProgramID, "Cubemap");
@@ -543,7 +556,30 @@ void MeGLWindow::RenderToFrameBuffer()
 	GLuint preFilterProjectionUniformLoc = glGetUniformLocation(SpecularPreFilterConvolutionProgramID, "viewToProjectionMatrix");
 	glUniformMatrix4fv(preFilterProjectionUniformLoc, 1, GL_FALSE, &renderProjectionMatrix[0][0]);
 	GLuint preFilterViewUniformLoc = glGetUniformLocation(SpecularPreFilterConvolutionProgramID, "worldToViewMatrix");
+	GLuint preFilterRoughnessUniformLoc = glGetUniformLocation(SpecularPreFilterConvolutionProgramID, "parameter_roughness");
 	//test
+
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	GLuint maxMipLevels = 5;
+	for (int mip = 0; mip < maxMipLevels; ++mip) {
+		GLuint mipWidth = 128 * std::pow(0.5, mip);
+		GLuint mipHeight = 128 * std::pow(0.5, mip);
+		glBindRenderbuffer(GL_RENDERBUFFER, renderBufferObject);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+		glViewport(0, 0, mipWidth, mipHeight);
+
+		float roughness = (float)mip / (float)(maxMipLevels - 1);
+		glUniform1f(preFilterRoughnessUniformLoc, roughness);
+		for (int i = 0; i < 6; ++i) {
+			glUniformMatrix4fv(preFilterViewUniformLoc, 1, GL_FALSE, &renderVires[i][0][0]);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+		}
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 
