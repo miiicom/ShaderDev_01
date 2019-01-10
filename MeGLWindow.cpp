@@ -385,18 +385,23 @@ void MeGLWindow::paintGL() {
 	glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
 	GLint lightpositionUniformLoc = glGetUniformLocation(PBRProgramID,"lightPositionWorld");
 	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
-	glm::vec3 albedo = glm::vec3(1.0, 0.0, 0.0);
-	GLint albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
-	glUniform3fv(albedoUniformLoc, 1, &albedo[0]);
 	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
+<<<<<<< HEAD
 	glUniform1f(metallicUniformLoc,0.99f);
 	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
 	glUniform1f(roughnesslicUniformLoc,0.01f);
 	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
 	glUniform1f(aoUniformLoc, 1.0f);
+=======
+	glUniform1f(metallicUniformLoc, 0.8f);
+	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
+	glUniform1f(roughnesslicUniformLoc, 1.0f);
+>>>>>>> parent of 170ec41... update
 
+	
 	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
+<<<<<<< HEAD
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -425,6 +430,8 @@ void MeGLWindow::paintGL() {
 	
 	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
+=======
+>>>>>>> parent of 170ec41... update
 	// bind back to default framebuffer
 	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//glDisable(GL_DEPTH_TEST);

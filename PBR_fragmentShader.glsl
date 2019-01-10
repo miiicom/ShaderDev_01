@@ -3,6 +3,7 @@ out vec4 FragmentColor;
 
 in vec3 vertexPositionWorld;
 in vec3 normalWorld;
+in vec3 fragColor;
 in vec2 uv0;
 
 struct PBR_parameters {
@@ -25,6 +26,7 @@ uniform sampler2D aoMap;
 
 float PI = 3.14159265359;
 
+<<<<<<< HEAD
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
     float a = roughness*roughness;
@@ -35,6 +37,22 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
     float nom   = a2;
     float denom = (NdotH2 * (a2 - 1.0) + 1.0);
     denom = PI * denom * denom;
+=======
+float RemapRoughness(float Roughness, bool isIBL){
+	if(isIBL){
+		return Roughness * Roughness / 2.0;
+	}else{
+		return (Roughness + 1.0) * (Roughness + 1.0) / 8.0;
+	}
+}
+
+float  GeometrySchlickGGX(float DotProduct, float roughness){
+	float r = (roughness + 1.0);
+	float remappedRoughness = (r*r) / 8.0;
+
+	float nom = DotProduct;
+	float denom = DotProduct * (1.0 - remappedRoughness) + remappedRoughness;
+>>>>>>> parent of 170ec41... update
 
     return nom / denom;
 }
@@ -68,6 +86,7 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 
 void main()
 {	
+<<<<<<< HEAD
 	
 	vec3 albedo;
 	float roughness;
@@ -80,28 +99,13 @@ void main()
 			albedo = parameter.albedo;
 		}
 
+=======
+	vec3 albedo = pow(texture(albedoMap, uv0).xyz, vec3(2.2));
+>>>>>>> parent of 170ec41... update
 	vec3 normalmap = texture(normalMap, uv0).xyz;
-
-	if(parameter.roughness == -1.0){
-			roughness = texture(roughnessMap,uv0).r;
-		}
-		else{
-			roughness = parameter.roughness;
-		}
-
-	if(parameter.metallic == -1.0){
-			metallic = texture(metallicMap,uv0).r;
-		}
-		else{
-			metallic = parameter.metallic;
-		}
-
-	if(parameter.AO == -1.0){
-			ao = texture(aoMap,uv0).r;
-		}
-		else{
-			ao = parameter.AO;
-		}
+	float roughness = texture(roughnessMap,uv0).r;
+	float metallic = texture(metallicMap,uv0).r;
+	float ao = texture(aoMap,uv0).r;
 
     vec3 N = normalWorld;
     vec3 V = normalize(CameraDirectionWorld - vertexPositionWorld);
