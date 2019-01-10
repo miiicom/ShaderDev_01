@@ -24,7 +24,7 @@ uniform sampler2D roughnessMap;
 uniform sampler2D metallicMap;
 uniform sampler2D aoMap;
 
-float PI = 3.14159265359;
+float PI = 3.141592653;
 
 <<<<<<< HEAD
 float DistributionGGX(vec3 N, vec3 H, float roughness)
@@ -87,6 +87,7 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 void main()
 {	
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 	vec3 albedo;
 	float roughness;
@@ -102,6 +103,9 @@ void main()
 =======
 	vec3 albedo = pow(texture(albedoMap, uv0).xyz, vec3(2.2));
 >>>>>>> parent of 170ec41... update
+=======
+	vec3 albedo = texture(albedoMap, uv0).xyz;
+>>>>>>> parent of 96bca73... gamma correction to make to color look right
 	vec3 normalmap = texture(normalMap, uv0).xyz;
 	float roughness = texture(roughnessMap,uv0).r;
 	float metallic = texture(metallicMap,uv0).r;
