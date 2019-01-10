@@ -6,6 +6,7 @@ in vec3 normalWorld;
 in vec3 fragColor;
 in vec2 uv0;
 
+const float MAX_REFLECTION_LOD = 4.0;
 struct PBR_parameters {
 	vec3 albedo;
 	float metallic;
@@ -19,6 +20,8 @@ uniform vec3 CameraDirectionWorld;
 uniform vec3 lightPositionWorld;
 
 uniform samplerCube irradianceMap;
+uniform samplerCube prefilterMap;
+uniform sampler2D   BRDFLUT;  
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
 uniform sampler2D roughnessMap;
@@ -55,6 +58,11 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
 	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}   
 
 float DistributionGGX(vec3 normal, vec3 halfway, float Roughness)
 {
@@ -115,6 +123,7 @@ void main()
 	vec3 ViewDirectionWorld = normalize(CameraDirectionWorld - vertexPositionWorld);
 	vec3 lightDirection = normalize(lightPositionWorld - vertexPositionWorld);
 	vec3 halfwayVector = normalize(ViewDirectionWorld + lightDirection);
+	vec3 reflectVector = reflect(-ViewDirectionWorld, normal);
 
 	// radiance
 	float lightdistance = length(lightPositionWorld - vertexPositionWorld);
@@ -144,7 +153,12 @@ void main()
 	kD *= 1.0 - metallic;
 	vec3 irradiance = texture(irradianceMap,normalizedNormalWorld).xyz;
 	vec3 diffuse = irradiance * albedo;
-	vec3 ambient = (kD * diffuse) * ao;
+
+	vec3 preFilteredColor = textureLod(prefilterMap, reflectVector,  roughness * MAX_REFLECTION_LOD).xyz;    
+	vec2 BRDF = texture(BRDFLUT, vec2(max(dot(normal,ViewDirectionWorld),0.0),roughness)).xy;
+	specular = preFilteredColor * (FrenelValue * BRDF.x + BRDF.y);
+
+	vec3 ambient = (kD * diffuse + specular) * ao;
 
 
 	vec3 color = ambient + Lo;

@@ -675,7 +675,11 @@ void MeGLWindow::paintGL() {
 	GLint AoUniformLoc = glGetUniformLocation(PBRProgramID, "aoMap");
 	glUniform1i(AoUniformLoc, 4);
 	GLint IrradianceMapUniformLoc = glGetUniformLocation(PBRProgramID, "irradianceMap");
-	glUniform1i(IrradianceMapUniformLoc, 7);
+	glUniform1i(IrradianceMapUniformLoc, 5);
+	GLint prefilterMapUniformLoc = glGetUniformLocation(PBRProgramID, "prefilterMap");
+	glUniform1i(prefilterMapUniformLoc, 7);
+	GLint BRDFLUTUniformLoc = glGetUniformLocation(PBRProgramID, "BRDFLUT");
+	glUniform1i(BRDFLUTUniformLoc, 9);
 
 
 		
@@ -696,7 +700,7 @@ void MeGLWindow::paintGL() {
 	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
 	glUniform1f(metallicUniformLoc,-1.0f);
 	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
-	glUniform1f(roughnesslicUniformLoc, -1.0f);
+	glUniform1f(roughnesslicUniformLoc, -0.01f);
 	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
 	glUniform1f(aoUniformLoc, -1.0f);
 
@@ -714,8 +718,8 @@ void MeGLWindow::paintGL() {
 	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
 	albedoColor = glm::vec3(0.99f, 0.01f, 0.01f);
 	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
-	glUniform1f(metallicUniformLoc, 0.01f);
-	glUniform1f(roughnesslicUniformLoc,0.99f);
+	glUniform1f(metallicUniformLoc, 1.0f);
+	glUniform1f(roughnesslicUniformLoc,0.0f);
 	glUniform1f(aoUniformLoc, 1.0f);
 
 	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
@@ -766,13 +770,13 @@ void MeGLWindow::paintGL() {
 //
 //	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 	// test frame buffer
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	glUseProgram(programID);
-	glBindVertexArray(PlaneVertexArrayObjectID);
-	GLuint framebufferTextureUniformLoc = glGetUniformLocation(programID, "frameBufferTexture");
-	glUniform1i(framebufferTextureUniformLoc,9);
+	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	//glUseProgram(programID);
+	//glBindVertexArray(PlaneVertexArrayObjectID);
+	//GLuint framebufferTextureUniformLoc = glGetUniformLocation(programID, "frameBufferTexture");
+	//glUniform1i(framebufferTextureUniformLoc,9);
 
-	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
+	//glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 }
 
 MeGLWindow::MeGLWindow()
