@@ -74,11 +74,39 @@ float DistributionGGX(vec3 normal, vec3 halfway, float Roughness)
 
 void main()
 {	
-	vec3 albedo = pow(texture(albedoMap, uv0).xyz, vec3(2.2));
+	vec3 albedo;
+	float roughness;
+	float metallic;
+	float ao;
+	if(parameter.albedo.x == -1.0 && parameter.albedo.y == -1.0 && parameter.albedo.z == -1.0){
+			albedo = pow(texture(albedoMap, uv0).xyz, vec3(2.2));
+		}
+		else{
+			albedo = parameter.albedo;
+		}
+
 	vec3 normalmap = texture(normalMap, uv0).xyz;
-	float roughness = texture(roughnessMap,uv0).r;
-	float metallic = texture(metallicMap,uv0).r;
-	float ao = texture(aoMap,uv0).r;
+
+	if(parameter.roughness == -1.0){
+			roughness = texture(roughnessMap,uv0).r;
+		}
+		else{
+			roughness = parameter.roughness;
+		}
+
+	if(parameter.metallic == -1.0){
+			metallic = texture(metallicMap,uv0).r;
+		}
+		else{
+			metallic = parameter.metallic;
+		}
+
+	if(parameter.AO == -1.0){
+			ao = texture(aoMap,uv0).r;
+		}
+		else{
+			ao = parameter.AO;
+		}
 
 	vec3 F0 = vec3(0.04);
 	F0 = mix(F0, albedo, metallic);
