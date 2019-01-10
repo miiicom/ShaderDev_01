@@ -437,7 +437,7 @@ void MeGLWindow::installShaders() {
 	glLinkProgram(SpecularPreFilterConvolutionProgramID);
 
 	SpecularPreComputeBRDFProgramID = glCreateProgram();
-	glAttachShader(SpecularPreComputeBRDFProgramID, SpecularPreFilterConvolutionvertexShaedrID);
+	glAttachShader(SpecularPreComputeBRDFProgramID, vertexShaderID);
 	glAttachShader(SpecularPreComputeBRDFProgramID, SpecularPreComputefragmentShaderID); // same, can reuse that vertex shader
 	glLinkProgram(SpecularPreComputeBRDFProgramID);
 
@@ -594,7 +594,33 @@ void MeGLWindow::RenderToFrameBuffer()
 		}
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// Now we render the 2 dimension look up table
 
+	GLuint  BDRFLUTTexture;
+	glBindVertexArray(PlaneVertexArrayObjectID);
+	glGenTextures(1, &BDRFLUTTexture);
+	glActiveTexture(GL_TEXTURE9);
+	glBindTexture(GL_TEXTURE_2D, BDRFLUTTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 1024, 1024, 0, GL_RG, GL_FLOAT, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferObject);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 1024, 1024);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, BDRFLUTTexture, 0);
+
+	glViewport(0, 0, 1024, 1024);
+	glUseProgram(SpecularPreComputeBRDFProgramID);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	
 }
 
 
@@ -739,6 +765,14 @@ void MeGLWindow::paintGL() {
 //	glUniform1i(framebufferTextureUniformLoc, 5);
 //
 //	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
+	// test frame buffer
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glUseProgram(programID);
+	glBindVertexArray(PlaneVertexArrayObjectID);
+	GLuint framebufferTextureUniformLoc = glGetUniformLocation(programID, "frameBufferTexture");
+	glUniform1i(framebufferTextureUniformLoc,9);
+
+	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 }
 
 MeGLWindow::MeGLWindow()

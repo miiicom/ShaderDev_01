@@ -38,8 +38,9 @@ void main()
 	for(int i = 0; i < 9; i++){
 		col += sampleTex[i] * kernel[i];
 	}
-
-	FragmentColor = vec4(col, 1.0);
-
+	FragmentColor = vec4(texture(frameBufferTexture, fragmentUV0).xy,0.0,1.0);
+	//FragmentColor = vec4(0.0,texture(frameBufferTexture, fragmentUV0).y,0.0,1.0);
+	//FragmentColor = vec4(texture(frameBufferTexture, fragmentUV0).x,0.0,0.0,1.0);
+	//FragmentColor = vec4(col, 1.0);
 	//FragmentColor = vec4(vec3(1.0 - texture(frameBufferTexture, fragmentUV0)), 1.0);
 }
