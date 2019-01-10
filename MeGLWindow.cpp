@@ -389,37 +389,41 @@ void MeGLWindow::paintGL() {
 	GLint albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
 	glUniform3fv(albedoUniformLoc, 1, &albedo[0]);
 	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
-	glUniform1f(metallicUniformLoc,0.0f);
+	glUniform1f(metallicUniformLoc,0.99f);
 	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
-	glUniform1f(roughnesslicUniformLoc,1.0f);
+	glUniform1f(roughnesslicUniformLoc,0.01f);
+	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
+	glUniform1f(aoUniformLoc, 1.0f);
 
 	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
-	//modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
-	//modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	//modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
-	//ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
-	//ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
-	//fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
 
-	//fullTransformMatrixUniformLocation = glGetUniformLocation(PBRProgramID, "modelToProjectionMatrix");
-	//glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	//modelToWorldMatrixUniformLoc = glGetUniformLocation(PBRProgramID, "modelToWorldMatrix");
-	//glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-	//cameraDirection = meCamera->getPosition();
-	//cameraDirectionUniformLoc = glGetUniformLocation(PBRProgramID, "CameraDirectionWorld");
-	//glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
-	//lightpositionUniformLoc = glGetUniformLocation(PBRProgramID, "lightPositionWorld");
-	//glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
-	//albedo = glm::vec3(-1.0,-1.0, -1.0);
-	//albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
-	//glUniform3fv(albedoUniformLoc, 1, &albedo[0]);
-	//metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
-	//glUniform1f(metallicUniformLoc, -1.0f);
-	//roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
-	//glUniform1f(roughnesslicUniformLoc, -1.0f);
-	//
-	//glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+	fullTransformMatrixUniformLocation = glGetUniformLocation(PBRProgramID, "modelToProjectionMatrix");
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	modelToWorldMatrixUniformLoc = glGetUniformLocation(PBRProgramID, "modelToWorldMatrix");
+	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	cameraDirection = meCamera->getPosition();
+	cameraDirectionUniformLoc = glGetUniformLocation(PBRProgramID, "CameraDirectionWorld");
+	glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
+	lightpositionUniformLoc = glGetUniformLocation(PBRProgramID, "lightPositionWorld");
+	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
+	albedo = glm::vec3(-1.0,-1.0, -1.0);
+	albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
+	glUniform3fv(albedoUniformLoc, 1, &albedo[0]);
+	metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
+	glUniform1f(metallicUniformLoc, -1.0f);
+	roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
+	glUniform1f(roughnesslicUniformLoc, -1.0f);
+	aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
+	glUniform1f(aoUniformLoc, -1.0f);
+	
+	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
 	// bind back to default framebuffer
 	//glBindFramebuffer(GL_FRAMEBUFFER, 0);

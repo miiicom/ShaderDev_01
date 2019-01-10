@@ -16,7 +16,7 @@ out vec2 uv0;
 
 void main()
 {
-	normalWorld = vec3(modelToWorldMatrix * vec4(normalModel, 0));
+	normalWorld = mat3(modelToWorldMatrix) * normalModel; 
 	vertexPositionWorld = vec3(modelToWorldMatrix * vertexPositionModel);
 
 	gl_Position = modelToProjectionMatrix * vertexPositionModel;
