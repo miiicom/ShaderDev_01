@@ -79,7 +79,7 @@ void main()
 	float metallic;
 	float ao;
 	if(parameter.albedo.x == -1.0 && parameter.albedo.y == -1.0 && parameter.albedo.z == -1.0){
-			albedo = texture(albedoMap, uv0).xyz;
+			albedo = pow(texture(albedoMap, uv0).xyz, vec3(2.2));
 		}
 		else{
 			albedo = parameter.albedo;
