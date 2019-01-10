@@ -385,11 +385,15 @@ void MeGLWindow::paintGL() {
 	glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
 	GLint lightpositionUniformLoc = glGetUniformLocation(PBRProgramID,"lightPositionWorld");
 	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
+	glm::vec3 albedo = glm::vec3(1.0, 0.0, 0.0);
+	GLint albedormLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
+	glUniform3fv(albedormLoc, 1, &albedo[0]);
 	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
-
-	glUniform1f(metallicUniformLoc, 0.8f);
+	glUniform1f(metallicUniformLoc,0.9f);
 	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
 	glUniform1f(roughnesslicUniformLoc, 1.0f);
+	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
+	glUniform1f(aoUniformLoc, 1.0f);
 
 
 	
