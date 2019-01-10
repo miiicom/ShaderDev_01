@@ -24,7 +24,7 @@ uniform sampler2D roughnessMap;
 uniform sampler2D metallicMap;
 uniform sampler2D aoMap;
 
-float PI = 3.141592653;
+float PI = 3.14159265359;
 
 float RemapRoughness(float Roughness, bool isIBL){
 	if(isIBL){
@@ -74,7 +74,7 @@ float DistributionGGX(vec3 normal, vec3 halfway, float Roughness)
 
 void main()
 {	
-	vec3 albedo = texture(albedoMap, uv0).xyz;
+	vec3 albedo = pow(texture(albedoMap, uv0).xyz, vec3(2.2));
 	vec3 normalmap = texture(normalMap, uv0).xyz;
 	float roughness = texture(roughnessMap,uv0).r;
 	float metallic = texture(metallicMap,uv0).r;
