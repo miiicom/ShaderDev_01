@@ -345,7 +345,7 @@ glm::vec2 MeGLWindow::Calculate2DSpriteLoc(GLfloat time, GLint XSegNum, GLint YS
 void MeGLWindow::paintGL() {
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
 	//render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	/*glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);*/
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -394,20 +394,20 @@ void MeGLWindow::paintGL() {
 	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
 	// bind back to default framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDisable(GL_DEPTH_TEST);
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//glDisable(GL_DEPTH_TEST);
+	//glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	//glClear(GL_COLOR_BUFFER_BIT);
 
 
-	glUseProgram(programID);
-	glBindVertexArray(PlaneVertexArrayObjectID);
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, framebufferTexture);
-	GLuint framebufferTextureUniformLoc = glGetUniformLocation(programID, "frameBufferTexture");
-	glUniform1i(framebufferTextureUniformLoc, 5);
+	//glUseProgram(programID);
+	//glBindVertexArray(PlaneVertexArrayObjectID);
+	//glActiveTexture(GL_TEXTURE5);
+	//glBindTexture(GL_TEXTURE_2D, framebufferTexture);
+	//GLuint framebufferTextureUniformLoc = glGetUniformLocation(programID, "frameBufferTexture");
+	//glUniform1i(framebufferTextureUniformLoc, 5);
 
-	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
+	//glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 }
 
 MeGLWindow::MeGLWindow()

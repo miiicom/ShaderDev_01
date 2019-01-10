@@ -30,22 +30,25 @@ float RemapRoughness(float Roughness, bool isIBL){
 	if(isIBL){
 		return Roughness * Roughness / 2.0;
 	}else{
-		return (Roughness + 1) * (Roughness + 1) / 8;
+		return (Roughness + 1.0) * (Roughness + 1.0) / 8.0;
 	}
 }
 
-float  GeometrySchlickGGX(float DotProduct, float remappedRoughness){
+float  GeometrySchlickGGX(float DotProduct, float roughness){
+	float r = (roughness + 1.0);
+	float remappedRoughness = (r*r) / 8.0;
+
 	float nom = DotProduct;
 	float denom = DotProduct * (1.0 - remappedRoughness) + remappedRoughness;
 
 	return nom / denom;
 }
 
-float GeometrySmith(vec3 Normal, vec3 ViewDirection, vec3 LightDirection, float remappedRoughness){
+float GeometrySmith(vec3 Normal, vec3 ViewDirection, vec3 LightDirection, float roughness){
 	float NdotV = max(dot(Normal, ViewDirection), 0.0);
     float NdotL = max(dot(Normal, LightDirection), 0.0);
-    float ggx1 = GeometrySchlickGGX(NdotV, remappedRoughness);
-    float ggx2 = GeometrySchlickGGX(NdotL, remappedRoughness);
+    float ggx1 = GeometrySchlickGGX(NdotV, roughness);
+    float ggx2 = GeometrySchlickGGX(NdotL, roughness);
 
 	return ggx1 * ggx2;
 }
@@ -58,11 +61,12 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 float DistributionGGX(vec3 normal, vec3 halfway, float Roughness)
 {
     float RoughnessPower2 = Roughness*Roughness;
+	float RoughnessPower4 = RoughnessPower2*RoughnessPower2;
     float NdotH  = max(dot(normal, halfway), 0.0);
     float NdotH2 = NdotH*NdotH;
 	
-    float nom    = RoughnessPower2;
-    float denom  = (NdotH2 * (RoughnessPower2 - 1.0) + 1.0);
+    float nom    = RoughnessPower4;
+    float denom  = (NdotH2 * (RoughnessPower4 - 1.0) + 1.0);
     denom        = PI * denom * denom;
 	
     return nom / denom;
@@ -94,8 +98,7 @@ void main()
 	// BRDF
 	vec3 FrenelValue = fresnelSchlick(max(dot(halfwayVector,ViewDirectionWorld),0.0),F0);
 	float NormalDistribution = DistributionGGX(normal, halfwayVector, roughness);
-	float RemappedRoughtness = RemapRoughness(roughness,false);
-	float GeometryFunction = GeometrySmith(normal, ViewDirectionWorld, lightDirection,RemappedRoughtness);
+	float GeometryFunction = GeometrySmith(normal, ViewDirectionWorld, lightDirection,roughness);
 	
 	vec3 kS = FrenelValue;
 	vec3 kD = vec3(1.0) - kS;
