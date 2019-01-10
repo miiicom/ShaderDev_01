@@ -65,7 +65,7 @@ float DistributionGGX(vec3 normal, vec3 halfway, float Roughness)
     float NdotH  = max(dot(normal, halfway), 0.0);
     float NdotH2 = NdotH*NdotH;
 	
-    float nom    = RoughnessPower4;
+    float nom    = max(RoughnessPower4,0.001);
     float denom  = (NdotH2 * (RoughnessPower4 - 1.0) + 1.0);
     denom        = PI * denom * denom;
 	

@@ -391,7 +391,7 @@ void MeGLWindow::paintGL() {
 	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
 	glUniform1f(metallicUniformLoc,1.0f);
 	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
-	glUniform1f(roughnesslicUniformLoc, 0.0f);
+	glUniform1f(roughnesslicUniformLoc, 0.9f);
 	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
 	glUniform1f(aoUniformLoc, 1.0f);
 
