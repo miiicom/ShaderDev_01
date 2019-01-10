@@ -374,30 +374,42 @@ void MeGLWindow::paintGL() {
 	GLint AoUniformLoc = glGetUniformLocation(PBRProgramID, "aoMap");
 	glUniform1i(AoUniformLoc, 4);
 
-
+	
 		
 	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(PBRProgramID, "modelToProjectionMatrix");
-	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	GLint modelToWorldMatrixUniformLoc = glGetUniformLocation(PBRProgramID, "modelToWorldMatrix");
-	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE,&ModelToWorldMatrix[0][0]);
 	glm::vec3 cameraDirection = meCamera->getPosition();
 	GLint cameraDirectionUniformLoc = glGetUniformLocation(PBRProgramID, "CameraDirectionWorld");
 	glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
 	GLint lightpositionUniformLoc = glGetUniformLocation(PBRProgramID,"lightPositionWorld");
 	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
-	glm::vec3 albedo = glm::vec3(1.0, 0.0, 0.0);
+	glm::vec3 albedo = glm::vec3(1.0, 0.0,0.0);
 	GLint albedormLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
 	glUniform3fv(albedormLoc, 1, &albedo[0]);
 	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
-	glUniform1f(metallicUniformLoc,1.0f);
+	
 	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
-	glUniform1f(roughnesslicUniformLoc, 0.9f);
+	
 	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
 	glUniform1f(aoUniformLoc, 1.0f);
 
+	for (int i = 0; i < 7; ++i) { // i  for roughness and  x movement
+		for (int j = 0; j < 7; ++j) { // j for metallic and y movement
+			modelTransformMatrix = glm::translate(mat4(), glm::vec3(2.2f * (float)i, 2.2f * (float)j, 0.0f));
+			ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+			ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+			fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
 
+			glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+			glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+			glUniform1f(metallicUniformLoc,(float)j * (1.0f/7.0f));
+			glUniform1f(roughnesslicUniformLoc, (float)i * (1.0f / 7.0f));
+			glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+		}
+
+	}
 	
-	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+	
 
 
 	// bind back to default framebuffer
@@ -422,7 +434,7 @@ MeGLWindow::MeGLWindow()
 	meCamera = new MeCamera;
 	spriteOffset = glm::vec2(0.0f, 0.0f);
 	ambientLight = glm::vec3(+0.1f, +0.2f, +0.25f);
-	pointLightPosition = glm::vec3(+0.0f,+1.2f,+0.0f);
+	pointLightPosition = glm::vec3(+10.0f,+10.0f,+2.0f);
 	time = 0.0f;
 }
 

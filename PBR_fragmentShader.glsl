@@ -65,7 +65,7 @@ float DistributionGGX(vec3 normal, vec3 halfway, float Roughness)
     float NdotH  = max(dot(normal, halfway), 0.0);
     float NdotH2 = NdotH*NdotH;
 	
-    float nom    = max(RoughnessPower4,0.001);
+    float nom    = max(RoughnessPower4,0.0001);
     float denom  = (NdotH2 * (RoughnessPower4 - 1.0) + 1.0);
     denom        = PI * denom * denom;
 	
@@ -121,7 +121,7 @@ void main()
 	// radiance
 	float lightdistance = length(lightPositionWorld - vertexPositionWorld);
 	float attenuation = 1.0 / (lightdistance * lightdistance);
-	vec3 radiance = vec3(0.8,0.8,0.8) * attenuation;
+	vec3 radiance = vec3(300.0,300.0,300.0) * attenuation;
 
 	// BRDF
 	vec3 FrenelValue = fresnelSchlick(max(dot(halfwayVector,ViewDirectionWorld),0.0),F0);
