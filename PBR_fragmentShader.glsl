@@ -25,113 +25,60 @@ uniform sampler2D metallicMap;
 uniform sampler2D aoMap;
 
 float PI = 3.141592653;
-float DistributionGGX(vec3 N, vec3 H, float roughness)
-{
-    float a = roughness*roughness;
-    float a2 = a*a;
-    float NdotH = max(dot(N, H), 0.0);
-    float NdotH2 = NdotH*NdotH;
-
-    float nom   = a2;
-    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
-    denom = PI * denom * denom;
-
-    return nom / denom;
-}
 
 float RemapRoughness(float Roughness, bool isIBL){
 	if(isIBL){
 		return Roughness * Roughness / 2.0;
 	}else{
-		return (Roughness + 1) * (Roughness + 1) / 8;
+		return (Roughness + 1.0) * (Roughness + 1.0) / 8.0;
 	}
 }
 
-float  GeometrySchlickGGX(float DotProduct, float remappedRoughness){
+float  GeometrySchlickGGX(float DotProduct, float roughness){
+	float r = (roughness + 1.0);
+	float remappedRoughness = (r*r) / 8.0;
+
 	float nom = DotProduct;
 	float denom = DotProduct * (1.0 - remappedRoughness) + remappedRoughness;
 
-    return nom / denom;
+	return nom / denom;
 }
 
-<<<<<<< HEAD
-// ----------------------------------------------------------------------------
-float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
-{
-    float NdotV = max(dot(N, V), 0.0);
-    float NdotL = max(dot(N, L), 0.0);
-    float ggx2 = GeometrySchlickGGX(NdotV, roughness);
-    float ggx1 = GeometrySchlickGGX(NdotL, roughness);
-=======
-float GeometrySmith(vec3 Normal, vec3 ViewDirection, vec3 LightDirection, float remappedRoughness){
+float GeometrySmith(vec3 Normal, vec3 ViewDirection, vec3 LightDirection, float roughness){
 	float NdotV = max(dot(Normal, ViewDirection), 0.0);
     float NdotL = max(dot(Normal, LightDirection), 0.0);
-    float ggx1 = GeometrySchlickGGX(NdotV, remappedRoughness);
-    float ggx2 = GeometrySchlickGGX(NdotL, remappedRoughness);
->>>>>>> parent of 8ab7b70... update pbr shader, fix bugs
+    float ggx1 = GeometrySchlickGGX(NdotV, roughness);
+    float ggx2 = GeometrySchlickGGX(NdotL, roughness);
 
-    return ggx1 * ggx2;
+	return ggx1 * ggx2;
 }
-// ----------------------------------------------------------------------------
+
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
-<<<<<<< HEAD
-    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
-=======
 	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }
 
 float DistributionGGX(vec3 normal, vec3 halfway, float Roughness)
 {
     float RoughnessPower2 = Roughness*Roughness;
+	float RoughnessPower4 = RoughnessPower2*RoughnessPower2;
     float NdotH  = max(dot(normal, halfway), 0.0);
     float NdotH2 = NdotH*NdotH;
 	
-    float nom    = RoughnessPower2;
-    float denom  = (NdotH2 * (RoughnessPower2 - 1.0) + 1.0);
+    float nom    = RoughnessPower4;
+    float denom  = (NdotH2 * (RoughnessPower4 - 1.0) + 1.0);
     denom        = PI * denom * denom;
 	
     return nom / denom;
->>>>>>> parent of 8ab7b70... update pbr shader, fix bugs
 }
-// ----------------------------------------------------------------------------
 
 void main()
 {	
-		vec3 albedo;
-	float roughness;
-	float metallic;
-	float ao;
-	if(parameter.albedo.x == -1.0 && parameter.albedo.y == -1.0 && parameter.albedo.z == -1.0){
-			albedo = pow(texture(albedoMap, uv0).xyz, vec3(2.2));
-		}
-		else{
-			albedo = parameter.albedo;
-		}
-
+	vec3 albedo = pow(texture(albedoMap, uv0).xyz, vec3(2.2));
 	vec3 normalmap = texture(normalMap, uv0).xyz;
-
-	if(parameter.roughness == -1.0){
-			roughness = texture(roughnessMap,uv0).r;
-		}
-		else{
-			roughness = parameter.roughness;
-		}
-
-	if(parameter.metallic == -1.0){
-			metallic = texture(metallicMap,uv0).r;
-		}
-		else{
-			metallic = parameter.metallic;
-		}
-
-	if(parameter.AO == -1.0){
-			ao = texture(aoMap,uv0).r;
-		}
-		else{
-			ao = parameter.AO;
-		}
-
+	float roughness = texture(roughnessMap,uv0).r;
+	float metallic = texture(metallicMap,uv0).r;
+	float ao = texture(aoMap,uv0).r;
 
 	vec3 F0 = vec3(0.04);
 	F0 = mix(F0, albedo, metallic);
@@ -151,8 +98,7 @@ void main()
 	// BRDF
 	vec3 FrenelValue = fresnelSchlick(max(dot(halfwayVector,ViewDirectionWorld),0.0),F0);
 	float NormalDistribution = DistributionGGX(normal, halfwayVector, roughness);
-	float RemappedRoughtness = RemapRoughness(roughness,false);
-	float GeometryFunction = GeometrySmith(normal, ViewDirectionWorld, lightDirection,RemappedRoughtness);
+	float GeometryFunction = GeometrySmith(normal, ViewDirectionWorld, lightDirection,roughness);
 	
 	vec3 kS = FrenelValue;
 	vec3 kD = vec3(1.0) - kS;
@@ -179,4 +125,3 @@ void main()
 	//FragmentColor = vec4(FrenelValue,0.0);
 	//FragmentColor = vec4(fragColor,0.0);
 }
-
