@@ -675,9 +675,9 @@ void MeGLWindow::paintGL() {
 	GLint AoUniformLoc = glGetUniformLocation(PBRProgramID, "aoMap");
 	glUniform1i(AoUniformLoc, 4);
 	GLint IrradianceMapUniformLoc = glGetUniformLocation(PBRProgramID, "irradianceMap");
-	glUniform1i(IrradianceMapUniformLoc, 5);
+	glUniform1i(IrradianceMapUniformLoc, 7);
 	GLint prefilterMapUniformLoc = glGetUniformLocation(PBRProgramID, "prefilterMap");
-	glUniform1i(prefilterMapUniformLoc, 7);
+	glUniform1i(prefilterMapUniformLoc, 8);
 	GLint BRDFLUTUniformLoc = glGetUniformLocation(PBRProgramID, "BRDFLUT");
 	glUniform1i(BRDFLUTUniformLoc, 9);
 
@@ -694,35 +694,51 @@ void MeGLWindow::paintGL() {
 	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
 
 
-	glm::vec3 albedoColor = glm::vec3(-1.0f, -1.0f, -1.0f);
+	glm::vec3 albedoColor = glm::vec3(1.0f, 0.0f, 0.0f);
 	GLint albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
 	glUniform3fv(albedoUniformLoc, 1,&albedoColor[0]);
 	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
-	glUniform1f(metallicUniformLoc,-1.0f);
+	//glUniform1f(metallicUniformLoc,-1.0f);
 	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
-	glUniform1f(roughnesslicUniformLoc, -0.01f);
+	//glUniform1f(roughnesslicUniformLoc, -0.01f);
 	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
-	glUniform1f(aoUniformLoc, -1.0f);
-
-	// Draw first metallic ball with texture
-	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
-
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
-	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
-	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
-	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
-	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
-
-	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-	albedoColor = glm::vec3(0.99f, 0.01f, 0.01f);
-	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
-	glUniform1f(metallicUniformLoc, 1.0f);
-	glUniform1f(roughnesslicUniformLoc,0.0f);
 	glUniform1f(aoUniformLoc, 1.0f);
 
-	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+	for (int i = 0; i < 7; ++i) { // i  for roughness and  x movement
+		for (int j = 0; j < 7; ++j) { // j for metallic and y movement
+			modelTransformMatrix = glm::translate(mat4(), glm::vec3(2.2f * (float)i, 2.2f * (float)j, 0.0f));
+			ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+			ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+			fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+
+			glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+			glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+			glUniform1f(metallicUniformLoc, (float)j * (1.0f / 7.0f));
+			glUniform1f(roughnesslicUniformLoc, (float)i * (1.0f / 7.0f));
+			glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+		}
+
+	}
+
+	//// Draw first metallic ball with texture
+	//glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+
+	//modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
+	//modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	//modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	//ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	//ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	//fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+
+	//glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	//glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	//albedoColor = glm::vec3(0.99f, 0.01f, 0.01f);
+	//glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
+	//glUniform1f(metallicUniformLoc, 1.0f);
+	//glUniform1f(roughnesslicUniformLoc,0.0f);
+	//glUniform1f(aoUniformLoc, 1.0f);
+
+	//glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
 	//Draw skybox
 	glUseProgram(SkyboxProgramID);

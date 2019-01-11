@@ -6,7 +6,7 @@ in vec3 normalWorld;
 in vec3 fragColor;
 in vec2 uv0;
 
-const float MAX_REFLECTION_LOD = 4.0;
+
 struct PBR_parameters {
 	vec3 albedo;
 	float metallic;
@@ -30,7 +30,7 @@ uniform sampler2D aoMap;
 
 float PI = 3.141592653;
 
-float  GeometrySchlickGGX(float DotProduct, float roughness){
+float  GeometrySchlickGGX(float DotProduct, float roughness){//check
 	float r = (roughness + 1.0);
 	float remappedRoughness = (r * r)/8.0;
 	float nom = DotProduct;
@@ -39,7 +39,7 @@ float  GeometrySchlickGGX(float DotProduct, float roughness){
 	return nom / denom;
 }
 
-float GeometrySmith(vec3 Normal, vec3 ViewDirection, vec3 LightDirection, float roughness){
+float GeometrySmith(vec3 Normal, vec3 ViewDirection, vec3 LightDirection, float roughness){//check
 	float NdotV = max(dot(Normal, ViewDirection), 0.0);
     float NdotL = max(dot(Normal, LightDirection), 0.0);
     float ggx1 = GeometrySchlickGGX(NdotV, roughness);
@@ -48,17 +48,17 @@ float GeometrySmith(vec3 Normal, vec3 ViewDirection, vec3 LightDirection, float 
 	return ggx1 * ggx2;
 }
 
-vec3 fresnelSchlick(float cosTheta, vec3 F0)
+vec3 fresnelSchlick(float cosTheta, vec3 F0) // check
 {
 	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }
 
-vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness) // check
 {
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
 }   
 
-float DistributionGGX(vec3 normal, vec3 halfway, float Roughness)
+float DistributionGGX(vec3 normal, vec3 halfway, float Roughness) //check
 {
     float RoughnessPower2 = Roughness*Roughness;
 	float RoughnessPower4 = RoughnessPower2*RoughnessPower2;
@@ -108,35 +108,36 @@ void main()
 			ao = parameter.AO;
 		}
 
-	vec3 normalizedNormalWorld = normalize(normalWorld);
-	vec3 F0 = vec3(0.04);
-	F0 = mix(F0, albedo, metallic);
-
-	vec3 Lo = vec3(0.0);
-
+	//vec3 normalizedNormalWorld = normalize(normalWorld);
 	vec3 normal = normalWorld;
 	vec3 ViewDirectionWorld = normalize(CameraDirectionWorld - vertexPositionWorld);
+	vec3 reflectVector = reflect(-ViewDirectionWorld, normal);
+	//-----------------------
+	vec3 F0 = vec3(0.04);
+	F0 = mix(F0, albedo, metallic);
+	vec3 Lo = vec3(0.0);
+	//-------------------------------------------------------------------------
+	
 	vec3 lightDirection = normalize(lightPositionWorld - vertexPositionWorld);
 	vec3 halfwayVector = normalize(ViewDirectionWorld + lightDirection);
-	vec3 reflectVector = reflect(-ViewDirectionWorld, normal);
-
+	
 	// radiance
 	float lightdistance = length(lightPositionWorld - vertexPositionWorld);
 	float attenuation = 1.0 / (lightdistance * lightdistance);
-	vec3 radiance = vec3(0.8,0.8,0.8) * attenuation;
+	vec3 radiance = vec3(300.0,300.0,300.0) * attenuation;
 
 	// BRDF
 	vec3 FrenelValue = fresnelSchlick(max(dot(halfwayVector,ViewDirectionWorld),0.0),F0);
 	float NormalDistribution = DistributionGGX(normal, halfwayVector, roughness);
 	float GeometryFunction = GeometrySmith(normal, ViewDirectionWorld, lightDirection,roughness);
+
+	vec3 numerator = NormalDistribution * GeometryFunction * FrenelValue;
+	float denominator = 4.0 * max(dot(normal,ViewDirectionWorld), 0.0) * max(dot(normal, lightDirection),0.0) + 0.001;
+	vec3 specular = numerator / denominator;
 	
 	vec3 kS = FrenelValue;
 	vec3 kD = vec3(1.0) - kS;
 	kD *= 1.0 - metallic;
-
-	vec3 numerator = NormalDistribution * GeometryFunction * FrenelValue;
-	float denominator = 4.0 * max(dot(normal,ViewDirectionWorld), 0.0) * max(dot(normal, lightDirection),0.0);
-	vec3 specular = numerator / max(denominator, 0.001);
 
 	float NormalLightDot = max(dot(normal, lightDirection), 0.0);
 	Lo += (kD * albedo / PI + specular) *  radiance * NormalLightDot;
@@ -148,8 +149,8 @@ void main()
 	kD *= 1.0 - metallic;
 	vec3 irradiance = texture(irradianceMap,normal).xyz;
 	vec3 diffuse = irradiance * albedo;
-
-	vec3 preFilteredColor = textureLod(prefilterMap, reflectVector,  roughness * MAX_REFLECTION_LOD).xyz;    
+	const float MAX_REFLECTION_LOD = 4.0;
+	vec3 preFilteredColor = texture(prefilterMap, reflectVector,  roughness * MAX_REFLECTION_LOD).xyz;    
 	vec2 BRDF = texture(BRDFLUT, vec2(max(dot(normal,ViewDirectionWorld),0.0),roughness)).xy;
 	specular = preFilteredColor * (FrenelValue * BRDF.x + BRDF.y);
 
