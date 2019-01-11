@@ -65,7 +65,7 @@ float DistributionGGX(vec3 normal, vec3 halfway, float Roughness) //check
     float NdotH  = max(dot(normal, halfway), 0.0);
     float NdotH2 = NdotH*NdotH;
 	
-    float nom    = RoughnessPower4;
+    float nom    = max(RoughnessPower4,0.00001);
     float denom  = (NdotH2 * (RoughnessPower4 - 1.0) + 1.0);
     denom        = PI * denom * denom;
 	
@@ -109,9 +109,9 @@ void main()
 		}
 
 	//vec3 normalizedNormalWorld = normalize(normalWorld);
-	vec3 normal = normalWorld;
+	vec3 normal = normalize(normalWorld);
 	vec3 ViewDirectionWorld = normalize(CameraDirectionWorld - vertexPositionWorld);
-	vec3 reflectVector = reflect(-ViewDirectionWorld, normal);
+	vec3 reflectVector = normalize(reflect(-ViewDirectionWorld, normal));
 	//-----------------------
 	vec3 F0 = vec3(0.04);
 	F0 = mix(F0, albedo, metallic);
@@ -151,6 +151,7 @@ void main()
 	vec3 diffuse = irradiance * albedo;
 	const float MAX_REFLECTION_LOD = 4.0;
 	vec3 preFilteredColor = texture(prefilterMap, reflectVector,  roughness * MAX_REFLECTION_LOD).xyz;    
+	//vec3 preFilteredColor = vec3(0.0,1.0,0.0);
 	vec2 BRDF = texture(BRDFLUT, vec2(max(dot(normal,ViewDirectionWorld),0.0),roughness)).xy;
 	specular = preFilteredColor * (FrenelValue * BRDF.x + BRDF.y);
 

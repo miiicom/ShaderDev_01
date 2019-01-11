@@ -694,7 +694,7 @@ void MeGLWindow::paintGL() {
 	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
 
 
-	glm::vec3 albedoColor = glm::vec3(1.0f, 0.0f, 0.0f);
+	glm::vec3 albedoColor = glm::vec3(1.0f, 0.0f,0.0f);
 	GLint albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
 	glUniform3fv(albedoUniformLoc, 1,&albedoColor[0]);
 	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
@@ -715,6 +715,8 @@ void MeGLWindow::paintGL() {
 			glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
 			glUniform1f(metallicUniformLoc, (float)j * (1.0f / 7.0f));
 			glUniform1f(roughnesslicUniformLoc, (float)i * (1.0f / 7.0f));
+			/*glUniform1f(metallicUniformLoc, -1.0f);
+			glUniform1f(roughnesslicUniformLoc, -1.0f);*/
 			glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 		}
 
