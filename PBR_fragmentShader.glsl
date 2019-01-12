@@ -72,6 +72,23 @@ float DistributionGGX(vec3 normal, vec3 halfway, float Roughness) //check
     return nom / denom;
 }
 
+vec3 getNormalFromMap()
+{
+    vec3 tangentNormal = texture(normalMap, uv0).xyz * 2.0 - 1.0;
+
+    vec3 Q1  = dFdx(vertexPositionWorld);
+    vec3 Q2  = dFdy(vertexPositionWorld);
+    vec2 st1 = dFdx(uv0);
+    vec2 st2 = dFdy(uv0);
+
+    vec3 N   = normalize(normalWorld);
+    vec3 T  = normalize(Q1*st2.t - Q2*st1.t);		//get tangent 
+    vec3 B  = -normalize(cross(N, T));
+    mat3 TBN = mat3(T, B, N);
+
+    return normalize(TBN * tangentNormal);
+}
+
 void main()
 {	
 	vec3 albedo;
@@ -84,8 +101,6 @@ void main()
 		else{
 			albedo = parameter.albedo;
 		}
-
-	vec3 normalmap = texture(normalMap, uv0).xyz;
 
 	if(parameter.roughness == -1.0){
 			roughness = texture(roughnessMap,uv0).r;
@@ -110,6 +125,7 @@ void main()
 
 	//vec3 normalizedNormalWorld = normalize(normalWorld);
 	vec3 normal = normalize(normalWorld);
+	//normal = getNormalFromMap();
 
 	vec3 ViewDirectionWorld = normalize(CameraDirectionWorld- vertexPositionWorld);
 	vec3 reflectVector = normalize(reflect(-ViewDirectionWorld, normal));

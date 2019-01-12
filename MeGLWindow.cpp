@@ -84,7 +84,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	shape.cleanup();
 	//Create QImage obj
-	const char * texName = "texture/rustediron2_basecolor.png";
+	const char * texName = "texture/rustediron2_normal.png";
 	QImage normalMap = loadTexture(texName);
 	// send Normal Image to OpenGL
 	glActiveTexture(GL_TEXTURE0);
@@ -99,7 +99,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 		GL_LINEAR);
 	//Create another QImage obj
-	texName = "texture/rustediron2_normal.png";
+	texName = "texture/rustediron2_basecolor.png";
 	QImage AlbedoMap = loadTexture(texName);
 	//send Albedo color to OpenGL
 	glGenTextures(1, &textureID);
@@ -116,7 +116,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	//Create another QImage obj
 	texName = "texture/rustediron2_roughness.png";
 	QImage RoughnessMap = loadTexture(texName);
-	//send Albedo color to OpenGL
+	//send roughness color to OpenGL
 	glGenTextures(1, &textureID);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, textureID);
@@ -146,7 +146,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	//Create another QImage obj
 	texName = "texture/rustediron2_ao.png";
 	QImage aoMap = loadTexture(texName);
-	//send metallic color to OpenGL
+	//send ao color to OpenGL
 	glGenTextures(1, &textureID);
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, textureID);
@@ -665,9 +665,9 @@ void MeGLWindow::paintGL() {
 
 	// bind texture
 	GLint AlbedoUniformLoc = glGetUniformLocation(PBRProgramID, "albedoMap");
-	glUniform1i(AlbedoUniformLoc, 0);
+	glUniform1i(AlbedoUniformLoc, 1);
 	GLint NormalUniformLoc = glGetUniformLocation(PBRProgramID, "normalMap");
-	glUniform1i(NormalUniformLoc, 1);
+	glUniform1i(NormalUniformLoc, 0);
 	GLint RoughnessUniformLoc = glGetUniformLocation(PBRProgramID, "roughnessMap");
 	glUniform1i(RoughnessUniformLoc, 2);
 	GLint MetallicUniformLoc = glGetUniformLocation(PBRProgramID, "metallicMap");
@@ -694,7 +694,7 @@ void MeGLWindow::paintGL() {
 	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
 
 
-	glm::vec3 albedoColor = glm::vec3(0.82f, 0.686f,0.214f);
+	glm::vec3 albedoColor = glm::vec3(-1.0f, -1.0f,-1.0f);
 	GLint albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
 	glUniform3fv(albedoUniformLoc, 1,&albedoColor[0]);
 	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
@@ -702,7 +702,7 @@ void MeGLWindow::paintGL() {
 	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
 	//glUniform1f(roughnesslicUniformLoc, -0.01f);
 	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
-	glUniform1f(aoUniformLoc, 1.0f);
+	glUniform1f(aoUniformLoc, -1.0f);
 
 	for (int i = 0; i < 7; ++i) { // i  for roughness and  x movement
 		for (int j = 0; j < 7; ++j) { // j for metallic and y movement
@@ -713,10 +713,10 @@ void MeGLWindow::paintGL() {
 
 			glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 			glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-			glUniform1f(metallicUniformLoc, (float)j * (1.0f / 7.0f));
-			glUniform1f(roughnesslicUniformLoc, (float)i * (1.0f / 7.0f));
-			/*glUniform1f(metallicUniformLoc, -1.0f);
-			glUniform1f(roughnesslicUniformLoc, -1.0f);*/
+			//glUniform1f(metallicUniformLoc, (float)j * (1.0f / 7.0f));
+			//glUniform1f(roughnesslicUniformLoc, (float)i * (1.0f / 7.0f));
+			glUniform1f(metallicUniformLoc, -1.0f);
+			glUniform1f(roughnesslicUniformLoc, -1.0f);
 			glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 		}
 
