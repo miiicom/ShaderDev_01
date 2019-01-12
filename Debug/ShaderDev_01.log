@@ -1,5 +1,21 @@
-﻿  MeGLWindow.cpp
+﻿  Mainer.cpp
+  MeCamera.cpp
+  MeGLWindow.cpp
 c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\shapedata.h(4): warning C4099: 'Vertex': type name first seen using 'struct' now seen using 'class'
   c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\vertex.h(5): note: see declaration of 'Vertex'
 c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\meglwindow.cpp(579): warning C4018: '<': signed/unsigned mismatch
+  MeWidget.cpp
+  ShapeGenerator.cpp
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\shapedata.h(4): warning C4099: 'Vertex': type name first seen using 'struct' now seen using 'class'
+  c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\vertex.h(5): note: see declaration of 'Vertex'
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\shapegenerator.cpp(568): warning C4018: '<': signed/unsigned mismatch
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\shapegenerator.cpp(570): warning C4018: '<': signed/unsigned mismatch
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\shapegenerator.cpp(573): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\shapegenerator.cpp(574): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\shapegenerator.cpp(592): warning C4018: '<': signed/unsigned mismatch
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\shapegenerator.cpp(594): warning C4018: '<': signed/unsigned mismatch
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\shapegenerator.cpp(639): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\shapegenerator.cpp(640): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\shapegenerator.cpp(641): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
   ShaderDev_01.vcxproj -> C:\Users\U1137972\source\repos\ShaderDev_01\Debug\ShaderDev_01.exe

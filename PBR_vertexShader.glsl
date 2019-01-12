@@ -8,6 +8,7 @@ in layout(location=4) vec3 tangentModel;
 
 uniform mat4 modelToProjectionMatrix; // MVP
 uniform mat4 modelToWorldMatrix;
+uniform sampler2D displacementMap;
 
 out vec3 fragColor;
 out vec3 vertexPositionWorld;
@@ -16,6 +17,11 @@ out vec2 uv0;
 
 void main()
 {
+	//calculate and apply normalMap------------------------
+
+
+	//-----------------------------------------------------
+
 	normalWorld = vec3(modelToWorldMatrix * vec4(normalModel, 0));
 	vertexPositionWorld = vec3(modelToWorldMatrix * vertexPositionModel);
 
