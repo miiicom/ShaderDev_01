@@ -820,7 +820,7 @@ MeGLWindow::MeGLWindow()
 	meCamera = new MeCamera;
 	spriteOffset = glm::vec2(0.0f, 0.0f);
 	ambientLight = glm::vec3(+0.1f, +0.2f, +0.25f);
-	pointLightPosition = glm::vec3(+0.0f,+10.2f,+0.0f);
+	pointLightPosition = glm::vec3(+0.0f,+5.2f,+0.0f);
 	time = 0.0f;
 }
 
