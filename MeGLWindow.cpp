@@ -160,7 +160,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	stbi_set_flip_vertically_on_load(true);
 	int width, height, nrComponents;
-	float *data  = stbi_loadf("texture/Newport_Loft_Ref.hdr", &width, &height, &nrComponents, 0);
+	float *data  = stbi_loadf("texture/03-Ueno-Shrine_3k.hdr", &width, &height, &nrComponents, 0);
 	GLuint hdrTexture;
 	
 	if (data) {
@@ -694,7 +694,7 @@ void MeGLWindow::paintGL() {
 	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
 
 
-	glm::vec3 albedoColor = glm::vec3(1.0f, 0.0f,0.0f);
+	glm::vec3 albedoColor = glm::vec3(0.82f, 0.686f,0.214f);
 	GLint albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
 	glUniform3fv(albedoUniformLoc, 1,&albedoColor[0]);
 	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
