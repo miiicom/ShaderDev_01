@@ -72,7 +72,7 @@ float DistributionGGX(vec3 normal, vec3 halfway, float Roughness) //check
     return nom / denom;
 }
 
-vec3 getNormalFromMap()
+vec3 getNormalFromMap()				// translate from tangent space to world space should be done per vertex, let GPU do interpolation on NTB and then pass it down to fragment shader
 {
     vec3 tangentNormal = texture(normalMap, uv0).xyz * 2.0 - 1.0;
 
@@ -141,7 +141,7 @@ void main()
 	// radiance
 	float lightdistance = length(lightPositionWorld - vertexPositionWorld);
 	float attenuation = 1.0 / (lightdistance * lightdistance);
-	vec3 radiance = vec3(100.0,100.0,100.0) * attenuation;
+	vec3 radiance = vec3(300.0,300.0,300.0) * attenuation;
 
 	// BRDF
 	vec3 FrenelValue = fresnelSchlick(max(dot(halfwayVector,ViewDirectionWorld),0.0),F0);

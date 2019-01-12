@@ -84,7 +84,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	shape.cleanup();
 	//Create QImage obj
-	const char * texName = "texture/Cobblestone1_Normal.png";
+	const char * texName = "texture/rustediron2_normal.png";
 	QImage normalMap = loadTexture(texName);
 	// send Normal Image to OpenGL
 	glActiveTexture(GL_TEXTURE0);
@@ -99,7 +99,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 		GL_LINEAR);
 	//Create another QImage obj
-	texName = "texture/Cobblestone1_albedo.png";
+	texName = "texture/rustediron2_basecolor.png";
 	QImage AlbedoMap = loadTexture(texName);
 	//send Albedo color to OpenGL
 	glGenTextures(1, &textureID);
@@ -114,7 +114,7 @@ void MeGLWindow::sendDataToOpenGL() {
 		GL_LINEAR);
 
 	//Create another QImage obj
-	texName = "texture/Cobblestone1_roughness.png";
+	texName = "texture/rustediron2_roughness.png";
 	QImage RoughnessMap = loadTexture(texName);
 	//send roughness color to OpenGL
 	glGenTextures(1, &textureID);
@@ -144,7 +144,7 @@ void MeGLWindow::sendDataToOpenGL() {
 		GL_LINEAR);
 
 	//Create another QImage obj
-	texName = "texture/Cobblestone1_ao.png";
+	texName = "texture/rustediron2_ao.png";
 	QImage aoMap = loadTexture(texName);
 	//send ao color to OpenGL
 	glGenTextures(1, &textureID);
@@ -678,28 +678,6 @@ void MeGLWindow::paintGL() {
 	mat4 ModelToWorldMatrix = modelTransformMatrix* modelRotateMatrix *  modelScaleMatrix;
 	mat4 ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 	mat4 fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
-
-	// bind texture
-	GLint AlbedoUniformLoc = glGetUniformLocation(PBRProgramID, "albedoMap");
-	glUniform1i(AlbedoUniformLoc, 1);
-	GLint NormalUniformLoc = glGetUniformLocation(PBRProgramID, "normalMap");
-	glUniform1i(NormalUniformLoc, 0);
-	GLint RoughnessUniformLoc = glGetUniformLocation(PBRProgramID, "roughnessMap");
-	glUniform1i(RoughnessUniformLoc, 2);
-	GLint MetallicUniformLoc = glGetUniformLocation(PBRProgramID, "metallicMap");
-	glUniform1i(MetallicUniformLoc, 3);
-	GLint AoUniformLoc = glGetUniformLocation(PBRProgramID, "aoMap");
-	glUniform1i(AoUniformLoc, 4);
-	GLint IrradianceMapUniformLoc = glGetUniformLocation(PBRProgramID, "irradianceMap");
-	glUniform1i(IrradianceMapUniformLoc, 7);
-	GLint prefilterMapUniformLoc = glGetUniformLocation(PBRProgramID, "prefilterMap");
-	glUniform1i(prefilterMapUniformLoc, 8);
-	GLint BRDFLUTUniformLoc = glGetUniformLocation(PBRProgramID, "BRDFLUT");
-	glUniform1i(BRDFLUTUniformLoc, 9);
-	GLint displacementUniformLoc = glGetUniformLocation(PBRProgramID, "displacementMap");
-	glUniform1i(displacementUniformLoc, 10);
-
-
 		
 	GLint fullTransformMatrixUniformLocation = glGetUniformLocation(PBRProgramID, "modelToProjectionMatrix");
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
@@ -722,43 +700,61 @@ void MeGLWindow::paintGL() {
 	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
 	glUniform1f(aoUniformLoc, -1.0f);
 
-	for (int i = 0; i < 7; ++i) { // i  for roughness and  x movement
-		for (int j = 0; j < 7; ++j) { // j for metallic and y movement
-			modelTransformMatrix = glm::translate(mat4(), glm::vec3(22.2f * (float)i, 22.2f * (float)j, 0.0f));
-			ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
-			ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
-			fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+	//for (int i = 0; i < 7; ++i) { // i  for roughness and  x movement
+	//	for (int j = 0; j < 7; ++j) { // j for metallic and y movement
+	//		modelTransformMatrix = glm::translate(mat4(), glm::vec3(22.2f * (float)i, 22.2f * (float)j, 0.0f));
+	//		ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	//		ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	//		fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
 
-			glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-			glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-			//glUniform1f(metallicUniformLoc, (float)j * (1.0f / 7.0f));
-			//glUniform1f(roughnesslicUniformLoc, (float)i * (1.0f / 7.0f));
-			glUniform1f(metallicUniformLoc, 0.0f);
-			glUniform1f(roughnesslicUniformLoc, -1.0f);
-			glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
-		}
+	//		glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	//		glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	//		//glUniform1f(metallicUniformLoc, (float)j * (1.0f / 7.0f));
+	//		//glUniform1f(roughnesslicUniformLoc, (float)i * (1.0f / 7.0f));
+	//		glUniform1f(metallicUniformLoc, 0.0f);
+	//		glUniform1f(roughnesslicUniformLoc, -1.0f);
+	//		glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
+	//	}
+	//}
 
-	}
+	// Draw first rock plane with texture
 
-	//// Draw first metallic ball with texture
-	//glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
 
-	//modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
-	//modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	//modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
-	//ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
-	//ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
-	//fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+	// bind texture
+	GLint AlbedoUniformLoc = glGetUniformLocation(PBRProgramID, "albedoMap");
+	glUniform1i(AlbedoUniformLoc, 1);
+	GLint NormalUniformLoc = glGetUniformLocation(PBRProgramID, "normalMap");
+	glUniform1i(NormalUniformLoc, 0);
+	GLint RoughnessUniformLoc = glGetUniformLocation(PBRProgramID, "roughnessMap");
+	glUniform1i(RoughnessUniformLoc, 2);
+	GLint MetallicUniformLoc = glGetUniformLocation(PBRProgramID, "metallicMap");
+	glUniform1i(MetallicUniformLoc, 3);
+	GLint AoUniformLoc = glGetUniformLocation(PBRProgramID, "aoMap");
+	glUniform1i(AoUniformLoc, 4);
+	GLint IrradianceMapUniformLoc = glGetUniformLocation(PBRProgramID, "irradianceMap");
+	glUniform1i(IrradianceMapUniformLoc, 7);
+	GLint prefilterMapUniformLoc = glGetUniformLocation(PBRProgramID, "prefilterMap");
+	glUniform1i(prefilterMapUniformLoc, 8);
+	GLint BRDFLUTUniformLoc = glGetUniformLocation(PBRProgramID, "BRDFLUT");
+	glUniform1i(BRDFLUTUniformLoc, 9);
+	GLint displacementUniformLoc = glGetUniformLocation(PBRProgramID, "displacementMap");
+	glUniform1i(displacementUniformLoc, 11);// bind to 11, so no displacement
 
-	//glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-	//glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-	//albedoColor = glm::vec3(0.99f, 0.01f, 0.01f);
-	//glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
-	//glUniform1f(metallicUniformLoc, 1.0f);
-	//glUniform1f(roughnesslicUniformLoc,0.0f);
-	//glUniform1f(aoUniformLoc, 1.0f);
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	albedoColor = glm::vec3(-1.0f, -1.0f, -1.0f);
+	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
+	glUniform1f(metallicUniformLoc, -1.0f);
+	glUniform1f(roughnesslicUniformLoc,-1.0f);
+	glUniform1f(aoUniformLoc, -1.0f);
 
-	//glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 
 	//Draw skybox
 	glUseProgram(SkyboxProgramID);
