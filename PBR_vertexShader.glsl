@@ -17,15 +17,17 @@ out vec2 uv0;
 
 void main()
 {
-	//calculate and apply normalMap------------------------
-
+	//calculate and apply displacementlMap------------------------
+	vec4 texel = texture2D(displacementMap, vertexUV0);
+	float displacementAmount =5 *( 0.30 * texel.x + 0.59*texel.y + 0.11 * texel.z);
+	vec4 vertexPositionOffsetted = vec4(vertexPositionModel.x,vertexPositionModel.y +displacementAmount,vertexPositionModel.z,vertexPositionModel.w);
 
 	//-----------------------------------------------------
 
 	normalWorld = vec3(modelToWorldMatrix * vec4(normalModel, 0));
-	vertexPositionWorld = vec3(modelToWorldMatrix * vertexPositionModel);
+	vertexPositionWorld = vec3(modelToWorldMatrix * vertexPositionOffsetted);
 
-	gl_Position = modelToProjectionMatrix * vertexPositionModel;
+	gl_Position = modelToProjectionMatrix * vertexPositionOffsetted;
 	fragColor = vertexColorModel.xyz;
 	uv0 = vertexUV0;
 }

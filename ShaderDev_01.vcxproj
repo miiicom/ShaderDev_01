@@ -162,6 +162,11 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="texture\Checker" />
+    <Image Include="texture\Cobblestone1_albedo.png" />
+    <Image Include="texture\Cobblestone1_ao.png" />
+    <Image Include="texture\Cobblestone1_displacement.png" />
+    <Image Include="texture\Cobblestone1_Normal.png" />
+    <Image Include="texture\Cobblestone1_roughness.png" />
     <Image Include="texture\ColorChecker.png" />
     <Image Include="texture\Displacement.png" />
     <Image Include="texture\displacement_origin.png" />

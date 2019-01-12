@@ -62,7 +62,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	SphereIndices = shape.numIndices;
 
-	shape = ShapeGenerator::makefillerQuard();
+	shape = ShapeGenerator::makePlane(30);
 	glGenBuffers(1, &PlaneVertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, PlaneVertexBufferID);
 	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
@@ -84,7 +84,7 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	shape.cleanup();
 	//Create QImage obj
-	const char * texName = "texture/rustediron2_normal.png";
+	const char * texName = "texture/Cobblestone1_Normal.png";
 	QImage normalMap = loadTexture(texName);
 	// send Normal Image to OpenGL
 	glActiveTexture(GL_TEXTURE0);
@@ -99,7 +99,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 		GL_LINEAR);
 	//Create another QImage obj
-	texName = "texture/rustediron2_basecolor.png";
+	texName = "texture/Cobblestone1_albedo.png";
 	QImage AlbedoMap = loadTexture(texName);
 	//send Albedo color to OpenGL
 	glGenTextures(1, &textureID);
@@ -114,7 +114,7 @@ void MeGLWindow::sendDataToOpenGL() {
 		GL_LINEAR);
 
 	//Create another QImage obj
-	texName = "texture/rustediron2_roughness.png";
+	texName = "texture/Cobblestone1_roughness.png";
 	QImage RoughnessMap = loadTexture(texName);
 	//send roughness color to OpenGL
 	glGenTextures(1, &textureID);
@@ -144,7 +144,7 @@ void MeGLWindow::sendDataToOpenGL() {
 		GL_LINEAR);
 
 	//Create another QImage obj
-	texName = "texture/rustediron2_ao.png";
+	texName = "texture/Cobblestone1_ao.png";
 	QImage aoMap = loadTexture(texName);
 	//send ao color to OpenGL
 	glGenTextures(1, &textureID);
@@ -153,6 +153,21 @@ void MeGLWindow::sendDataToOpenGL() {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, aoMap.width(),
 		aoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		aoMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+
+	//Create another QImage obj
+	texName = "texture/Cobblestone1_displacement.png";
+	QImage displacementMap = loadTexture(texName);
+	//send ao color to OpenGL
+	glGenTextures(1, &textureID);
+	glActiveTexture(GL_TEXTURE10);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, displacementMap.width(),
+		displacementMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		displacementMap.bits());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 		GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
@@ -654,7 +669,8 @@ void MeGLWindow::paintGL() {
 	glDepthFunc(GL_LEQUAL);
 	glUseProgram(PBRProgramID);
 	// in here rebind for cube
-	glBindVertexArray(SphereVertexArrayObjectID);
+	//glBindVertexArray(SphereVertexArrayObjectID);
+	glBindVertexArray(PlaneVertexArrayObjectID);
 	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 50.0f); // Projection matrix
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -680,6 +696,8 @@ void MeGLWindow::paintGL() {
 	glUniform1i(prefilterMapUniformLoc, 8);
 	GLint BRDFLUTUniformLoc = glGetUniformLocation(PBRProgramID, "BRDFLUT");
 	glUniform1i(BRDFLUTUniformLoc, 9);
+	GLint displacementUniformLoc = glGetUniformLocation(PBRProgramID, "displacementMap");
+	glUniform1i(displacementUniformLoc, 10);
 
 
 		
@@ -706,7 +724,7 @@ void MeGLWindow::paintGL() {
 
 	for (int i = 0; i < 7; ++i) { // i  for roughness and  x movement
 		for (int j = 0; j < 7; ++j) { // j for metallic and y movement
-			modelTransformMatrix = glm::translate(mat4(), glm::vec3(2.2f * (float)i, 2.2f * (float)j, 0.0f));
+			modelTransformMatrix = glm::translate(mat4(), glm::vec3(22.2f * (float)i, 22.2f * (float)j, 0.0f));
 			ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 			ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 			fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
@@ -715,9 +733,9 @@ void MeGLWindow::paintGL() {
 			glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
 			//glUniform1f(metallicUniformLoc, (float)j * (1.0f / 7.0f));
 			//glUniform1f(roughnesslicUniformLoc, (float)i * (1.0f / 7.0f));
-			glUniform1f(metallicUniformLoc, -1.0f);
+			glUniform1f(metallicUniformLoc, 0.0f);
 			glUniform1f(roughnesslicUniformLoc, -1.0f);
-			glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+			glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 		}
 
 	}
@@ -802,7 +820,7 @@ MeGLWindow::MeGLWindow()
 	meCamera = new MeCamera;
 	spriteOffset = glm::vec2(0.0f, 0.0f);
 	ambientLight = glm::vec3(+0.1f, +0.2f, +0.25f);
-	pointLightPosition = glm::vec3(+0.0f,+1.2f,+0.0f);
+	pointLightPosition = glm::vec3(+0.0f,+10.2f,+0.0f);
 	time = 0.0f;
 }
 

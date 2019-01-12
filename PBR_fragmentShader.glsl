@@ -124,8 +124,8 @@ void main()
 		}
 
 	//vec3 normalizedNormalWorld = normalize(normalWorld);
-	vec3 normal = normalize(normalWorld);
-	//normal = getNormalFromMap();
+	//vec3 normal = normalize(normalWorld);
+	vec3 normal = getNormalFromMap();
 
 	vec3 ViewDirectionWorld = normalize(CameraDirectionWorld- vertexPositionWorld);
 	vec3 reflectVector = normalize(reflect(-ViewDirectionWorld, normal));
