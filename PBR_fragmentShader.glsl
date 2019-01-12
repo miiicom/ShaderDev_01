@@ -110,7 +110,8 @@ void main()
 
 	//vec3 normalizedNormalWorld = normalize(normalWorld);
 	vec3 normal = normalize(normalWorld);
-	vec3 ViewDirectionWorld = normalize(CameraDirectionWorld - vertexPositionWorld);
+
+	vec3 ViewDirectionWorld = normalize(CameraDirectionWorld- vertexPositionWorld);
 	vec3 reflectVector = normalize(reflect(-ViewDirectionWorld, normal));
 	//-----------------------
 	vec3 F0 = vec3(0.04);
@@ -150,7 +151,7 @@ void main()
 	vec3 irradiance = texture(irradianceMap,normal).xyz;
 	vec3 diffuse = irradiance * albedo;
 	const float MAX_REFLECTION_LOD = 4.0;
-	vec3 preFilteredColor = texture(prefilterMap, reflectVector,  roughness * MAX_REFLECTION_LOD).xyz;    
+	vec3 preFilteredColor = texture(prefilterMap, reflectVector * 0.1,  roughness * MAX_REFLECTION_LOD).xyz;    
 	//vec3 preFilteredColor = vec3(0.0,1.0,0.0);
 	vec2 BRDF = texture(BRDFLUT, vec2(max(dot(normal,ViewDirectionWorld),0.0),roughness)).xy;
 	specular = preFilteredColor * (FrenelValue * BRDF.x + BRDF.y);
