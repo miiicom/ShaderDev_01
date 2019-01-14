@@ -53,11 +53,23 @@ GLuint stoneNormalTextureID;
 GLuint stoneAlbedoTextureID;
 GLuint stoneRoughnessTextureID;
 GLuint stoneDisplacementTextureID;
+GLuint stoneAoTextureID;
+
+QImage stoneNormalMap;
+QImage stoneAlbedoMap;
+QImage stoneRoughnessMap;
+QImage stoneDisplacementMap;
+QImage stoneAoMap;
 
 GLuint rustedironNormalTextureID;
 GLuint rustedironAlbedoTextureID;
 GLuint rustedironRoughnessTextureID;
 GLuint rustedironMetallicTextureID;
+
+QImage rustedironNormalMap;
+QImage rustedironAlbedoMap;
+QImage rustedironRoughnessMap;
+QImage rustedironMetallicMap;
 
 void MeGLWindow::sendDataToOpenGL() {
 	GLuint PlaneDimension = 60;
@@ -72,7 +84,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	SphereIndices = shape.numIndices;
 
-	shape = ShapeGenerator::makePlane(30);
+	shape = ShapeGenerator::makePlane(30);// temp solution before I figure out tessellation haha
 	glGenBuffers(1, &PlaneVertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, PlaneVertexBufferID);
 	glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW);
@@ -92,31 +104,43 @@ void MeGLWindow::sendDataToOpenGL() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	cubeIndices = shape.numIndices;
 
+	/* -----------------------------------
+	Normal TEX0
+	ALBEOD TEX1
+	ROUGHENSS TEX2
+	METALLIC TEX3
+	AO TEX4
+	DISPLACEMENT TEX 10
+	
+	HDR TEX6
+	TEX5,TEX7,TEX8,TEX9 ARE FOR PBR RENDERS
+	*/
+
 	shape.cleanup();
 	//Create QImage obj
 	const char * texName = "texture/Cobblestone1_Normal.png";
-	QImage normalMap = loadTexture(texName);
+	stoneNormalMap = loadTexture(texName);
 	// Normal map for cobbleStone
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &stoneNormalTextureID);
 	glBindTexture(GL_TEXTURE_2D, stoneNormalTextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, normalMap.width(),
-		normalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-		normalMap.bits());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, stoneNormalMap.width(),
+		stoneNormalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		stoneNormalMap.bits());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 		GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 		GL_LINEAR);
 	//Create another QImage obj
 	texName = "texture/Cobblestone1_albedo.png";
-	QImage AlbedoMap = loadTexture(texName);
+	stoneAlbedoMap = loadTexture(texName);
 	// Albedo map for cobbleStone
 	glGenTextures(1, &stoneAlbedoTextureID);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, stoneAlbedoTextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, AlbedoMap.width(),
-		AlbedoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-		AlbedoMap.bits());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, stoneAlbedoMap.width(),
+		stoneAlbedoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		stoneAlbedoMap.bits());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 		GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
@@ -124,14 +148,14 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	//Create another QImage obj
 	texName = "texture/Cobblestone1_roughness.png";
-	QImage RoughnessMap = loadTexture(texName);
+	stoneRoughnessMap = loadTexture(texName);
 	// Roughness map for cobbleStone
 	glGenTextures(1, &stoneRoughnessTextureID);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, stoneRoughnessTextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, RoughnessMap.width(),
-		RoughnessMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-		RoughnessMap.bits());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, stoneRoughnessMap.width(),
+		stoneRoughnessMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		stoneRoughnessMap.bits());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 		GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
@@ -139,14 +163,14 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	//Create another QImage obj
 	texName = "texture/rustediron2_metallic.png";
-	QImage metallicMap = loadTexture(texName);
+	rustedironMetallicMap = loadTexture(texName);
 	// Metallic map for cobbleStone
 	glGenTextures(1, &rustedironMetallicTextureID);
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, rustedironMetallicTextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, metallicMap.width(),
-		metallicMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-		metallicMap.bits());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rustedironMetallicMap.width(),
+		rustedironMetallicMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		rustedironMetallicMap.bits());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 		GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
@@ -154,56 +178,114 @@ void MeGLWindow::sendDataToOpenGL() {
 
 	//Create another QImage obj
 	texName = "texture/Cobblestone1_ao.png";
-	QImage aoMap = loadTexture(texName);
-	GLuint stoneAoTextureID;
+	stoneAoMap = loadTexture(texName);
 	// Ao map for cobbleStone
 	glGenTextures(1, &stoneAoTextureID);
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, stoneAoTextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, aoMap.width(),
-		aoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-		aoMap.bits());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, stoneAoMap.width(),
+		stoneAoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		stoneAoMap.bits());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 		GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 		GL_LINEAR);
 
 	//Create another QImage obj
-	texName = "texture/rustediron2_normal.png";
-	QImage displacementMap = loadTexture(texName);
-	// Normal map for rustMetal
+	texName = "texture/Cobblestone1_displacement.png";
+	stoneDisplacementMap = loadTexture(texName);
+	// Ao map for cobbleStone
 	glGenTextures(1, &stoneDisplacementTextureID);
 	glActiveTexture(GL_TEXTURE10);
 	glBindTexture(GL_TEXTURE_2D, stoneDisplacementTextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, displacementMap.width(),
-		displacementMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-		displacementMap.bits());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, stoneDisplacementMap.width(),
+		stoneDisplacementMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		stoneDisplacementMap.bits());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 		GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 		GL_LINEAR);
 
-	stbi_set_flip_vertically_on_load(true);
-	int width, height, nrComponents;
-	float *data  = stbi_loadf("texture/03-Ueno-Shrine_3k.hdr", &width, &height, &nrComponents, 0);
-	GLuint hdrTexture;
-	
-	if (data) {
-		glGenTextures(1, &hdrTexture);
-		glActiveTexture(GL_TEXTURE6);
-		glBindTexture(GL_TEXTURE_2D, hdrTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
-	
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-		stbi_image_free(data);
-	}
-	else {
-		printf("fail to load hdr");
-	}
+	// temp create and store them in Tex11
+	glActiveTexture(GL_TEXTURE11);
+	//Create another QImage obj
+	texName = "texture/rustediron2_normal.png";
+	rustedironNormalMap = loadTexture(texName);
+	// Normal map for rustMetal
+	glGenTextures(1, &rustedironNormalTextureID);
+	glBindTexture(GL_TEXTURE_2D, rustedironNormalTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rustedironNormalMap.width(),
+		rustedironNormalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		rustedironNormalMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+
+	//Create another QImage obj
+	texName = "texture/rustediron2_basecolor.png";
+	rustedironAlbedoMap = loadTexture(texName);
+	// albedo map for rustMetal
+	glGenTextures(1, &rustedironAlbedoTextureID);
+	glBindTexture(GL_TEXTURE_2D, rustedironAlbedoTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rustedironAlbedoMap.width(),
+		rustedironAlbedoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		rustedironAlbedoMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+
+	//Create another QImage obj
+	texName = "texture/rustediron2_roughness.png";
+	rustedironRoughnessMap = loadTexture(texName);
+	// roughness map for rustMetal
+	glGenTextures(1, &rustedironRoughnessTextureID);
+	glBindTexture(GL_TEXTURE_2D, rustedironRoughnessTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rustedironRoughnessMap.width(),
+		rustedironRoughnessMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		rustedironRoughnessMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+
+	////Create another QImage obj
+	//texName = "texture/rustediron2_metallic.png";
+	//metallicMap = loadTexture(texName);
+	//// roughness map for rustMetal
+	//glGenTextures(1, &rustedironMetallicTextureID);
+	//glBindTexture(GL_TEXTURE_2D, rustedironMetallicTextureID);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, metallicMap.width(),
+	//	metallicMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+	//	metallicMap.bits());
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+	//	GL_LINEAR);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+	//	GL_LINEAR);
+
+	// --------------------Load HDR-----------------------------
+			stbi_set_flip_vertically_on_load(true);
+			int width, height, nrComponents;
+			float *data  = stbi_loadf("texture/03-Ueno-Shrine_3k.hdr", &width, &height, &nrComponents, 0);
+			GLuint hdrTexture;
+			
+			if (data) {
+				glGenTextures(1, &hdrTexture);
+				glActiveTexture(GL_TEXTURE6);
+				glBindTexture(GL_TEXTURE_2D, hdrTexture);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+			
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			
+				stbi_image_free(data);
+			}
+			else {
+				printf("fail to load hdr");
+			}
 }
 
 void MeGLWindow::setupVertexArrays()
@@ -680,7 +762,6 @@ void MeGLWindow::paintGL() {
 	glUseProgram(PBRProgramID);
 	// in here rebind for cube
 	//glBindVertexArray(SphereVertexArrayObjectID);
-	glBindVertexArray(PlaneVertexArrayObjectID);
 	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 50.0f); // Projection matrix
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -700,17 +781,14 @@ void MeGLWindow::paintGL() {
 	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
 
 
-	glm::vec3 albedoColor = glm::vec3(-1.0f, -1.0f,-1.0f);
+	glm::vec3 albedoColor = glm::vec3(-1.0f, -1.0f, -1.0f);
 	GLint albedoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
 	glUniform3fv(albedoUniformLoc, 1,&albedoColor[0]);
 	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
-	//glUniform1f(metallicUniformLoc,-1.0f);
 	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
-	//glUniform1f(roughnesslicUniformLoc, -0.01f);
 	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
-	glUniform1f(aoUniformLoc, -1.0f);
 	GLint displacementMultiplierUniformLoc = glGetUniformLocation(PBRProgramID, "displacementMultiplier");
-	glUniform1f(displacementMultiplierUniformLoc, 5.0f);
+	GLint useNormalUniformLoc = glGetUniformLocation(PBRProgramID, "useNormal");
 
 	//for (int i = 0; i < 7; ++i) { // i  for roughness and  x movement
 	//	for (int j = 0; j < 7; ++j) { // j for metallic and y movement
@@ -728,12 +806,11 @@ void MeGLWindow::paintGL() {
 	//		glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 	//	}
 	//}
-
 	// Draw first rock plane with texture
 
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, -5.0f, 3.0f)); // push 4 away from camera
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -5.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f,1.0f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
@@ -756,8 +833,27 @@ void MeGLWindow::paintGL() {
 	GLint BRDFLUTUniformLoc = glGetUniformLocation(PBRProgramID, "BRDFLUT");
 	glUniform1i(BRDFLUTUniformLoc, 9);
 	GLint displacementUniformLoc = glGetUniformLocation(PBRProgramID, "displacementMap");
-	glUniform1i(displacementUniformLoc, 10);// bind to 11, so no displacement
+	glUniform1i(displacementUniformLoc, 10);
+	//
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, stoneNormalTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, stoneNormalMap.width(),
+		stoneNormalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		stoneNormalMap.bits());
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, stoneAlbedoTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, stoneAlbedoMap.width(),
+		stoneAlbedoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		stoneAlbedoMap.bits());
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, stoneRoughnessTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, stoneRoughnessMap.width(),
+		stoneRoughnessMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		stoneRoughnessMap.bits());
 
+
+	//Apply transform and render rockPad
+	glBindVertexArray(PlaneVertexArrayObjectID);
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
 	albedoColor = glm::vec3(-1.0f, -1.0f, -1.0f);
@@ -765,8 +861,51 @@ void MeGLWindow::paintGL() {
 	glUniform1f(metallicUniformLoc, 0.0f);
 	glUniform1f(roughnesslicUniformLoc,-1.0f);
 	glUniform1f(aoUniformLoc, -1.0f);
-
+	glUniform1f(displacementMultiplierUniformLoc, 5.0f);
+	glUniform1f(useNormalUniformLoc, 1.0f);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
+
+	//here use other textures
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, rustedironNormalTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rustedironNormalMap.width(),
+		rustedironNormalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		rustedironNormalMap.bits());
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, rustedironNormalTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rustedironAlbedoMap.width(),
+		rustedironAlbedoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		rustedironAlbedoMap.bits());
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, rustedironRoughnessTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rustedironRoughnessMap.width(),
+		rustedironRoughnessMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		rustedironRoughnessMap.bits());
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, rustedironMetallicTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rustedironMetallicMap.width(),
+		rustedironMetallicMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		rustedironMetallicMap.bits());
+
+	glBindVertexArray(SphereVertexArrayObjectID);
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 2.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +90.0f, glm::vec3(1.0f, 1.0f, 0.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	albedoColor = glm::vec3(-1.0f,-1.0f, -1.0f);
+	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
+	glUniform1f(metallicUniformLoc, -1.0f);
+	glUniform1f(roughnesslicUniformLoc, -1.0f);
+	glUniform1f(aoUniformLoc, -1.0f);
+	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
+	glUniform1f(useNormalUniformLoc, -1.0f);
+	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+
 
 	//Draw skybox
 	glUseProgram(SkyboxProgramID);
@@ -828,7 +967,7 @@ MeGLWindow::MeGLWindow()
 	meCamera = new MeCamera;
 	spriteOffset = glm::vec2(0.0f, 0.0f);
 	ambientLight = glm::vec3(+0.1f, +0.2f, +0.25f);
-	pointLightPosition = glm::vec3(+0.0f,+3.0f,+0.0f);
+	pointLightPosition = glm::vec3(+0.0f,0.0f,+0.0f);
 	time = 0.0f;
 }
 

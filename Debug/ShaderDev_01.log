@@ -1,5 +1,5 @@
 ﻿  MeGLWindow.cpp
 c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\shapedata.h(4): warning C4099: 'Vertex': type name first seen using 'struct' now seen using 'class'
   c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\vertex.h(5): note: see declaration of 'Vertex'
-c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\meglwindow.cpp(604): warning C4018: '<': signed/unsigned mismatch
+c:\users\u1137972\source\repos\shaderdev_01\shaderdev_01\meglwindow.cpp(686): warning C4018: '<': signed/unsigned mismatch
   ShaderDev_01.vcxproj -> C:\Users\U1137972\source\repos\ShaderDev_01\Debug\ShaderDev_01.exe

@@ -18,6 +18,7 @@ uniform mat4 modelToProjectionMatrix; // MVP
 uniform mat4 modelToWorldMatrix;
 uniform vec3 CameraDirectionWorld;
 uniform vec3 lightPositionWorld;
+uniform float useNormal;
 
 uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;
@@ -27,6 +28,7 @@ uniform sampler2D normalMap;
 uniform sampler2D roughnessMap;
 uniform sampler2D metallicMap;
 uniform sampler2D aoMap;
+
 
 float PI = 3.141592653;
 
@@ -92,6 +94,7 @@ vec3 getNormalFromMap()				// translate from tangent space to world space should
 void main()
 {	
 	vec3 albedo;
+	vec3 normal;
 	float roughness;
 	float metallic;
 	float ao;
@@ -125,7 +128,12 @@ void main()
 
 	//vec3 normalizedNormalWorld = normalize(normalWorld);
 	//vec3 normal = normalize(normalWorld);
-	vec3 normal = getNormalFromMap();
+	if(useNormal == -1.0){
+			normal = normalize(normalWorld);
+		}
+		else{
+			normal = getNormalFromMap();
+		}
 
 	vec3 ViewDirectionWorld = normalize(CameraDirectionWorld- vertexPositionWorld);
 	vec3 reflectVector = normalize(reflect(-ViewDirectionWorld, normal));
