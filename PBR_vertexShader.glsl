@@ -9,6 +9,7 @@ in layout(location=4) vec3 tangentModel;
 uniform mat4 modelToProjectionMatrix; // MVP
 uniform mat4 modelToWorldMatrix;
 uniform sampler2D displacementMap;
+uniform float displacementMultiplier;
 
 out vec3 fragColor;
 out vec3 vertexPositionWorld;
@@ -17,11 +18,15 @@ out vec2 uv0;
 
 void main()
 {
+	vec4 vertexPositionOffsetted;
 	//calculate and apply displacementlMap------------------------
 	vec4 texel = texture2D(displacementMap, vertexUV0);
-	float displacementAmount =5 *( 0.30 * texel.x + 0.59*texel.y + 0.11 * texel.z);
-	vec4 vertexPositionOffsetted = vec4(vertexPositionModel.x,vertexPositionModel.y +displacementAmount,vertexPositionModel.z,vertexPositionModel.w);
-
+	if(displacementMultiplier != 0.0){
+		float displacementAmount =displacementMultiplier *( 0.30 * texel.x + 0.59*texel.y + 0.11 * texel.z);  // 
+		vertexPositionOffsetted = vec4(vertexPositionModel.x,vertexPositionModel.y +displacementAmount,vertexPositionModel.z,vertexPositionModel.w);
+	}else{
+		vertexPositionOffsetted = vertexPositionModel;
+	}
 	//-----------------------------------------------------
 
 	normalWorld = vec3(modelToWorldMatrix * vec4(normalModel, 0));
