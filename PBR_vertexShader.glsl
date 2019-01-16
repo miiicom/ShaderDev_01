@@ -15,11 +15,13 @@ out vec3 fragColor;
 out vec3 vertexPositionWorld;
 out vec3 normalWorld;
 out vec2 uv0;
+out mat3 TBNtangentToModel;
 
 void main()
 {
 	vec4 vertexPositionOffsetted;
-	//calculate and apply displacementlMap------------------------
+
+	//----------------------------calculate and apply displacementlMap------------------------
 	vec4 texel = texture2D(displacementMap, vertexUV0);
 	if(displacementMultiplier != 0.0){
 		float displacementAmount =displacementMultiplier *( 0.30 * texel.x + 0.59*texel.y + 0.11 * texel.z);  // 
@@ -28,6 +30,10 @@ void main()
 		vertexPositionOffsetted = vertexPositionModel;
 	}
 	//-----------------------------------------------------
+	//----------------------------calculate TBN Matrix per vertex-----------------------------
+	vec3 biTangentModel = normalize(cross(normalModel,tangentModel)) * 1 ; //1 for handedness ion OpenGL 
+	TBNtangentToModel =  mat3(tangentModel,biTangentModel,normalModel); //Construct TBN Matrix
+	//----------------------------------------------------
 
 	normalWorld = vec3(modelToWorldMatrix * vec4(normalModel, 0));
 	vertexPositionWorld = vec3(modelToWorldMatrix * vertexPositionOffsetted);

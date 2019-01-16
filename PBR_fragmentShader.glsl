@@ -5,7 +5,7 @@ in vec3 vertexPositionWorld;
 in vec3 normalWorld;
 in vec3 fragColor;
 in vec2 uv0;
-
+in mat3 TBNtangentToModel;
 
 struct PBR_parameters {
 	vec3 albedo;
@@ -89,6 +89,16 @@ vec3 getNormalFromMap()				// translate from tangent space to world space should
     mat3 TBN = mat3(T, B, N);
 
     return normalize(TBN * tangentNormal);
+}
+
+vec3 useTBNgetNormalMap(sampler normalMap, vec2 uv0){
+	//read Texture and apply TBN matrix to sampled normal vector
+	//vec2 newfragmentUV0 = vec2(uv0.x, -uv0.y);
+	vec4 normalTextureInfo = texture(normalMap,uv0) * 2.0 - 1.0;
+	vec4 testNormalTangent = vec4(0.0,0.0,1.0,0.0);
+	vec3 normalTextureInfoInObj = TBNtangentToModel * normalTextureInfo.xyz;
+	vec3 normalTextureInfoInWorld = vec3(modelToWorldMatrix * vec4(normalTextureInfoInObj,1.0));
+	return normalTextureInfoInWorld;
 }
 
 void main()

@@ -809,7 +809,7 @@ void MeGLWindow::paintGL() {
 	// Draw first rock plane with texture
 
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, -5.0f, 0.0f)); // push 4 away from camera
-	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f,1.0f, 1.0f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f,1.0f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
@@ -888,8 +888,8 @@ void MeGLWindow::paintGL() {
 		rustedironMetallicMap.bits());
 
 	glBindVertexArray(CubeVertexArrayObjectID);
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 2.0f, 0.0f)); // push 4 away from camera
-	modelRotateMatrix = glm::rotate(mat4(), +90.0f, glm::vec3(1.0f, 1.0f, 0.0f));
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
@@ -967,7 +967,7 @@ MeGLWindow::MeGLWindow()
 	meCamera = new MeCamera;
 	spriteOffset = glm::vec2(0.0f, 0.0f);
 	ambientLight = glm::vec3(+0.1f, +0.2f, +0.25f);
-	pointLightPosition = glm::vec3(+0.0f,0.0f,+0.0f);
+	pointLightPosition = glm::vec3(+0.0f,2.5f,+0.0f);
 	time = 0.0f;
 }
 
