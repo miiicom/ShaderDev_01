@@ -78,9 +78,9 @@ vec3 getNormalFromMap()				// translate from tangent space to world space should
 {
     vec3 tangentNormal = texture(normalMap, uv0).xyz * 2.0 - 1.0;
 
-    vec3 Q1  = dFdx(vertexPositionWorld);
+    vec3 Q1  = dFdx(vertexPositionWorld); //dFdx, dFdy — return the partial derivative of an argument with respect to x or y
     vec3 Q2  = dFdy(vertexPositionWorld);
-    vec2 st1 = dFdx(uv0);
+    vec2 st1 = dFdx(uv0);				
     vec2 st2 = dFdy(uv0);
 
     vec3 N   = normalize(normalWorld);

@@ -49,6 +49,9 @@ GLuint CubeVertexArrayObjectID;
 
 GLuint environemntRenderTexture;
 
+GLuint checkerNormalTextureID;
+QImage checkerNormalMap;
+
 GLuint stoneNormalTextureID;
 GLuint stoneAlbedoTextureID;
 GLuint stoneRoughnessTextureID;
@@ -209,7 +212,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	// temp create and store them in Tex11
 	glActiveTexture(GL_TEXTURE11);
 	//Create another QImage obj
-	texName = "texture/normalMap.png";
+	texName = "texture/rustediron2_normal.png";
 	rustedironNormalMap = loadTexture(texName);
 	// Normal map for rustMetal
 	glGenTextures(1, &rustedironNormalTextureID);
@@ -245,6 +248,21 @@ void MeGLWindow::sendDataToOpenGL() {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rustedironRoughnessMap.width(),
 		rustedironRoughnessMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		rustedironRoughnessMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+
+	// temp create and store them in Tex11
+	//Create another QImage obj
+	texName = "texture/normalMap.png";
+	checkerNormalMap = loadTexture(texName);
+	// Normal map for rustMetal
+	glGenTextures(1, &checkerNormalTextureID);
+	glBindTexture(GL_TEXTURE_2D, checkerNormalTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, checkerNormalMap.width(),
+		checkerNormalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		checkerNormalMap.bits());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 		GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
@@ -865,6 +883,31 @@ void MeGLWindow::paintGL() {
 	glUniform1f(useNormalUniformLoc, 1.0f);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, checkerNormalTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, checkerNormalMap.width(),
+		checkerNormalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		checkerNormalMap.bits());
+
+	glBindVertexArray(CubeVertexArrayObjectID);
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	albedoColor = glm::vec3(0.0f, 1.0f, 0.0f);
+	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
+	glUniform1f(metallicUniformLoc, 1.0f);
+	glUniform1f(roughnesslicUniformLoc, 0.0f);
+	glUniform1f(aoUniformLoc, 1.0f);
+	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
+	glUniform1f(useNormalUniformLoc, 1.0f);
+	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+
 	//here use other textures
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, rustedironNormalTextureID);
@@ -887,9 +930,10 @@ void MeGLWindow::paintGL() {
 		rustedironMetallicMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		rustedironMetallicMap.bits());
 
-	glBindVertexArray(CubeVertexArrayObjectID);
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
-	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	
+	glBindVertexArray(SphereVertexArrayObjectID);
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
@@ -897,15 +941,14 @@ void MeGLWindow::paintGL() {
 
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-	albedoColor = glm::vec3(0.0f,1.0f, 0.0f);
+	albedoColor = glm::vec3(-1.0f, -1.0f, -1.0f);
 	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
-	glUniform1f(metallicUniformLoc, 1.0f);
-	glUniform1f(roughnesslicUniformLoc, 0.0f);
-	glUniform1f(aoUniformLoc,1.0f);
-	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
+	glUniform1f(metallicUniformLoc, -1.0f);
+	glUniform1f(roughnesslicUniformLoc, -1.0f);
+	glUniform1f(aoUniformLoc, -1.0f);
+	glUniform1f(displacementMultiplierUniformLoc,0.0f);
 	glUniform1f(useNormalUniformLoc, 1.0f);
-	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
-
+	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
 	//Draw skybox
 	glUseProgram(SkyboxProgramID);
