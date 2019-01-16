@@ -1001,7 +1001,7 @@ void MeGLWindow::paintGL() {
 
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-	albedoColor = glm::vec3(0.0f, 1.0f, 0.0f);
+	albedoColor = glm::vec3(0.8f, 0.8f, 0.8f);
 	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
 	glUniform1f(metallicUniformLoc, 1.0f);
 	glUniform1f(roughnesslicUniformLoc, 0.0f);
@@ -1009,6 +1009,101 @@ void MeGLWindow::paintGL() {
 	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
 	glUniform1f(useNormalUniformLoc, 1.0f);
 	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(12.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	albedoColor = glm::vec3(0.8f, 0.8f, 0.8f);
+	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
+	glUniform1f(metallicUniformLoc, 0.0f);
+	glUniform1f(roughnesslicUniformLoc, 1.0f);
+	glUniform1f(aoUniformLoc, 1.0f);
+	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
+	glUniform1f(useNormalUniformLoc, 1.0f);
+	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(9.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	albedoColor = glm::vec3(0.8f, 0.8f, 0.8f);
+	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
+	glUniform1f(metallicUniformLoc, 0.33f);
+	glUniform1f(roughnesslicUniformLoc, 0.66f);
+	glUniform1f(aoUniformLoc, 1.0f);
+	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
+	glUniform1f(useNormalUniformLoc, 1.0f);
+	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(6.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	albedoColor = glm::vec3(0.8f, 0.8f, 0.8f);
+	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
+	glUniform1f(metallicUniformLoc,0.66f);
+	glUniform1f(roughnesslicUniformLoc, 0.33f);
+	glUniform1f(aoUniformLoc, 1.0f);
+	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
+	glUniform1f(useNormalUniformLoc, 1.0f);
+	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+	//here use other textures
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, woodNormalTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, woodNormalMap.width(),
+		woodNormalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		woodNormalMap.bits());
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, woodAlbedoTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, woodAlbedoMap.width(),
+		woodAlbedoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		woodAlbedoMap.bits());
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, woodRoughnessTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, woodRoughnessMap.width(),
+		woodRoughnessMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		woodRoughnessMap.bits());
+	glActiveTexture(GL_TEXTURE10);
+	glBindTexture(GL_TEXTURE_2D, woodDisplacementTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, woodDisplacementMap.width(),
+		woodDisplacementMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		woodDisplacementMap.bits());
+
+	//draw wood sphere
+	glBindVertexArray(SphereVertexArrayObjectID);
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f,1.0f));
+	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	albedoColor = glm::vec3(-1.0f, -1.0f, -1.0f);
+	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
+	glUniform1f(metallicUniformLoc, 0.0f);
+	glUniform1f(roughnesslicUniformLoc, -1.0f);
+	glUniform1f(aoUniformLoc, -1.0f);
+	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
+	glUniform1f(useNormalUniformLoc, 1.0f);
+	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
 
 	//here use other textures
 	glActiveTexture(GL_TEXTURE0);

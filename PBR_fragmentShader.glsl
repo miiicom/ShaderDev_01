@@ -159,7 +159,7 @@ void main()
 	// radiance
 	float lightdistance = length(lightPositionWorld - vertexPositionWorld);
 	float attenuation = 1.0 / (lightdistance * lightdistance);
-	vec3 radiance = vec3(300.0,300.0,300.0) * attenuation;
+	vec3 radiance = vec3(255.0,244.0,229.0) * attenuation;
 
 	// BRDF
 	vec3 FrenelValue = fresnelSchlick(max(dot(halfwayVector,ViewDirectionWorld),0.0),F0);
