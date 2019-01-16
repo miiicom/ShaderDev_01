@@ -994,7 +994,7 @@ void MeGLWindow::paintGL() {
 	glBindVertexArray(CubeVertexArrayObjectID);
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(0.8f, 0.8f, 0.8f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
@@ -1012,7 +1012,7 @@ void MeGLWindow::paintGL() {
 
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(12.0f, 0.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(0.8f, 0.8f, 0.8f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
@@ -1030,7 +1030,7 @@ void MeGLWindow::paintGL() {
 
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(9.0f, 0.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(0.8f, 0.8f, 0.8f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
@@ -1048,7 +1048,7 @@ void MeGLWindow::paintGL() {
 
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(6.0f, 0.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(0.8f, 0.8f, 0.8f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
@@ -1063,6 +1063,33 @@ void MeGLWindow::paintGL() {
 	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
 	glUniform1f(useNormalUniformLoc, 1.0f);
 	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, rustedironNormalTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rustedironNormalMap.width(),
+		rustedironNormalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		rustedironNormalMap.bits());
+
+	glBindVertexArray(SphereVertexArrayObjectID);
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(-6.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
+	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
+	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
+	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
+	// 
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
+	albedoColor = glm::vec3(0.828f, 0.683f, 0.214f); 
+	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
+	glUniform1f(metallicUniformLoc, 1.00f);
+	glUniform1f(roughnesslicUniformLoc, 0.25f);
+	glUniform1f(aoUniformLoc, 1.0f);
+	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
+	glUniform1f(useNormalUniformLoc, 1.0f);
+	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+
+
 	//here use other textures
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, woodNormalTextureID);
