@@ -177,6 +177,17 @@
     <Image Include="texture\rustediron2_metallic.png" />
     <Image Include="texture\rustediron2_normal.png" />
     <Image Include="texture\rustediron2_roughness.png" />
+    <Image Include="texture\TexturesCom_Metal_Corrugated_1K_albedo.png" />
+    <Image Include="texture\TexturesCom_Metal_Corrugated_1K_ao.png" />
+    <Image Include="texture\TexturesCom_Metal_Corrugated_1K_height.png" />
+    <Image Include="texture\TexturesCom_Metal_Corrugated_1K_metallic.png" />
+    <Image Include="texture\TexturesCom_Metal_Corrugated_1K_normal.png" />
+    <Image Include="texture\TexturesCom_Metal_Corrugated_1K_roughness.png" />
+    <Image Include="texture\TexturesCom_Wood_Rough_1K_albedo.png" />
+    <Image Include="texture\TexturesCom_Wood_Rough_1K_ao.png" />
+    <Image Include="texture\TexturesCom_Wood_Rough_1K_height.png" />
+    <Image Include="texture\TexturesCom_Wood_Rough_1K_normal.png" />
+    <Image Include="texture\TexturesCom_Wood_Rough_1K_roughness.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

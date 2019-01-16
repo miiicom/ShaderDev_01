@@ -55,12 +55,14 @@ QImage checkerNormalMap;
 GLuint stoneNormalTextureID;
 GLuint stoneAlbedoTextureID;
 GLuint stoneRoughnessTextureID;
+GLuint stoneMetallicTextureID;
 GLuint stoneDisplacementTextureID;
 GLuint stoneAoTextureID;
 
 QImage stoneNormalMap;
 QImage stoneAlbedoMap;
 QImage stoneRoughnessMap;
+QImage stoneMetallicMap;
 QImage stoneDisplacementMap;
 QImage stoneAoMap;
 
@@ -74,8 +76,20 @@ QImage rustedironAlbedoMap;
 QImage rustedironRoughnessMap;
 QImage rustedironMetallicMap;
 
+GLuint woodNormalTextureID;
+GLuint woodAlbedoTextureID;
+GLuint woodRoughnessTextureID;
+GLuint woodDisplacementTextureID;
+GLuint woodAoTextureID;
+
+QImage woodNormalMap;
+QImage woodAlbedoMap;
+QImage woodRoughnessMap;
+QImage woodDisplacementMap;
+QImage woodAoMap;
+
 void MeGLWindow::sendDataToOpenGL() {
-	GLuint PlaneDimension = 60;
+	GLuint PlaneDimension =60;
 
 	ShapeData shape = ShapeGenerator::makeSphere(PlaneDimension);
 	glGenBuffers(1, &SphereVertexBufferID);
@@ -117,6 +131,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	
 	HDR TEX6
 	TEX5,TEX7,TEX8,TEX9 ARE FOR PBR RENDERS
+	---------------------------------------
 	*/
 
 	shape.cleanup();
@@ -165,19 +180,8 @@ void MeGLWindow::sendDataToOpenGL() {
 		GL_LINEAR);
 
 	//Create another QImage obj
-	texName = "texture/rustediron2_metallic.png";
-	rustedironMetallicMap = loadTexture(texName);
-	// Metallic map for cobbleStone
-	glGenTextures(1, &rustedironMetallicTextureID);
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, rustedironMetallicTextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rustedironMetallicMap.width(),
-		rustedironMetallicMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-		rustedironMetallicMap.bits());
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-		GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-		GL_LINEAR);
+	stoneMetallicMap;
+	// METALLIC map for cobbleStone
 
 	//Create another QImage obj
 	texName = "texture/Cobblestone1_ao.png";
@@ -253,6 +257,21 @@ void MeGLWindow::sendDataToOpenGL() {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 		GL_LINEAR);
 
+	//Create another QImage obj
+	texName = "texture/rustediron2_metallic.png";
+	rustedironMetallicMap = loadTexture(texName);
+	// Metallic map for cobbleStone
+	glGenTextures(1, &rustedironMetallicTextureID);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, rustedironMetallicTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rustedironMetallicMap.width(),
+		rustedironMetallicMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		rustedironMetallicMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+
 	// temp create and store them in Tex11
 	//Create another QImage obj
 	texName = "texture/normalMap.png";
@@ -263,6 +282,79 @@ void MeGLWindow::sendDataToOpenGL() {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, checkerNormalMap.width(),
 		checkerNormalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		checkerNormalMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+	//----------
+	texName = "texture/TexturesCom_Wood_Rough_1K_normal.png";
+	woodNormalMap = loadTexture(texName);
+	// Normal map for cobbleStone
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &woodNormalTextureID);
+	glBindTexture(GL_TEXTURE_2D, woodNormalTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, woodNormalMap.width(),
+		woodNormalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		woodNormalMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+	//Create another QImage obj
+	texName = "texture/TexturesCom_Wood_Rough_1K_albedo.png";
+	woodAlbedoMap = loadTexture(texName);
+	// Albedo map for cobbleStone
+	glGenTextures(1, &woodAlbedoTextureID);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, woodAlbedoTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, woodAlbedoMap.width(),
+		woodAlbedoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		woodAlbedoMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+
+	//Create another QImage obj
+	texName = "texture/TexturesCom_Wood_Rough_1K_roughness.png";
+	woodRoughnessMap = loadTexture(texName);
+	// Roughness map for cobbleStone
+	glGenTextures(1, &woodRoughnessTextureID);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, woodRoughnessTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, woodRoughnessMap.width(),
+		woodRoughnessMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		woodRoughnessMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+
+	//Create another QImage obj
+	texName = "texture/TexturesCom_Wood_Rough_1K_ao.png";
+	woodAoMap = loadTexture(texName);
+	// Ao map for cobbleStone
+	glGenTextures(1, &woodAoTextureID);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, woodAoTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, woodAoMap.width(),
+		woodAoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		woodAoMap.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_LINEAR);
+
+	//Create another QImage obj
+	texName = "texture/TexturesCom_Wood_Rough_1K_height.png";
+	woodDisplacementMap = loadTexture(texName);
+	// Ao map for cobbleStone
+	glGenTextures(1, &woodDisplacementTextureID);
+	glActiveTexture(GL_TEXTURE10);
+	glBindTexture(GL_TEXTURE_2D, woodDisplacementTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, woodDisplacementMap.width(),
+		woodDisplacementMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		woodDisplacementMap.bits());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 		GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
@@ -868,9 +960,19 @@ void MeGLWindow::paintGL() {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, stoneRoughnessMap.width(),
 		stoneRoughnessMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		stoneRoughnessMap.bits());
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, stoneMetallicTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, stoneMetallicMap.width(),
+		stoneMetallicMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		stoneMetallicMap.bits());
+	glActiveTexture(GL_TEXTURE10);
+	glBindTexture(GL_TEXTURE_2D, stoneDisplacementTextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, stoneDisplacementMap.width(),
+		stoneDisplacementMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		stoneDisplacementMap.bits());
 
 
-	//Apply transform and render rockPad
+	//render Stone Block
 	glBindVertexArray(PlaneVertexArrayObjectID);
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
@@ -882,7 +984,7 @@ void MeGLWindow::paintGL() {
 	glUniform1f(displacementMultiplierUniformLoc, 5.0f);
 	glUniform1f(useNormalUniformLoc, 1.0f);
 	glDrawElements(GL_TRIANGLES, planeIndices, GL_UNSIGNED_SHORT, 0);
-
+	//render metallic cube
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, checkerNormalTextureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, checkerNormalMap.width(),
@@ -930,9 +1032,9 @@ void MeGLWindow::paintGL() {
 		rustedironMetallicMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		rustedironMetallicMap.bits());
 
-	
+	//draw ironRusted sphere
 	glBindVertexArray(SphereVertexArrayObjectID);
-	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
+	modelTransformMatrix = glm::translate(mat4(), glm::vec3(-3.0f, 0.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;

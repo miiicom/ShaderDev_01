@@ -171,5 +171,38 @@
     <Image Include="texture\normalMap.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="texture\TexturesCom_Wood_Rough_1K_roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\TexturesCom_Wood_Rough_1K_normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\TexturesCom_Wood_Rough_1K_height.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\TexturesCom_Wood_Rough_1K_ao.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\TexturesCom_Wood_Rough_1K_albedo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\TexturesCom_Metal_Corrugated_1K_roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\TexturesCom_Metal_Corrugated_1K_normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\TexturesCom_Metal_Corrugated_1K_metallic.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\TexturesCom_Metal_Corrugated_1K_height.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\TexturesCom_Metal_Corrugated_1K_ao.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\TexturesCom_Metal_Corrugated_1K_albedo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
