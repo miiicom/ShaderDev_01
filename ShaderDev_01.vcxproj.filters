@@ -61,9 +61,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="texture\normalMap">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="texture\Mans_Outside_Env.hdr">
       <Filter>Resource Files</Filter>
     </None>
@@ -169,6 +166,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="texture\Cobblestone1_roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="texture\normalMap.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

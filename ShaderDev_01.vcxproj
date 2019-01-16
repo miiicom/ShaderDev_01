@@ -154,7 +154,6 @@
     <None Include="texture\03-Ueno-Shrine_3k.hdr" />
     <None Include="texture\Mans_Outside_Env.hdr" />
     <None Include="texture\Newport_Loft_Ref.hdr" />
-    <None Include="texture\normalMap" />
     <None Include="texture\Road_to_MonumentValley_Ref.hdr" />
     <None Include="vertexShaderCode.glsl" />
     <None Include="WhitePlaneFragmentShader.glsl" />
@@ -171,6 +170,7 @@
     <Image Include="texture\Displacement.png" />
     <Image Include="texture\displacement_origin.png" />
     <Image Include="texture\fireSprite.png" />
+    <Image Include="texture\normalMap.png" />
     <Image Include="texture\normalOcean.png" />
     <Image Include="texture\rustediron2_ao.png" />
     <Image Include="texture\rustediron2_basecolor.png" />

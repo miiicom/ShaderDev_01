@@ -209,7 +209,7 @@ void MeGLWindow::sendDataToOpenGL() {
 	// temp create and store them in Tex11
 	glActiveTexture(GL_TEXTURE11);
 	//Create another QImage obj
-	texName = "texture/rustediron2_normal.png";
+	texName = "texture/normalMap.png";
 	rustedironNormalMap = loadTexture(texName);
 	// Normal map for rustMetal
 	glGenTextures(1, &rustedironNormalTextureID);
@@ -872,7 +872,7 @@ void MeGLWindow::paintGL() {
 		rustedironNormalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		rustedironNormalMap.bits());
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, rustedironNormalTextureID);
+	glBindTexture(GL_TEXTURE_2D, rustedironAlbedoTextureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rustedironAlbedoMap.width(),
 		rustedironAlbedoMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		rustedironAlbedoMap.bits());
@@ -887,7 +887,7 @@ void MeGLWindow::paintGL() {
 		rustedironMetallicMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		rustedironMetallicMap.bits());
 
-	glBindVertexArray(SphereVertexArrayObjectID);
+	glBindVertexArray(CubeVertexArrayObjectID);
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 2.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +90.0f, glm::vec3(1.0f, 1.0f, 0.0f));
 	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f, 1.0f, 1.0f));
@@ -897,14 +897,14 @@ void MeGLWindow::paintGL() {
 
 	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 	glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-	albedoColor = glm::vec3(-1.0f,-1.0f, -1.0f);
+	albedoColor = glm::vec3(0.0f,1.0f, 0.0f);
 	glUniform3fv(albedoUniformLoc, 1, &albedoColor[0]);
-	glUniform1f(metallicUniformLoc, -1.0f);
-	glUniform1f(roughnesslicUniformLoc, -1.0f);
-	glUniform1f(aoUniformLoc, -1.0f);
+	glUniform1f(metallicUniformLoc, 1.0f);
+	glUniform1f(roughnesslicUniformLoc, 0.0f);
+	glUniform1f(aoUniformLoc,1.0f);
 	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
-	glUniform1f(useNormalUniformLoc, -1.0f);
-	glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
+	glUniform1f(useNormalUniformLoc, 1.0f);
+	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
 
 
 	//Draw skybox
