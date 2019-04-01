@@ -43,6 +43,11 @@ GLuint PlaneIndexBufferID;
 GLuint CubeVertexBufferID;
 GLuint CubeIndexBufferID;
 
+GLuint teapotVertexBufferID;
+GLuint teapotIndexBufferID;
+GLuint teapotVertexArrayObjectID;
+GLuint teapotIndices;
+
 GLuint SphereVertexArrayObjectID;
 GLuint PlaneVertexArrayObjectID;
 GLuint CubeVertexArrayObjectID;
@@ -120,6 +125,72 @@ void MeGLWindow::sendDataToOpenGL() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, CubeIndexBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	cubeIndices = shape.numIndices;
+
+	//Load teapot
+
+	std::ostream *outStream = &std::cout;
+	if (teapot.LoadFromFileObj("object/teapot.obj", TRUE, outStream)) {
+		printf("load success");
+	}
+	else {
+		printf("load fail");
+	}
+
+	std::vector<cyPoint3f> teapotVertices;
+	for (int i = 0; i < teapot.NV(); i++) {
+		teapotVertices.push_back(teapot.V(i));
+	}
+
+	std::vector<cyPoint3f> teapotColors;
+	for (int i = 0; i < teapot.NV(); i++) {
+		teapotColors.push_back(teapot.VN(i));
+	}
+
+	std::vector<cyPoint3f> teapotNormals;
+	for (int i = 0; i < teapot.NV(); i++) {
+		teapotNormals.push_back(teapot.VN(i));
+	}
+
+	//std::vector<cyPoint3f> teapotUVs;
+	//for (int i = 0; i < teapot.NVT(); i++) {
+	//	teapotUVs.push_back(teapot.VT(i));
+	//}
+
+	std::vector<cyPoint3f> teapotUVs;
+	teapotUVs.resize(teapot.NV());
+	for (int i = 0; i < teapot.NF(); i++) {
+		for (int j = 0; j < 3; j++) {
+			teapotUVs[teapot.F(i).v[j]] = cyPoint3f(teapot.VT(teapot.FT(i).v[j]).x,
+				teapot.VT(teapot.FT(i).v[j]).y, 0);
+		}
+	}
+
+	std::vector<cyPoint3f> teapotInfos;
+	teapotInfos.insert(teapotInfos.end(), teapotVertices.begin(), teapotVertices.end());
+	teapotInfos.insert(teapotInfos.end(), teapotColors.begin(), teapotColors.end());
+	teapotInfos.insert(teapotInfos.end(), teapotNormals.begin(), teapotNormals.end());
+	teapotInfos.insert(teapotInfos.end(), teapotUVs.begin(), teapotUVs.end());
+
+	printf("teapot vertices buffer is %d size large\n", teapotVertices.size());
+	printf("teapot has %d vertices\n", teapot.NV());
+
+	printf("\nthe num of vertes is %d\n", teapot.NV());
+	printf("\nthe num of NORMAL is %d\n", teapot.NV());
+	printf("\nthe num of FACE is %d\n", teapot.NF());
+	printf("\nthe num of uv is %d\n", teapot.NVT());
+
+	glGenBuffers(1, &teapotVertexBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, teapotVertexBufferID);
+	// read vertex position info only
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, teapot.NF() * sizeof(unsigned int) *3 , &teapot.F(0), GL_STATIC_DRAW);
+	// read vertex information from a vector
+	glBufferData(GL_ARRAY_BUFFER, (teapot.NV() * 2 + teapot.NVN() + teapot.NV()) * sizeof(cyPoint3f), &teapotInfos[0], GL_STATIC_DRAW);
+
+
+	glGenBuffers(1, &teapotIndexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, teapotIndexBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, teapot.NF() * sizeof(unsigned int) * 3, &teapot.F(0), GL_STATIC_DRAW);
+	teapotIndices = teapot.NF() * 3;
 
 	/* -----------------------------------
 	Normal TEX0
@@ -445,6 +516,20 @@ void MeGLWindow::setupVertexArrays()
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 10));
 	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 12));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, CubeIndexBufferID);
+
+	glGenVertexArrays(1, &teapotVertexArrayObjectID);
+
+	glBindVertexArray(teapotVertexArrayObjectID);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glBindBuffer(GL_ARRAY_BUFFER, teapotVertexBufferID);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(cyPoint3f) * teapot.NV()));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(cyPoint3f) * teapot.NV() * 2));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(cyPoint3f) * teapot.NVN() + sizeof(cyPoint3f) * teapot.NV() * 2));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, teapotIndexBufferID);
 }
 
 void MeGLWindow::setupFrameBuffer()
@@ -991,10 +1076,10 @@ void MeGLWindow::paintGL() {
 		checkerNormalMap.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		checkerNormalMap.bits());
 
-	glBindVertexArray(CubeVertexArrayObjectID);
+	glBindVertexArray(teapotVertexArrayObjectID);
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(3.0f, 0.0f, 0.0f)); // push 4 away from camera
-	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(0.8f, 0.8f, 0.8f));
+	modelRotateMatrix = glm::rotate(mat4(), -90.0f, glm::vec3(1.0f, 0.0f,0.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(0.1f, 0.1f, 0.1f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
@@ -1008,11 +1093,11 @@ void MeGLWindow::paintGL() {
 	glUniform1f(aoUniformLoc, 1.0f);
 	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
 	glUniform1f(useNormalUniformLoc, 1.0f);
-	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, teapotIndices, GL_UNSIGNED_INT, 0);
 
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(12.0f, 0.0f, 0.0f)); // push 4 away from camera
-	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(0.8f, 0.8f, 0.8f));
+	modelRotateMatrix = glm::rotate(mat4(), -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(0.1f, 0.1f, 0.1f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
@@ -1026,11 +1111,11 @@ void MeGLWindow::paintGL() {
 	glUniform1f(aoUniformLoc, 1.0f);
 	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
 	glUniform1f(useNormalUniformLoc, 1.0f);
-	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, teapotIndices, GL_UNSIGNED_INT, 0);
 
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(9.0f, 0.0f, 0.0f)); // push 4 away from camera
-	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(0.8f, 0.8f, 0.8f));
+	modelRotateMatrix = glm::rotate(mat4(), -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(0.1f, 0.1f, 0.1f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
@@ -1044,11 +1129,11 @@ void MeGLWindow::paintGL() {
 	glUniform1f(aoUniformLoc, 1.0f);
 	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
 	glUniform1f(useNormalUniformLoc, 1.0f);
-	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, teapotIndices, GL_UNSIGNED_INT, 0);
 
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(6.0f, 0.0f, 0.0f)); // push 4 away from camera
-	modelRotateMatrix = glm::rotate(mat4(), +45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(0.8f, 0.8f, 0.8f));
+	modelRotateMatrix = glm::rotate(mat4(), -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(0.1f, 0.1f, 0.1f));
 	ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 	ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 	fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
@@ -1062,7 +1147,7 @@ void MeGLWindow::paintGL() {
 	glUniform1f(aoUniformLoc, 1.0f);
 	glUniform1f(displacementMultiplierUniformLoc, 0.0f);
 	glUniform1f(useNormalUniformLoc, 1.0f);
-	glDrawElements(GL_TRIANGLES, cubeIndices, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, teapotIndices, GL_UNSIGNED_INT, 0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, rustedironNormalTextureID);

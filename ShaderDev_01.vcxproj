@@ -79,7 +79,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Middleware\glew\include;$(ProjectDir)\Middleware\glm;$(ProjectDir)\Middleware\Qt\include;$(ProjectDir)\Middleware\stb_image\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Middleware\Cy;$(ProjectDir);$(ProjectDir)\Middleware\glew\include;$(ProjectDir)\Middleware\glm;$(ProjectDir)\Middleware\Qt\include;$(ProjectDir)\Middleware\stb_image\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)\Middleware\glew\lib;$(ProjectDir)\ShaderDev_01\Middleware\Qt\lib;%(AdditionalLibraryDirectories);$(ProjectDir)</AdditionalLibraryDirectories>
