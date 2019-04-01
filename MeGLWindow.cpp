@@ -30,6 +30,12 @@ GLuint SphereIndexBufferID;
 GLuint PlaneVertexBufferID;
 GLuint PlaneIndexBufferID;
 
+
+GLuint teapotVertexBufferID;
+GLuint teapotIndexBufferID;
+GLuint teapotVertexArrayObjectID;
+GLuint teapotIndices;
+
 GLuint SphereVertexArrayObjectID;
 GLuint PlaneVertexArrayObjectID;
 
@@ -57,6 +63,73 @@ void MeGLWindow::sendDataToOpenGL() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, PlaneIndexBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 	planeIndices = shape.numIndices;
+
+	std::ostream *outStream = &std::cout;
+	if (teapot.LoadFromFileObj("object/teapot.obj", TRUE, outStream)) {
+		printf("load success");
+	}
+	else {
+		printf("load fail");
+	}
+
+	//Load teapot
+
+	std::vector<cyPoint3f> teapotVertices;
+	for (int i = 0; i < teapot.NV(); i++) {
+		teapotVertices.push_back(teapot.V(i));
+	}
+
+	std::vector<cyPoint3f> teapotColors;
+	for (int i = 0; i < teapot.NV(); i++) {
+		teapotColors.push_back(teapot.VN(i));
+	}
+
+	std::vector<cyPoint3f> teapotNormals;
+	for (int i = 0; i < teapot.NV(); i++) {
+		teapotNormals.push_back(teapot.VN(i));
+	}
+
+	//std::vector<cyPoint3f> teapotUVs;
+	//for (int i = 0; i < teapot.NVT(); i++) {
+	//	teapotUVs.push_back(teapot.VT(i));
+	//}
+
+	std::vector<cyPoint3f> teapotUVs;
+	teapotUVs.resize(teapot.NV());
+	for (int i = 0; i < teapot.NF(); i++) {
+		for (int j = 0; j < 3; j++) {
+			teapotUVs[teapot.F(i).v[j]] = cyPoint3f(teapot.VT(teapot.FT(i).v[j]).x,
+				teapot.VT(teapot.FT(i).v[j]).y, 0);
+		}
+	}
+
+	std::vector<cyPoint3f> teapotInfos;
+	teapotInfos.insert(teapotInfos.end(), teapotVertices.begin(), teapotVertices.end());
+	teapotInfos.insert(teapotInfos.end(), teapotColors.begin(), teapotColors.end());
+	teapotInfos.insert(teapotInfos.end(), teapotNormals.begin(), teapotNormals.end());
+	teapotInfos.insert(teapotInfos.end(), teapotUVs.begin(), teapotUVs.end());
+
+	printf("teapot vertices buffer is %d size large\n", teapotVertices.size());
+	printf("teapot has %d vertices\n", teapot.NV());
+
+	printf("\nthe num of vertes is %d\n", teapot.NV());
+	printf("\nthe num of NORMAL is %d\n", teapot.NV());
+	printf("\nthe num of FACE is %d\n", teapot.NF());
+	printf("\nthe num of uv is %d\n", teapot.NVT());
+
+	glGenBuffers(1, &teapotVertexBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, teapotVertexBufferID);
+	// read vertex position info only
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, teapot.NF() * sizeof(unsigned int) *3 , &teapot.F(0), GL_STATIC_DRAW);
+	// read vertex information from a vector
+	glBufferData(GL_ARRAY_BUFFER, (teapot.NV()*2 + teapot.NVN() + teapot.NV()) * sizeof(cyPoint3f), &teapotInfos[0], GL_STATIC_DRAW);
+
+
+	glGenBuffers(1, &teapotIndexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, teapotIndexBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, teapot.NF() * sizeof(unsigned int) * 3, &teapot.F(0), GL_STATIC_DRAW);
+	teapotIndices = teapot.NF() * 3;
+
 
 
 	shape.cleanup();
@@ -169,6 +242,20 @@ void MeGLWindow::setupVertexArrays()
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 10));
 	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(float) * NUM_FLOATS_PER_VERTICE, (void*)(sizeof(float) * 12));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, PlaneIndexBufferID);
+
+	glGenVertexArrays(1, &teapotVertexArrayObjectID);
+
+	glBindVertexArray(teapotVertexArrayObjectID);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glBindBuffer(GL_ARRAY_BUFFER, teapotVertexBufferID);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(cyPoint3f) * teapot.NV()));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(cyPoint3f) * teapot.NV()*2));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(cyPoint3f) * teapot.NVN() + sizeof(cyPoint3f) * teapot.NV()*2));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, teapotIndexBufferID);
 }
 
 void MeGLWindow::setupFrameBuffer()
@@ -346,18 +433,18 @@ void MeGLWindow::paintGL() {
 	mat4 projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.01f, 50.0f); // Projection matrix
 	//render things into my frame buffer																								// bind to framebuffer and draw scene as we normally would to color texture 
 	//glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClearColor(0.0f, 0.1f, 0.0f, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width(), height());
 
 	glUseProgram(PBRProgramID);
 	// in here rebind for cube
-	glBindVertexArray(SphereVertexArrayObjectID);
+	glBindVertexArray(teapotVertexArrayObjectID);
 	projectionMatrix = glm::perspective(60.0f, ((float)width()) / height(), 0.1f, 50.0f); // Projection matrix
 	modelTransformMatrix = glm::translate(mat4(), glm::vec3(0.0f, 0.0f, 0.0f)); // push 4 away from camera
 	modelRotateMatrix = glm::rotate(mat4(), +0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-	modelScaleMatrix = glm::scale(mat4(), glm::vec3(1.0f,1.0f, 1.0f));
+	modelScaleMatrix = glm::scale(mat4(), glm::vec3(0.1f,0.1f, 0.1f));
 	mat4 ModelToWorldMatrix = modelTransformMatrix* modelRotateMatrix *  modelScaleMatrix;
 	mat4 ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
 	mat4 fullTransformMatrix = projectionMatrix * ModelToViewMatrix;
@@ -383,7 +470,7 @@ void MeGLWindow::paintGL() {
 	glUniform3fv(cameraDirectionUniformLoc, 1, &cameraDirection[0]);
 	GLint lightpositionUniformLoc = glGetUniformLocation(PBRProgramID,"lightPositionWorld");
 	glUniform3fv(lightpositionUniformLoc, 1, &pointLightPosition[0]);
-	glm::vec3 albedo = glm::vec3(1.0, 0.0,0.0);
+	glm::vec3 albedo = glm::vec3(-1.0, -1.0,-1.0);
 	GLint albedormLoc = glGetUniformLocation(PBRProgramID, "parameter.albedo");
 	glUniform3fv(albedormLoc, 1, &albedo[0]);
 	GLint metallicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.metallic");
@@ -391,10 +478,10 @@ void MeGLWindow::paintGL() {
 	GLint roughnesslicUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.roughness");
 	
 	GLint aoUniformLoc = glGetUniformLocation(PBRProgramID, "parameter.AO");
-	glUniform1f(aoUniformLoc, 1.0f);
+	glUniform1f(aoUniformLoc, -1.0f);
 
-	for (int i = 0; i < 7; ++i) { // i  for roughness and  x movement
-		for (int j = 0; j < 7; ++j) { // j for metallic and y movement
+	for (int i = 0; i < 1; ++i) { // i  for roughness and  x movement
+		for (int j = 0; j < 1; ++j) { // j for metallic and y movement
 			modelTransformMatrix = glm::translate(mat4(), glm::vec3(2.2f * (float)i, 2.2f * (float)j, 0.0f));
 			ModelToWorldMatrix = modelTransformMatrix * modelRotateMatrix *  modelScaleMatrix;
 			ModelToViewMatrix = meCamera->getWorldToViewMatrix() * ModelToWorldMatrix;
@@ -402,11 +489,13 @@ void MeGLWindow::paintGL() {
 
 			glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
 			glUniformMatrix4fv(modelToWorldMatrixUniformLoc, 1, GL_FALSE, &ModelToWorldMatrix[0][0]);
-			glUniform1f(metallicUniformLoc,(float)j * (1.0f/7.0f));
-			glUniform1f(roughnesslicUniformLoc, (float)i * (1.0f / 7.0f));
-			glDrawElements(GL_TRIANGLES, SphereIndices, GL_UNSIGNED_SHORT, 0);
-		}
+			//glUniform1f(metallicUniformLoc,(float)j * (1.0f/7.0f));
+			//glUniform1f(roughnesslicUniformLoc, (float)i * (1.0f / 7.0f));
 
+			glUniform1f(metallicUniformLoc, -1);
+			glUniform1f(roughnesslicUniformLoc, -1);
+			glDrawElements(GL_TRIANGLES, teapotIndices, GL_UNSIGNED_INT, 0);
+		}
 	}
 	
 	
@@ -434,7 +523,7 @@ MeGLWindow::MeGLWindow()
 	meCamera = new MeCamera;
 	spriteOffset = glm::vec2(0.0f, 0.0f);
 	ambientLight = glm::vec3(+0.1f, +0.2f, +0.25f);
-	pointLightPosition = glm::vec3(+10.0f,+10.0f,+2.0f);
+	pointLightPosition = glm::vec3(+1.0f,+1.0f,+2.0f);
 	time = 0.0f;
 }
 

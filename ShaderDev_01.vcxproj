@@ -79,7 +79,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Middleware\glew\include;$(ProjectDir)\Middleware\glm;$(ProjectDir)\Middleware\Qt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Middleware\glew\include;$(ProjectDir)\Middleware\glm;$(ProjectDir)\Middleware\Qt\include;$(ProjectDir)\Middleware\Cy;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)\Middleware\glew\lib;$(ProjectDir)\ShaderDev_01\Middleware\Qt\lib;%(AdditionalLibraryDirectories);$(ProjectDir)</AdditionalLibraryDirectories>
@@ -159,6 +160,11 @@
     <Image Include="texture\rustediron2_metallic.png" />
     <Image Include="texture\rustediron2_normal.png" />
     <Image Include="texture\rustediron2_roughness.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="object\teapot.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -103,4 +103,7 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Object Include="object\teapot.obj" />
+  </ItemGroup>
 </Project>

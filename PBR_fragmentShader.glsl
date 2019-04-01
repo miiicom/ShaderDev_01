@@ -152,4 +152,5 @@ void main()
 	//FragmentColor = vec4(NormalDistribution,NormalDistribution,NormalDistribution,0.0);
 	//FragmentColor = vec4(FrenelValue,0.0);
 	//FragmentColor = vec4(fragColor,0.0);
+	//FragmentColor = vec4(uv0,0.0,1.0);
 }

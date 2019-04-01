@@ -6,6 +6,9 @@
 #include <String>
 #include <MeCamera.h>
 #include <Qt\qimage.h>
+#include <cyCore.h>
+#include <cyPoint.h>
+#include <cyTriMesh.h>
 using glm::mat4;
 class MeGLWindow : public QGLWidget
 {
@@ -44,6 +47,8 @@ private:
 	glm::vec2 spriteOffset;
 	glm::vec3 ambientLight;
 	glm::vec3 pointLightPosition;
+
+	cyTriMesh teapot;
 	
 };
 
